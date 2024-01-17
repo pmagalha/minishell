@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/17 15:23:25 by pmagalha          #+#    #+#             */
-/*   Updated: 2023/08/29 11:16:36 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/17 17:20:38 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void				ft_putstr_fd(char *s, int fd);
 
 size_t				ft_strlen(const char *s);
 
-size_t				ft_strlcpy(char *dst, const char *src, size_t size);
+size_t				ft_strlcpy(char *dest, const char *src, size_t size);
 
 size_t				ft_strlen(const char *s);
 

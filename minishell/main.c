@@ -6,14 +6,30 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/12 22:11:36 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/17 18:41:24 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 
-/* static void	dev_mod(t_prompt *prompt)
+char	*print_type(t_type type)
+{
+	if (type == REDIR_IN)
+		return ("REDIR_IN");
+	else if (type == REDIR_OUT)
+		return ("REDIR_OUT");
+	else if (type == REDIR2_OUT)
+		return ("REDIR2_OUT");
+	else if (type == HEREDOC)
+		return ("HEREDOC");
+	else if (type == PIPE)
+		return ("PIPE");
+	else
+		return ("OTHER");
+}
+
+static void	dev_mod(t_prompt *prompt)
 {
 	//t_parser	*cmds;
 	//t_lexer			*node;
@@ -24,12 +40,12 @@
 	for (t_lexer *node = prompt->lexer; node; node = node->next)
 	{
 		if (node->content)
-			printf("[%s] ", node->content);
+			printf("Content: [%s] | Type: [%s]\n", node->content, print_type(node->type));
 	}
 	printf("\n\n\n\033[1;32m* PARSER *\033[0m");
 	printf("\n\033[1;32m--------------------------------------\033[0m\n");
 	
-  	cmds = prompt->parser;
+/*   	cmds = prompt->parser;
 	j = 0;
 	while (cmds)
 	{
@@ -55,57 +71,60 @@
 		printf("\n");
 		cmds = cmds->next;
 		
-	}
+	} */
 	printf("\n\033[1;32m* OUTPUT *\033[0m");
 	printf("\n\033[1;32m--------------------------------------\033[0m\n");
-	
-} */
-
-char	*print_type(t_type type)
-{
-	if (type == 1)
-		return ("REDIR_IN");
-	else if (type == 2)
-		return ("REDIR_OUT");
-	else if (type == 3)
-		return ("REDIR2_OUT");
-	else if (type == 4)
-		return ("HEREDOC");
-	else if (type == 5)
-		return ("PIPE");
-	else
-		return ("OTHER");
 }
 
-int main(void)
+int main(int argc, char **argv, char **env)
 {
     char *input;
 	t_lexer	*current;
 	t_lexer *next;
 	t_prompt *prompt;
+	t_env_node *env_node;
+	
 	
 	next = NULL;
 	prompt = NULL;
 	current = NULL;
-	prompt = init(prompt);
-	
+	env_node = NULL;
+	prompt = init(prompt, env);
+	(void)argc;
+
 	while (1)
 	{
-		
+		if (argv[1])
+		{
+			printf("Wrong number of arguments\n");
+			break ;
+		}
 		input = readline("Minishell$ ");
 		if (input != NULL)
 		{
 			add_history(input);
 			get_token(input, prompt);
+			init_env(env_node);
+			get_env(env, env_node);
 			current = prompt->lexer;
+
+			//print_env_list(prompt->env_node);
+/*  			printf("\nORIGINAL ENV\n\n");
+			print_env(prompt->env);
+			printf("\nDUP ENV\n\n");
+			print_env(prompt->dup_env); */
+			
+			// SO PARA PRINTAR OS ENVS
+			
+
 			while (current != NULL)
 			{
 				
-                printf("[%s] | [%s]\n", current->content, print_type(current->type));
+                //printf("[%s] | [%s]\n", current->content, print_type(current->type));
 				next = current->next;
                 current = next;
 			}
-			//dev_mod(prompt);
+			dev_mod(prompt);
 			free_token_list(prompt->lexer);
 			prompt->lexer = NULL;
 			free(input);

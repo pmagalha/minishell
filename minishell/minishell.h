@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/12 21:24:21 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/17 18:43:33 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,16 @@ typedef struct s_lexer
     struct s_lexer	*prev;
 }	                t_lexer;
 
+typedef struct  s_env_node
+{
+    char    *key;
+    char    *value;
+    char    *full_string;
+    struct  s_env_node   *next;
+}               t_env_node;
+
+// MUDAR ESTA STRUCT DE ENV_NODE PARA ENV_LST PARA EVITAR CAOS
+
 typedef struct s_parser
 {
     struct s_parser	*next;
@@ -57,6 +67,9 @@ typedef struct s_parser
 
 typedef struct  s_prompt
 {
+    char        **env;
+    char        **dup_env;
+    t_env_node  **env_node;
     t_lexer     *lexer;
     t_parser    *parser;
     t_lexer		**token_lst;
@@ -69,10 +82,12 @@ void get_token(char *input, t_prompt *prompt);
 char    *get_quoted_content(char *content);
 char	*get_token_content(char *content);
 //void    get_token(char *input, t_prompt lexer);
-t_prompt    *init(t_prompt *prompt);
 char	*other_content(char *content);
 char	*get_operator(char *content);
 
+// Init
+t_env_node   *init_env(t_env_node *env_node);
+t_prompt    *init(t_prompt *prompt, char **env);
 t_type	get_type(char *content);
 
 //List aux
@@ -86,6 +101,16 @@ void	token_add_back(t_lexer **token_lst, t_lexer *new);
 t_lexer	*new_token(char *content, t_lexer type);
 void	token_add_back(char *content, t_prompt *prompt); */
 
-char	*alloc_operator(char *content, int i, char c);
+
+// Env
+int		count_lines(char **env);
+int	lines_len(char **env, int line_count);
+char	**duplicate_env(char **env);
+
+// para cagar maybe
+t_env_node	*create_key_value(char *key, char *value, char *string);
+//void print_env_list(t_env_node *head);
+//void print_env(char **env);
+void get_env(char **dup_env, t_env_node *env_node);
 
 # endif

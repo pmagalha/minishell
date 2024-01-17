@@ -6,13 +6,13 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/12 22:09:35 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/17 15:34:12 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	get_token(char *input, t_prompt *prompt) // get token do chat gpt
+void	get_token(char *input, t_prompt *prompt)
 {
 	char	*content;
 	t_type	type;
@@ -130,6 +130,4 @@ char	*other_content(char *input)
 	return (res);
 }
 
-//testar isto que pelos vistos da erro
-// out_1 "ls" > out_2 '-l' < 'in' -a | grep "keyword"
-// out_1 "ls" > out_2 '-l' < 'in' | grep "keyword"
+// NAO ESQUECER DE TRATAR TABS E OUTROS WHITESPACES

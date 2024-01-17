@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/12 21:24:11 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/17 14:41:14 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	free_token_list(t_lexer *head)
     {
         next = current->next;
         free(current->content);
+		// free(current->type); checkar se funciona com isto
         free(current);
         current = next;
     }
