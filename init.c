@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/17 19:31:20 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/18 18:02:33 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ t_prompt    *init(t_prompt *prompt, char **env)
     prompt->token_lst = NULL;
     prompt->env_node = NULL;
     prompt->env = env;
-    prompt->dup_env = duplicate_env(env);
     return (prompt);
 }
 

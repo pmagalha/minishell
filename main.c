@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/18 13:02:58 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/18 18:04:00 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,9 +105,11 @@ int main(int argc, char **argv, char **env)
 		{
 			add_history(input);
 			get_token(input, prompt);
-			init_env(env_node);
-			get_env(env, env_node);
-			temp = env_node;
+			get_env(env, prompt);
+			
+			temp = prompt->env_node; // isto era para testar printar o env na main
+			
+			print_env_list(temp);
 			current = prompt->lexer;
 			
 			//print_env_list(prompt->env_node);
