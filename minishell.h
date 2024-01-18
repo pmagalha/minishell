@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/17 18:43:33 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/17 19:39:46 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,8 @@ char	**duplicate_env(char **env);
 
 // para cagar maybe
 t_env_node	*create_key_value(char *key, char *value, char *string);
-//void print_env_list(t_env_node *head);
-//void print_env(char **env);
+void print_env_list(t_env_node *head);
+void print_env(char **env);
 void get_env(char **dup_env, t_env_node *env_node);
 
 # endif

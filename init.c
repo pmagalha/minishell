@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/17 18:10:07 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/17 19:31:20 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 t_prompt    *init(t_prompt *prompt, char **env)
 {    
     prompt = malloc(sizeof(t_prompt));
-    if (prompt == NULL)
+    if (!prompt)
         return (NULL);
     prompt->lexer = NULL;
     prompt->parser = NULL;
@@ -33,16 +33,22 @@ t_prompt    *init(t_prompt *prompt, char **env)
 t_lexer     *init_lexer(t_lexer *lexer)
 {
     lexer = malloc(sizeof(t_lexer));
+    if (!lexer)
+        return (NULL);
     lexer->type = 0;
     lexer->content = NULL;
+    lexer->next = NULL;
     return (lexer);
 }
 
 t_env_node   *init_env(t_env_node *env_node)
 {
     env_node = malloc(sizeof(t_env_node));
+    if (!env_node)
+        return NULL;
     env_node->full_string = NULL;
     env_node->key = NULL;
     env_node->value = NULL;
+    env_node->next = NULL;
     return (env_node);
 }

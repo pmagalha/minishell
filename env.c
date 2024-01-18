@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/17 18:47:17 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:03:02 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ char *get_key(char *env)
         i++;
     }
     key[len] = '\0';
-	printf("ISTO EH UMA KEY: %s\n\n", key);
+	//printf("ISTO EH UMA KEY: %s\n\n", key);
     return (key);
 }
 
@@ -112,7 +112,7 @@ char *get_value(char *env)
 	if (!value)
 		return (NULL);
 	ft_strlcpy(value, env + i, len + 1);
-    printf("ISTO EH UM VALUE: %s\n\n", value);
+    //printf("ISTO EH UM VALUE: %s\n\n", value);
     return (value); // SE DER MERDA EH NESTA FUNCAO POR CAUSA DO LEN
 }
 
@@ -128,7 +128,7 @@ char	*get_full_string(char *env)
 	if (!full_string)
 		return (NULL);
 	ft_strlcpy(full_string, env, len + 1);
-	printf("ISTO EH UMA FULL STRING: %s\n\n", full_string);
+	//printf("ISTO EH UMA FULL STRING: %s\n\n", full_string);
 	return (full_string);
 }
 
@@ -163,8 +163,13 @@ void token_add_back_env(t_env_node **env_node, t_env_node *new)
         while (new_node->next != NULL)
             new_node = new_node->next;
         new_node->next = new;
+		printf("------------- Node added in token_add_back_env ------------\n\n");
+		printf("Adding to env_node: Key: %s | Value: %s | Full String: %s\n\n", new->key, new->value, new->full_string);
     }
 }
+
+// ESTE PRINT FOI METIDO PARA ME CERTIFICAR QUE OS NODES ESTAO A SER ADICIONADOS A LISTA
+
 
 void get_env(char **dup_env, t_env_node *env_node)
 {
@@ -183,18 +188,20 @@ void get_env(char **dup_env, t_env_node *env_node)
 		value = get_value(dup_env[i]);
 		string = get_full_string(dup_env[i]);
 		new_node = create_key_value(key, value, string);
-		printf("Adding to env_node: Key: %s | Value: %s | Full String: %s\n\n", new_node->key, value, string);
     	token_add_back_env(&(env_node), new_node);
 		i++;
 	}
 }
 
-/* void print_env_node(t_env_node *node)
+// ESTE PRINT ESTA A PRINTAR O CONTEUDO QUE DEVE SER ADICIONADO CORRETAMENTE
+// MAS NAO SAO OS NODES QUE ESTAO A SER PRINTADOS. TENTAR PRINTAR NA MAIN
+
+void print_env_node(t_env_node *node)
 {
     printf("Key: %s | Value: %s | Full String: %s\n", node->key, node->value, node->full_string);
-} */
+}
 
-/* void print_env_list(t_env_node *head)
+void print_env_list(t_env_node *head)
 {
     t_env_node *current = head;
     while (current != NULL)
@@ -213,7 +220,8 @@ void print_env(char **env)
     {
         printf("%s\n", env[i]);
         i++;
-    } */
+    }
+}
 
 //USAR A FUNCAO CREATE NODE PARA COLOCAR em env->key e env->value os valores antes e depois do =
 

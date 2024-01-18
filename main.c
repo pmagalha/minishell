@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/17 18:41:24 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/18 13:02:58 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ int main(int argc, char **argv, char **env)
 	t_lexer *next;
 	t_prompt *prompt;
 	t_env_node *env_node;
+	t_env_node *temp;
 	
 	
 	next = NULL;
@@ -106,8 +107,9 @@ int main(int argc, char **argv, char **env)
 			get_token(input, prompt);
 			init_env(env_node);
 			get_env(env, env_node);
+			temp = env_node;
 			current = prompt->lexer;
-
+			
 			//print_env_list(prompt->env_node);
 /*  			printf("\nORIGINAL ENV\n\n");
 			print_env(prompt->env);
@@ -115,13 +117,9 @@ int main(int argc, char **argv, char **env)
 			print_env(prompt->dup_env); */
 			
 			// SO PARA PRINTAR OS ENVS
-			
-
 			while (current != NULL)
 			{
-				
-                //printf("[%s] | [%s]\n", current->content, print_type(current->type));
-				next = current->next;
+                //printf("[%s] | [%s]\n", current->content, print_type(current->type));				next = current->next;
                 current = next;
 			}
 			dev_mod(prompt);
@@ -138,4 +136,4 @@ int main(int argc, char **argv, char **env)
 	free(prompt);
 }
 
-
+// nao esquecer de fazer o add history nao guardar comandos vazios
