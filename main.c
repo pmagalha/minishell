@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/18 18:04:00 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:45:45 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,14 +82,14 @@ int main(int argc, char **argv, char **env)
 	t_lexer	*current;
 	t_lexer *next;
 	t_prompt *prompt;
-	t_env_node *env_node;
-	t_env_node *temp;
+	t_env_list *env_list;
+	t_env_list *temp;
 	
 	
 	next = NULL;
 	prompt = NULL;
 	current = NULL;
-	env_node = NULL;
+	env_list = NULL;
 	prompt = init(prompt, env);
 	(void)argc;
 
@@ -107,12 +107,12 @@ int main(int argc, char **argv, char **env)
 			get_token(input, prompt);
 			get_env(env, prompt);
 			
-			temp = prompt->env_node; // isto era para testar printar o env na main
+			temp = prompt->env_list; // isto era para testar printar o env na main
 			
-			print_env_list(temp);
+			print_env_list(temp); //uncao para printar a lista de env com todos os seus nodes
 			current = prompt->lexer;
 			
-			//print_env_list(prompt->env_node);
+			//print_env_list(prompt->env_list);
 /*  			printf("\nORIGINAL ENV\n\n");
 			print_env(prompt->env);
 			printf("\nDUP ENV\n\n");

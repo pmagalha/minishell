@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/18 18:15:34 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/23 18:44:11 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,11 +137,11 @@ int count_lines(char **env)
     return (count);
 }
 
-t_env_node	*create_key_value(char *key, char *value, char *string)
+t_env_list	*create_key_value(char *key, char *value, char *string)
 {
-	t_env_node	*new;
+	t_env_list	*new;
 
-	new = (t_env_node *)malloc(sizeof(t_env_node));
+	new = (t_env_list *)malloc(sizeof(t_env_list));
 	if (new == NULL)
 		return (NULL);
 	new->key = ft_strdup(key);
@@ -151,9 +151,9 @@ t_env_node	*create_key_value(char *key, char *value, char *string)
 	return (new);
 }
 
-void token_add_back_env(t_env_node **env_list, t_env_node *new)
+void token_add_back_env(t_env_list **env_list, t_env_list *new)
 {
-    t_env_node *new_node;
+    t_env_list *new_node;
 
     if (*env_list == NULL)
         *env_list = new;
@@ -173,7 +173,7 @@ void	get_env(char **env, t_prompt *prompt)
     char *key;
     char *value;
     char *string;
-	t_env_node *new_node;
+	t_env_list *new_node;
 
 	i = 0;
 	lines = count_lines(env);
@@ -183,14 +183,14 @@ void	get_env(char **env, t_prompt *prompt)
 		value = ft_substr(env[i], ft_strchr(env[i], '=') - env[i] + 1, ft_strlen(env[i]));
 		string = ft_strdup(env[i]);
 		new_node = create_key_value(key, value, string);
-    	token_add_back_env(&(prompt->env_node), new_node);
+    	token_add_back_env(&(prompt->env_list), new_node);
 		i++;
 	}
 }
 
-void print_env_list(t_env_node *head)
+void print_env_list(t_env_list *head)
 {
-    t_env_node *current = head;
+    t_env_list *current = head;
     while (current != NULL)
     {
         printf("Key: %s | Value: %s | Full String: %s\n\n", current->key, current->value, current->full_string);

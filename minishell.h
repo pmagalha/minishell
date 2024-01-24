@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/18 18:18:46 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/23 19:07:17 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,16 +49,20 @@ typedef struct s_lexer
     struct s_lexer	*prev;
 }	                t_lexer;
 
-typedef struct  s_env_node
+typedef struct  s_env_list
 {
     char    *key;
     char    *value;
     char    *full_string;
-    struct  s_env_node   *next;
-}               t_env_node;
+    struct  s_env_list   *next;
+}               t_env_list;
 
 typedef struct s_parser
 {
+    char    **content;
+    char    *builtin;
+    t_lexer *redirect; // isto eh para guardar as redirections no parser
+    char    *hd_file; // heredoc file, que aparentemente sera necessario
     struct s_parser	*next;
     struct s_parser	*prev;
 }                   t_parser;
@@ -66,8 +70,7 @@ typedef struct s_parser
 typedef struct  s_prompt
 {
     char        **env;
-    t_env_node  *env_node;
-    t_env_node  **env_list;
+    t_env_list  *env_list;
     t_lexer     *lexer;
     t_lexer		**token_lst;
     t_parser    *parser;
@@ -80,7 +83,7 @@ typedef struct  s_prompt
 char	*get_operator(char *content);
 char	*other_content(char *content);
 char	*get_token_content(char *content);
-char    *get_quoted_content(char *content);
+char	*get_quoted_content(char *input);
 void    get_token(char *input, t_prompt *prompt);
 
 //Lexer list aux
@@ -91,7 +94,7 @@ void	token_add_back(t_lexer **token_lst, t_lexer *new);
 
 // Init
 t_type	    get_type(char *content);
-t_env_node  *init_env(t_env_node *env_node);
+t_env_list   *init_env(t_env_list *env_list);
 t_prompt    *init(t_prompt *prompt, char **env);
 
 // Env
@@ -100,9 +103,9 @@ char	**duplicate_env(char **env);
 
 // Env list aux
 void        print_env(char **env);
-void        print_env_list(t_env_node *head);
+void        print_env_list(t_env_list *head);
 void        get_env(char **dup_env, t_prompt *prompt);
-void    token_add_back_env(t_env_node **env_list, t_env_node *new);
-t_env_node	*create_key_value(char *key, char *value, char *string);
+void    token_add_back_env(t_env_list **env_list, t_env_list *new);
+t_env_list	*create_key_value(char *key, char *value, char *string);
 
 # endif

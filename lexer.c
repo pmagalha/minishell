@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/18 18:13:50 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/23 16:36:18 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,48 +74,28 @@ t_type  get_type(char *content)
         return (OTHER);
 }
 
-static int  last_quote(char *input, char quote)
-{
-    int i;
-    int last_quote;
-    int first_quote;
-
-    i = 0;
-    last_quote = -1;
-    first_quote = -1;
-    while (input[i++] != '\0')
-    {
-        if (input[i] == quote)
-        {
-            last_quote = i;
-            if (first_quote == -1)
-                first_quote = i;
-        }
-        
-    }
-    if (input[first_quote] == quote && input[last_quote] == quote)
-        return (last_quote);
-    else
-        return (0);
-}
-
-char    *get_quoted_content(char *input)
+char    *get_quoted_content(char *input) //function working, ommented just to create another and test
 {
     char    *res;
     char    quote;
     int     i;
+    bool in_quotes;
 
-    i = 1; // start after quote
+    i = 0;
     quote = input[0];
-    while (input[i] != quote  && i != last_quote(input, quote))
-        i++;
-    i++;
-    if (input[i] == ' ')
-        ;
-    else
+    in_quotes = true;
+    while (input[i++])
     {
-        while (input[i] != '\0')
-            i++;
+        if (input[i] == quote)
+        {
+            if (in_quotes)
+                in_quotes = false;
+            else
+                in_quotes = true;
+        }
+        if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
+                || input[i] == '|') && !in_quotes) // it breaks and exists the loop in case it finds any operator and is not between quotes
+            break ;
     }
     res = malloc(sizeof(char) * i + 2);
     if (!res)
@@ -123,8 +103,6 @@ char    *get_quoted_content(char *input)
     ft_strlcpy(res, input, i + 1);
     return (res);
 }
-
-//esta funcao [quoted_content] vai ter de ser alterada e temos de colocar flags para quando abrir quotes, correr a string ate fechar
 
 char    *other_content(char *input)
 {
@@ -150,7 +128,7 @@ char    *other_content(char *input)
     }
     while (input[i++])
     {
-        if (input[i] == input[j])
+        if (input[i] == input[quote])
         {
             if (!in_quotes)
                 in_quotes = true;
@@ -167,3 +145,9 @@ char    *other_content(char *input)
 }
 
 // NAO ESQUECER DE TRATAR TABS E OUTROS WHITESPACES
+
+// Comandos para testar tipo: echo "$?" $? '$?' "'"$?"'" """'$?'"""
+
+// echo $9$?I$SER$2USER$USER
+
+
