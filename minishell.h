@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/29 11:44:22 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/29 18:39:42 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ typedef enum    s_type
 typedef struct s_lexer
 {
     char    	    *content;
-    int              type;
+    t_type          type;
     struct s_lexer	*next;
     struct s_lexer	*prev;
 }	                t_lexer;
@@ -59,7 +59,7 @@ typedef struct  s_env_list
 
 typedef struct s_parser
 {
-    char    *content;
+    char    *string;
     char    *builtin;
     t_lexer *redirect; // isto eh para guardar as redirections no parser
     char    *hd_file; // heredoc file, que aparentemente sera necessario
@@ -85,17 +85,19 @@ char	*other_content(char *content);
 char	*get_token_content(char *content);
 char	*get_quoted_content(char *input);
 void    get_token(char *input, t_prompt *prompt);
+t_type  get_type(char *content);
 
 //Lexer list aux
-
 void    free_token_list(t_lexer *head);
 t_lexer	*create_node(void *content, t_type type);
 void	token_add_back(t_lexer **token_lst, t_lexer *new);
 
 // Init
-t_type	    get_type(char *content);
-t_env_list   *init_env(t_env_list *env_list);
 t_prompt    *init(t_prompt *prompt, char **env);
+t_lexer     *init_lexer(t_lexer *lexer);
+t_env_list   *init_env(t_env_list *env_list);
+t_parser    *init_parser(t_parser *parser);
+
 
 // Env
 int		count_lines(char **env);
@@ -110,8 +112,12 @@ t_env_list	*create_key_value(char *key, char *value, char *string);
 
 // Parser
 int check_quotes(char *str);
-void trim_quotes(char *input);
-t_parser	parser(t_lexer	*lexer);
+char	*trim_quotes(char *string);
+void   get_parser(t_prompt *prompt);
+t_parser *dup_parser(t_lexer *lexer);
+void    add_parser_back(t_parser **token_lst, t_parser *new);
+char    *get_builtin(char *content);
+t_parser *create_pnode(void *content, char *builtin);
 
 
 

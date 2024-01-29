@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/29 10:59:32 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/29 18:53:29 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,10 @@ char	*print_type(t_type type)
 
 static void	dev_mod(t_prompt *prompt)
 {
-	//t_parser	*cmds;
-	//t_lexer			*node;
-	//int				j;
-	//int				i;
+	t_parser		*cmds;
+	int				j;
+	int				i;
+	
 	printf("\n\033[1;32m* LEXER *\033[0m");
 	printf("\n\033[1;32m--------------------------------------\033[0m\n");
 	for (t_lexer *node = prompt->lexer; node; node = node->next)
@@ -45,20 +45,19 @@ static void	dev_mod(t_prompt *prompt)
 	printf("\n\n\n\033[1;32m* PARSER *\033[0m");
 	printf("\n\033[1;32m--------------------------------------\033[0m\n");
 	
-/*   	cmds = prompt->parser;
+  	cmds = prompt->parser;
 	j = 0;
 	while (cmds)
 	{
 		printf("\nPROCESS[%d]:\n", ++j);
 		printf("\n  \033[0;34mSTR:\033[0m ");
 		i = -1;
-		while (cmds->str && cmds->str[++i])
-			printf("[%s] ", cmds->str[i]);
+		printf("[%s] ", cmds->string);
 		printf("\n  \033[0;34mBUILTIN:\033[0m %s\n", cmds->builtin);
-		printf("  \033[0;34mREDIRCT NUMBER:\033[0m %d\n", cmds->num_redirct);
-		printf("  \033[0;34mREDIRCT:\033[0m ");
+		//printf("  \033[0;34mREDIRCT NUMBER:\033[0m %d\n", cmds->num_redirct);
+		//printf("  \033[0;34mREDIRCT:\033[0m ");
 		
-		node = cmds->redirct;
+/* 		node = cmds->redirct;
 		while (node)
 		{
 			if (node->token)
@@ -67,11 +66,11 @@ static void	dev_mod(t_prompt *prompt)
 				printf("[%s]", node->str);
 			printf("  ");
 			node = node->next;
-		}
+		} */
 		printf("\n");
 		cmds = cmds->next;
 		
-	} */
+	}
 	printf("\n\033[1;32m* OUTPUT *\033[0m");
 	printf("\n\033[1;32m--------------------------------------\033[0m\n");
 }
@@ -79,7 +78,9 @@ static void	dev_mod(t_prompt *prompt)
 int main(int argc, char **argv, char **env)
 {
     char *input;
-	t_lexer	*current;
+	t_lexer	*currentl;
+	t_lexer *current;
+	t_parser *currentp;
 	t_lexer *next;
 	t_prompt *prompt;
 	t_env_list *env_list;
@@ -89,6 +90,8 @@ int main(int argc, char **argv, char **env)
 	next = NULL;
 	prompt = NULL;
 	current = NULL;
+	currentl = NULL;
+	currentp = NULL;
 	env_list = NULL;
 	prompt = init(prompt, env);
 	(void)argc;
@@ -104,35 +107,17 @@ int main(int argc, char **argv, char **env)
 		if (input != NULL)
 		{
 			add_history(input);
+			
 			get_token(input, prompt);
 			get_env(env, prompt);
-			
-			temp = prompt->env_list; // isto era para testar printar o env na main
-			
-			//print_env_list(temp); //uncao para printar a lista de env com todos os seus nodes
+			get_parser(prompt);
+		
 			current = prompt->lexer;
 			
-			//print_env_list(prompt->env_list);
-/*  			printf("\nORIGINAL ENV\n\n");
-			print_env(prompt->env);
-			printf("\nDUP ENV\n\n");
-			print_env(prompt->dup_env); */
+			temp = prompt->env_list; // isto era para testar printar o env na main
+			//print_env_list(temp); // funcao para printar a lista de env com todos os seus nodes
 			
-			// SO PARA PRINTAR OS ENVS
-			while (current != NULL)
-			{
-                //printf("[%s] | [%s]\n", current->content, print_type(current->type));				next = current->next;
-				next = current->next;
-				if (check_quotes(current->content))
-				{
-					printf("\nQUOTE ERROR: (in main) wrong number of quotes\n");
-					break;
-				}
-				trim_quotes(current->content);
-                current = next;
-			}
 			dev_mod(prompt);
-			free_token_list(prompt->lexer);
 			prompt->lexer = NULL;
 			free(input);
 		}

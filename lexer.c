@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/23 16:36:18 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/29 18:01:44 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ char    *other_content(char *input)
     }
     while (input[i++])
     {
-        if (input[i] == input[quote])
+        if (input[i] == quote)
         {
             if (!in_quotes)
                 in_quotes = true;

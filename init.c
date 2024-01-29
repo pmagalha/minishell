@@ -6,26 +6,22 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/23 18:44:52 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/29 18:02:03 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-//fazere malloc para a struct do prompt
-//dar malloc para o lexer e para lexer ptr
-// dar init da str a NULL e do token a NULL
 
 #include "minishell.h"
 
 t_prompt    *init(t_prompt *prompt, char **env)
-{    
+{   
     prompt = malloc(sizeof(t_prompt));
     if (!prompt)
         return (NULL);
+    prompt->token_lst = NULL;
     prompt->lexer = NULL;
     prompt->parser = NULL;
-    prompt->token_lst = NULL;
-    prompt->env_list = NULL;
     prompt->env = env;
+    prompt->env_list = NULL;
     return (prompt);
 }
 
@@ -37,6 +33,7 @@ t_lexer     *init_lexer(t_lexer *lexer)
     lexer->type = 0;
     lexer->content = NULL;
     lexer->next = NULL;
+    lexer->prev = NULL;
     return (lexer);
 }
 
@@ -50,4 +47,16 @@ t_env_list   *init_env(t_env_list *env_list)
     env_list->value = NULL;
     env_list->next = NULL;
     return (env_list);
+}
+
+t_parser    *init_parser(t_parser *parser)
+{
+    parser = malloc(sizeof(t_parser));
+    if (!parser)
+        return (NULL);
+    parser->string = NULL;
+    parser->next = NULL;
+    parser->prev = NULL;
+    parser->builtin = NULL;
+    return (parser);
 }
