@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/23 18:45:45 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/29 10:59:32 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int main(int argc, char **argv, char **env)
 			
 			temp = prompt->env_list; // isto era para testar printar o env na main
 			
-			print_env_list(temp); //uncao para printar a lista de env com todos os seus nodes
+			//print_env_list(temp); //uncao para printar a lista de env com todos os seus nodes
 			current = prompt->lexer;
 			
 			//print_env_list(prompt->env_list);
@@ -122,6 +122,13 @@ int main(int argc, char **argv, char **env)
 			while (current != NULL)
 			{
                 //printf("[%s] | [%s]\n", current->content, print_type(current->type));				next = current->next;
+				next = current->next;
+				if (check_quotes(current->content))
+				{
+					printf("\nQUOTE ERROR: (in main) wrong number of quotes\n");
+					break;
+				}
+				trim_quotes(current->content);
                 current = next;
 			}
 			dev_mod(prompt);

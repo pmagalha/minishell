@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/23 19:07:17 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/29 11:44:22 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ typedef struct  s_env_list
 
 typedef struct s_parser
 {
-    char    **content;
+    char    *content;
     char    *builtin;
     t_lexer *redirect; // isto eh para guardar as redirections no parser
     char    *hd_file; // heredoc file, que aparentemente sera necessario
@@ -107,5 +107,12 @@ void        print_env_list(t_env_list *head);
 void        get_env(char **dup_env, t_prompt *prompt);
 void    token_add_back_env(t_env_list **env_list, t_env_list *new);
 t_env_list	*create_key_value(char *key, char *value, char *string);
+
+// Parser
+int check_quotes(char *str);
+void trim_quotes(char *input);
+t_parser	parser(t_lexer	*lexer);
+
+
 
 # endif

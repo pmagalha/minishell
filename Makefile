@@ -6,7 +6,7 @@
 #    By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/12 20:33:55 by pmagalha          #+#    #+#              #
-#    Updated: 2024/01/23 18:29:48 by pmagalha         ###   ########.fr        #
+#    Updated: 2024/01/29 10:24:53 by pmagalha         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 #                                  SOURCE FILES                                #
 ################################################################################
 
-SRC = main.c lexer.c init.c list_aux.c env.c expander.c
+SRC = main.c lexer.c init.c list_aux.c env.c expander.c parser.c
 OBJS = $(SRC:.c=.o)
 DEPS = libft/libft.a
 
