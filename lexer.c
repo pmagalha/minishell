@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/29 18:01:44 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/30 12:27:49 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ void    get_token(char *input, t_prompt *prompt)
         token_add_back(&(prompt->lexer), create_node(content, type));
     }
 }
+
+// Content: [$'HOME'] | Type: [OTHER] o lexer tem de dizer que se houver um $, tem de mandar com as quotes
 
 char    *get_token_content(char *content)
 {
