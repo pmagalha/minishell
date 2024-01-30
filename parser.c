@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/30 15:51:11 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/30 16:32:46 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,12 @@ void	get_parser(t_prompt *prompt)
 	builtin = NULL;
 	command = NULL;
 	start = prompt->lexer;
-	// meter aqui o expander
 	if (!prompt->lexer)
 		printf("empty lexer");
+	expander(prompt->lexer, prompt->env_list);
 	pipe_count = count_pipes(prompt->lexer);
 	while (pipe_count-- >= 0)
 	{
-		
 		while (prompt->lexer && prompt->lexer->type != PIPE)
 		{
 			check_quotes(prompt->lexer->content);
