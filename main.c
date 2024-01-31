@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/30 15:30:17 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/31 15:47:08 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	dev_mod(t_prompt *prompt)
 		printf("\033[34m   ARGS: \033[0m");
 		if (process->command)
 		{
-			if (!process->command[0])
+			if (!process->command)
 			{
 				printf("[");
 				printf("\033[90m(null)\033[0m");
@@ -60,10 +60,13 @@ int	dev_mod(t_prompt *prompt)
 			}
 			else
 			{
-				for (int i = 0; process->command[i]; i++)
-					printf("[%s] ", process->command[i]);
+				while (process->command)
+				{
+					printf("[%s]  ", process->command->content);
+					process->command = process->command->next;
+				}
 			}
-
+	
 		}
 		else
 			printf("\033[90m(null)\033[0m");

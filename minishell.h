@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/30 16:14:19 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/01/31 16:25:27 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,10 @@ typedef struct  s_env_list
 
 typedef struct s_parser
 {
-    char    **command;
     char    *builtin;
-    t_lexer *redirects; // isto eh para guardar as redirections no parser
     char    *hd_file; // heredoc file, que aparentemente sera necessario
+    t_lexer *command;
+    t_lexer *redirects; // isto eh para guardar as redirections no parser
     struct s_parser	*next;
     struct s_parser	*prev;
 }                   t_parser;
@@ -122,9 +122,12 @@ void   get_parser(t_prompt *prompt);
 t_parser *dup_parser(t_lexer *lexer);
 void    add_parser_back(t_parser **token_lst, t_parser *new);
 char	*get_builtin(t_prompt *prompt);
-t_parser	*create_pnode(char **command, char *builtin, t_lexer *redirects);
 char	get_first_quote(char *str);
-char	**get_command(t_prompt *prompt);
+
+void	get_command(t_prompt *prompt);
+
+t_parser	*create_pnode(t_lexer *command, char *builtin, t_lexer *redirects);
+void	get_redirects(t_prompt *prompt);
 
 
 //Frees

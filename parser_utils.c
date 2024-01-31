@@ -6,13 +6,13 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:37:48 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/30 15:18:54 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/31 15:47:40 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_parser	*create_pnode(char **command, char *builtin, t_lexer *redirects)
+t_parser	*create_pnode(t_lexer *command, char *builtin, t_lexer *redirects)
 {
 	t_parser	*new;
 
