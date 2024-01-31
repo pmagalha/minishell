@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/31 16:29:11 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/01/31 18:41:53 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,19 +24,18 @@ void	get_parser(t_prompt *prompt)
 	start = prompt->lexer;
 	if (!prompt->lexer)
 		printf("empty lexer");
+	check_quotes(prompt->lexer->content);
+	prompt->lexer->content = trim_quotes(prompt->lexer->content);
 	expander(prompt->lexer, prompt->env_list);
 	pipe_count = count_pipes(prompt->lexer);
 	while (pipe_count-- >= 0)
 	{
 		add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
-		while (prompt->lexer && prompt->lexer->type != PIPE)
+e		while (prompt->lexer && prompt->lexer->type != PIPE)
 		{
-			check_quotes(prompt->lexer->content);
 			if (!prompt->parser->builtin)
 				prompt->parser->builtin = get_builtin(prompt);
-			
 			get_command(prompt);			
-			
 			get_redirects(prompt);
 			if (prompt->lexer && prompt->parser->redirects)
 				prompt->lexer = prompt->lexer->next;
