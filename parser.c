@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/31 18:41:53 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/02/01 13:40:55 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,39 +19,38 @@ void	get_parser(t_prompt *prompt)
 	int		pipe_count;
 	char	**command;
 	t_lexer	*start;
+	t_parser *p_start;
 	
 	command = NULL;
 	start = prompt->lexer;
 	if (!prompt->lexer)
 		printf("empty lexer");
-	check_quotes(prompt->lexer->content);
-	prompt->lexer->content = trim_quotes(prompt->lexer->content);
+	add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
+	p_start = prompt->parser;
 	expander(prompt->lexer, prompt->env_list);
 	pipe_count = count_pipes(prompt->lexer);
 	while (pipe_count-- >= 0)
 	{
-		add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
-e		while (prompt->lexer && prompt->lexer->type != PIPE)
+		while (prompt->lexer && prompt->lexer->type != PIPE)
 		{
+			check_quotes(prompt->lexer->content);
+			prompt->lexer->content = trim_quotes(prompt->lexer->content);
 			if (!prompt->parser->builtin)
 				prompt->parser->builtin = get_builtin(prompt);
 			get_command(prompt);			
 			get_redirects(prompt);
-			if (prompt->lexer && prompt->parser->redirects)
-				prompt->lexer = prompt->lexer->next;
+		}
+		if (prompt->lexer && prompt->lexer->type == PIPE)
+		{
+			if (prompt->lexer->next->type == PIPE) // this is the condition for the double pipes case, (it will ignore the second)
+				prompt->lexer->next = prompt->lexer->next->next; 
+			add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
+			prompt->lexer = prompt->lexer->next;
 		}
 	}
+	prompt->parser = p_start;
 	prompt->lexer = start;
 }
-
-// o expander vai alterar as variaveis do env
-// o export eh um built in que vai fazer o mesmo
-// o redirect vai sempre guardar o redirect e a palavra que esta a frente
-
-
-// depois temos de fazer tambem condicoes nesta funcao para redirection e heredocs e tratar do dollar sign (expander)
-// o parser vai guardar numa lista ou array de simple comands, que vai ser todos os nodes que estejam depois de um pipe, e ate o pipe seguinte
-// dentro dos pipes pode haver varias redirections. Eh importante contar as redirectios
 
 int	count_pipes (t_lexer *lexer)
 {
@@ -130,7 +129,6 @@ void	get_command(t_prompt *prompt)
 			command_node->next = malloc(sizeof(t_lexer));
 			command_node->next->type = prompt->lexer->type;
 			command_node->next->content = ft_strdup(prompt->lexer->content);
-			printf("parei");
 			command_node->next->next = NULL;
 			command_node->next->prev = command_node;
 		}
@@ -149,7 +147,7 @@ void	get_redirects(t_prompt *prompt)
 				|| prompt->lexer->type == REDIR_IN || prompt->lexer->type == HEREDOC)
 		{
 			if (!prompt->parser->redirects)
-				prompt->parser->redirects = create_node(ft_strdup(prompt->lexer->next->content), prompt->lexer->type);
+				prompt->parser->redirects = create_node(trim_quotes(prompt->lexer->next->content), prompt->lexer->type);
 			else
 			{
 				redirect = prompt->parser->redirects;
@@ -157,13 +155,16 @@ void	get_redirects(t_prompt *prompt)
 					redirect = redirect->next;
 				redirect->next = malloc(sizeof(t_lexer));
 				redirect->next->type = prompt->lexer->type;
-				redirect->next->content = strdup(prompt->lexer->next->content);
+				redirect->next->content = trim_quotes(strdup(prompt->lexer->next->content));
 				redirect->next->next = NULL;
 				redirect->next->prev = redirect->next;
 			}
-			prompt->lexer = prompt->lexer->next;
+			prompt->lexer = prompt->lexer->next->next;
 		}
 }
+
+//cenas >> bue da fixes que sao top
+
 
 /* char	**get_redirects(t_prompt *prompt, char **redirects)
 {

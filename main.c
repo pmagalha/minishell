@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/31 15:47:08 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/01 13:10:29 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,11 +158,23 @@ int main(int argc, char **argv, char **env)
 		else
 		{
 			printf("\n"); // isto eh quando faz ctrl D (new line)
+			break ;
 		}
 	}
 	free_parser_list(prompt->parser);
 	free_lexer_list(prompt->lexer);
+	free_env_list(prompt->env_list);
 	free(prompt);
 }
 
 // nao esquecer de fazer o add history nao guardar comandos vazios
+
+/* void	set_sign(void)
+{	
+	signal.sa_handler = &handle_signal;
+	signal.sa_flags = 0;
+	sigemptyset(&signal.sa_mask);
+	sigaction(SIGINT, &signal, NULL);
+	sigaction(SIGQUIT, &signal, NULL);
+} */
+

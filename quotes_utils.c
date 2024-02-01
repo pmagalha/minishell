@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:39:05 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/30 12:24:01 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/01 12:15:36 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@ int	check_quotes(char *str)
 {
 	if (check_dquotes(str) || check_squotes(str))
 	{
-		printf("Error in check quotes: Uneven nr of quotes");
-		return (1);
+		printf("Error in check quotes: Uneven number of quotes\n");
+		exit (1);
 	}
 	else
 		return (0);

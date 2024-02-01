@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/31 16:25:27 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/01 13:43:43 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@
 # include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <signal.h>
 
 /*------------- Structures ---------------*/
 
@@ -133,10 +134,14 @@ void	get_redirects(t_prompt *prompt);
 //Frees
 void    free_parser_list(t_parser *head);
 void	free_lexer_list(t_lexer *head);
+void	free_env_list(t_env_list *head);
 
 //Expander
 void	expander(t_lexer *lexer, t_env_list *env_list);
 char	*set_key_value(char *content, t_env_list *env_list);
+
+//Builtins
+char    *pwd(void);
 
 
 # endif

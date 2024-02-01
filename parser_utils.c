@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:37:48 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/31 15:47:40 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/01 13:45:31 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void	add_parser_back(t_parser **token_lst, t_parser *new)
 			new_node = new_node->next;
 		new_node->next = new;
 		new->prev = new_node;
+		*token_lst = new;
 	}
 }
 
@@ -65,7 +66,7 @@ char	*get_builtin(t_prompt *prompt)
 	else if (!ft_strncmp(prompt->lexer->content, "cd", 3))
 		return (ft_strdup("cd"));
 	else if (!ft_strncmp(prompt->lexer->content, "pwd", 4))
-		return (ft_strdup("pwd"));
+		return (pwd());
 	else if (!ft_strncmp(prompt->lexer->content, "export", 7))
 		return (ft_strdup("export"));
 	else if (!ft_strncmp(prompt->lexer->content, "unset", 6))

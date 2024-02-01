@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/30 12:27:49 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/01 13:10:59 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,14 @@ void    get_token(char *input, t_prompt *prompt)
         type = get_type(content);
         input += ft_strlen(content);
         token_add_back(&(prompt->lexer), create_node(content, type));
+        
+        if (prompt->lexer->type == PIPE && !prompt->lexer->next) // this is the case for when there is only a single PIPE and nothing after it
+	    {
+			printf("minishell: syntax error near unexpected token `|'\n"); // o exit code vai ser 2
+			exit(2); // fazer um msexit para quando houver um erro fazer os frees e dar exit do programa | 
+            // lidar com erro para quando ha redirect e nada depois. O nome do erro eh "minishell: syntax error near unexpected token `newline' (mas se for tipo >>>> tem de dar ">>") o exit code disto vai ser 2"
+            // quando a palavra a frente do redirect eh uma variavel env que tem de ser substituida mas nao existe. Nome "minishell: ambiguous redirect" e o exit code eh 1
+	    }
     }
 }
 
@@ -118,6 +126,8 @@ char    *other_content(char *input)
     j = 0;
     quote = -1;
     in_quotes = false;
+    if (!input)
+        return (NULL);
     while (input[j++])
     {
         if (input[j] == '\'' || input[j] == '"')

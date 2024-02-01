@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/01/30 13:42:16 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/01 13:13:10 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	free_lexer_list(t_lexer *head)
     {
         next = current->next;
         free(current->content);
-		// free(current->type); ver se funciona com isto
+		//free(current->type);
         free(current);
         current = next;
     }
@@ -68,6 +68,23 @@ void	free_parser_list(t_parser *head)
         next = current->next;
         free(current->command);
 		free(current->builtin);
+        free(current);
+        current = next;
+    }
+}
+
+void	free_env_list(t_env_list *head)
+{
+    t_env_list	*current;
+    t_env_list	*next;
+
+	current = head;
+    while (current != NULL)
+    {
+        next = current->next;
+        free(current->key);
+		free(current->value);
+		free(current->full_string);
         free(current);
         current = next;
     }
