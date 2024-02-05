@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/01 13:43:43 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/05 15:23:43 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,11 @@ void	expander(t_lexer *lexer, t_env_list *env_list);
 char	*set_key_value(char *content, t_env_list *env_list);
 
 //Builtins
-char    *pwd(void);
+void    pwd(void);
+void    echo(t_prompt *prompt);
+void	env_builtin(t_prompt *prompt);
+void	exec_builtins(t_prompt *prompt);
+
 
 
 # endif

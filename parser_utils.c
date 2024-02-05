@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:37:48 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/01 13:45:31 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/05 16:43:56 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,19 +60,19 @@ void	add_parser_back(t_parser **token_lst, t_parser *new)
 }*/
 
 char	*get_builtin(t_prompt *prompt)
-{	
+{
 	if (!ft_strncmp(prompt->lexer->content, "echo", 5))
 		return (ft_strdup("echo"));
 	else if (!ft_strncmp(prompt->lexer->content, "cd", 3))
 		return (ft_strdup("cd"));
 	else if (!ft_strncmp(prompt->lexer->content, "pwd", 4))
-		return (pwd());
+		return (ft_strdup("pwd"));
 	else if (!ft_strncmp(prompt->lexer->content, "export", 7))
 		return (ft_strdup("export"));
 	else if (!ft_strncmp(prompt->lexer->content, "unset", 6))
 		return (ft_strdup("unset"));
 	else if (!ft_strncmp(prompt->lexer->content, "env", 4))
-		return (ft_strdup("env")); 
+		return (ft_strdup("env"));
 	else if (!ft_strncmp(prompt->lexer->content, "exit", 5))
 		return (ft_strdup("exit"));
 	else

@@ -6,109 +6,108 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/05 13:55:53 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/05 16:42:02 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void    get_token(char *input, t_prompt *prompt)
+void	get_token(char *input, t_prompt *prompt)
 {
-    char    *content;
-    t_type  type;
-    
-    while (*input)
-    {
-        while (*input == ' ')
-            input++;
-        if (!*input)
-            break ;
-        content = get_token_content(input);
-        type = get_type(content);
-        input += ft_strlen(content);
-        token_add_back(&(prompt->lexer), create_node(content, type));
-        
+	char	*content;
+	t_type	type;
+
+	while (*input)
+	{
+		while (*input == ' ')
+			input++;
+		if (!*input)
+			break ;
+		content = get_token_content(input);
+		type = get_type(content);
+		input += ft_strlen(content);
+		token_add_back(&(prompt->lexer), create_node(content, type));
         if (prompt->lexer->type == PIPE && !prompt->lexer->next) // this is the case for when there is only a single PIPE and nothing after it
-	    {
+		{
 			printf("minishell: syntax error near unexpected token `|'\n"); // o exit code vai ser 2
 			exit(2); // fazer um msexit para quando houver um erro fazer os frees e dar exit do programa | 
             // lidar com erro para quando ha redirect e nada depois. O nome do erro eh "minishell: syntax error near unexpected token `newline' (mas se for tipo >>>> tem de dar ">>") o exit code disto vai ser 2"
             // quando a palavra a frente do redirect eh uma variavel env que tem de ser substituida mas nao existe. Nome "minishell: ambiguous redirect" e o exit code eh 1
-	    }
-    }
+		}
+	}
 }
 
 // Content: [$'HOME'] | Type: [OTHER] o lexer tem de dizer que se houver um $, tem de mandar com as quotes
 
-char    *get_token_content(char *content)
+char	*get_token_content(char *content)
 {
-    if (*content == '>' || *content == '<' || *content == '|')
-        return (get_operator(content));
-    else if (*content == '"' || *content == '\'')
-        return (get_quoted_content(content));
-    else
-        return (other_content(content));
+	if (*content == '>' || *content == '<' || *content == '|')
+		return (get_operator(content));
+	else if (*content == '"' || *content == '\'')
+		return (get_quoted_content(content));
+	else
+		return (other_content(content));
 }
 
-char    *get_operator(char *content)
+char	*get_operator(char *content)
 {
-    if (content[0] == '>' && content[1] == '>')
-        return (ft_substr(content, 0, 2));
-    else if (content[0] == '>' && content[1] != '>')
-        return (ft_substr(content, 0, 1));
-    else if (content[0] == '<' && content[1] == '<')
-        return (ft_substr(content, 0, 2));
-    else if (content[0] == '<' && content[1] != '<')
-        return (ft_substr(content, 0, 1));
-    else if (content[0] == '|')
-        return (ft_substr(content, 0, 1));
-    return (NULL);
+	if (content[0] == '>' && content[1] == '>')
+		return (ft_substr(content, 0, 2));
+	else if (content[0] == '>' && content[1] != '>')
+		return (ft_substr(content, 0, 1));
+	else if (content[0] == '<' && content[1] == '<')
+		return (ft_substr(content, 0, 2));
+	else if (content[0] == '<' && content[1] != '<')
+		return (ft_substr(content, 0, 1));
+	else if (content[0] == '|')
+		return (ft_substr(content, 0, 1));
+	return (NULL);
 }
 
-t_type  get_type(char *content)
+t_type	get_type(char *content)
 {
-    if (content[0] == '>' && content[1] != '>')
-        return (REDIR_OUT);
-    else if (content[0] == '<' && content[1] != '<')
-        return (REDIR_IN);
-    else if (content[0] == '<' && content[1] == '<')
-        return (HEREDOC);
-    else if (content[0] == '>' && content[1] == '>')
-        return (REDIR2_OUT);
-    else if (content[0] == '|')
-        return (PIPE);
-    else
-        return (OTHER);
+	if (content[0] == '>' && content[1] != '>')
+		return (REDIR_OUT);
+	else if (content[0] == '<' && content[1] != '<')
+		return (REDIR_IN);
+	else if (content[0] == '<' && content[1] == '<')
+		return (HEREDOC);
+	else if (content[0] == '>' && content[1] == '>')
+		return (REDIR2_OUT);
+	else if (content[0] == '|')
+		return (PIPE);
+	else
+		return (OTHER);
 }
 
-char    *get_quoted_content(char *input) //function working, ommented just to create another and test
+char	*get_quoted_content(char *input) //function working, ommented just to create another and test
 {
-    char    *res;
-    char    quote;
-    int     i;
-    bool in_quotes;
+	char	*res;
+	char	quote;
+	int		i;
+	bool	in_quotes;
 
-    i = 0;
-    quote = input[0];
-    in_quotes = true;
-    while (input[i++])
-    {
-        if (input[i] == quote)
-        {
-            if (in_quotes)
-                in_quotes = false;
-            else
-                in_quotes = true;
-        }
-        if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
-                || input[i] == '|') && !in_quotes) // it breaks and exists the loop in case it finds any operator and is not between quotes
-            break ;
-    }
-    res = malloc(sizeof(char) * i + 2);
-    if (!res)
-        return (NULL); // or write any allocation error in the future
-    ft_strlcpy(res, input, i + 1);
-    return (res);
+	i = 0;
+	quote = input[0];
+	in_quotes = true;
+	while (input[i++])
+	{
+		if (input[i] == quote)
+		{
+			if (in_quotes)
+				in_quotes = false;
+			else
+				in_quotes = true;
+		}
+		if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
+			|| input[i] == '|') && !in_quotes) // it breaks and exists the loop in case it finds any operator and is not between quotes
+			break ;
+	}
+	res = malloc(sizeof(char) * i + 2);
+	if (!res)
+		return (NULL); // or write any allocation error in the future
+	ft_strlcpy(res, input, i + 1);
+	return (res);
 }
 
 char    *other_content(char *input)

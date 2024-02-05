@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/05 13:54:30 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/05 16:19:13 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ int main(int argc, char **argv, char **env)
 			printf("Wrong number of arguments\n");
 			break ;
 		}
-		input = readline("Minishell$ ");
+		input = readline("minishell$ ");
 		if (input != NULL)
 		{
 			add_history(input);

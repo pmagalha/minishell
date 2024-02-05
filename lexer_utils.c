@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/01 13:13:10 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/05 16:38:15 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,49 +43,48 @@ void	token_add_back(t_lexer **token_lst, t_lexer *new)
 
 void	free_lexer_list(t_lexer *head)
 {
-    t_lexer	*current;
-    t_lexer	*next;
+	t_lexer	*current;
+	t_lexer	*next;
 
 	current = head;
-    while (current != NULL)
-    {
-        next = current->next;
-        free(current->content);
-		//free(current->type);
-        free(current);
-        current = next;
-    }
+	while (current != NULL)
+	{
+		next = current->next;
+		free(current->content);
+		free(current);
+		current = next;
+	}
 }
 
 void	free_parser_list(t_parser *head)
 {
-    t_parser	*current;
-    t_parser	*next;
+	t_parser	*current;
+	t_parser	*next;
 
 	current = head;
-    while (current != NULL)
-    {
-        next = current->next;
-        free(current->command);
+	while (current != NULL)
+	{
+		next = current->next;
+		free(current->command);
 		free(current->builtin);
-        free(current);
-        current = next;
-    }
+		free(current);
+		current = next;
+	}
 }
 
 void	free_env_list(t_env_list *head)
 {
-    t_env_list	*current;
-    t_env_list	*next;
+	t_env_list	*current;
+	t_env_list	*next;
 
 	current = head;
-    while (current != NULL)
-    {
-        next = current->next;
-        free(current->key);
+	while (current != NULL)
+	{
+		next = current->next;
+		free(current->key);
 		free(current->value);
 		free(current->full_string);
-        free(current);
-        current = next;
-    }
+		free(current);
+		current = next;
+	}
 }
