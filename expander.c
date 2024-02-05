@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:07:55 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/01/31 18:22:07 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/02/05 13:56:42 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,9 @@ static int	count_signs(char *str, char c)
 
 static char	*set_sign_value(char *content, int signs, char *value) // PENSAR NOUTRO NOME PARA ESTA FUNCAO
 {
-	int		i;
 	char	*new_content;
 	char	*temp;
 
-	i = 0;
 	new_content = NULL;
 	temp = NULL;
 	if (signs == 1)

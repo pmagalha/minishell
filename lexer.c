@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/01 13:10:59 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/05 13:55:53 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,6 @@ char    *get_token_content(char *content)
 
 char    *get_operator(char *content)
 {
-    int i;
-
-    i = 0;
     if (content[0] == '>' && content[1] == '>')
         return (ft_substr(content, 0, 2));
     else if (content[0] == '>' && content[1] != '>')

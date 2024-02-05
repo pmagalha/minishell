@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/01 13:40:55 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/05 13:57:50 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,9 @@
 void	get_parser(t_prompt *prompt)
 {
 	int		pipe_count;
-	char	**command;
 	t_lexer	*start;
 	t_parser *p_start;
 	
-	command = NULL;
 	start = prompt->lexer;
 	if (!prompt->lexer)
 		printf("empty lexer");

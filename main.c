@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/01 13:10:29 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/02/05 13:54:30 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,21 +114,10 @@ int	dev_mod(t_prompt *prompt)
 int main(int argc, char **argv, char **env)
 {
     char *input;
-	t_lexer	*currentl;
-	t_lexer *current;
-	t_parser *currentp;
-	t_lexer *next;
 	t_prompt *prompt;
-	t_env_list *env_list;
-	t_env_list *temp;
 	
 	
-	next = NULL;
 	prompt = NULL;
-	current = NULL;
-	currentl = NULL;
-	currentp = NULL;
-	env_list = NULL;
 	prompt = init(prompt, env);
 	(void)argc;
 
@@ -148,7 +137,7 @@ int main(int argc, char **argv, char **env)
 			get_env(env, prompt);
 			get_parser(prompt);
 			
-			temp = prompt->env_list; // isto era para testar printar o env na main
+			//temp = prompt->env_list; // isto era para testar printar o env na main
 			//print_env_list(temp); // funcao para printar a lista de env com todos os seus nodes
 			dev_mod(prompt);
 			prompt->lexer = NULL;
