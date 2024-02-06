@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/05 15:23:43 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/06 18:16:07 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,10 @@ typedef struct  s_env_list
 
 typedef struct s_parser
 {
-    char    *builtin;
-    char    *hd_file; // heredoc file, que aparentemente sera necessario
     t_lexer *command;
     t_lexer *redirects; // isto eh para guardar as redirections no parser
+    char    *builtin;
+    char    *hd_file; // heredoc file, que aparentemente sera necessario
     struct s_parser	*next;
     struct s_parser	*prev;
 }                   t_parser;
@@ -142,7 +142,7 @@ char	*set_key_value(char *content, t_env_list *env_list);
 
 //Builtins
 void    pwd(void);
-void    echo(t_prompt *prompt);
+void	echo(t_parser *parser);
 void	env_builtin(t_prompt *prompt);
 void	exec_builtins(t_prompt *prompt);
 

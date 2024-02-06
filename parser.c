@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/05 16:50:14 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/06 19:27:34 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,10 @@ void	get_parser(t_prompt *prompt)
 	{
 		while (prompt->lexer && prompt->lexer->type != PIPE)
 		{
-			check_quotes(prompt->lexer->content);
+			check_quotes(prompt->lexer->content); // inacabado, falta colocar flags para lidar com o caso de "some'thing"
 			prompt->lexer->content = trim_quotes(prompt->lexer->content);
 			if (!prompt->parser->builtin)
 				prompt->parser->builtin = get_builtin(prompt);
-			exec_builtins(prompt);
 			get_command(prompt);
 			get_redirects(prompt);
 		}
@@ -46,7 +45,9 @@ void	get_parser(t_prompt *prompt)
 			add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
 			prompt->lexer = prompt->lexer->next;
 		}
+		exec_builtins(prompt);
 	}
+	
 	prompt->parser = p_start;
 	prompt->lexer = start;
 }
@@ -137,4 +138,3 @@ void	get_redirects(t_prompt *prompt)
 		prompt->lexer = prompt->lexer->next->next;
 	}
 }
-// so um pipe da erro, nao esquecer de meter essa condicao

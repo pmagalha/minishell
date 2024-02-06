@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/05 16:38:15 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/06 17:22:53 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ void	free_parser_list(t_parser *head)
 		next = current->next;
 		free(current->command);
 		free(current->builtin);
+		free(current->redirects);
 		free(current);
 		current = next;
 	}
