@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/07 14:40:59 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 17:33:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,29 +44,103 @@ void	echo(t_parser *parser)
 
 void	env_builtin(t_prompt *prompt)
 {
-	t_env_list	*current;
-
-	current = prompt->env_list;
-	while (current != NULL)
+	t_env_list	*temp;
+	
+	temp = prompt->env_list;
+	while (temp && temp->key)
 	{
-		ft_putstr_fd(current->key, STDOUT_FILENO);
+		ft_putstr_fd(temp->key, STDOUT_FILENO);
 		ft_putchar_fd('=', STDOUT_FILENO);
-		ft_putstr_fd(current->value, STDOUT_FILENO);
+		ft_putstr_fd(temp->value, STDOUT_FILENO);
 		ft_putchar_fd('\n', STDOUT_FILENO);
-		current = current->next;
+		temp = temp->next;
 	}
 }
 
-void	cd(t_prompt *prompt)
+char	*get_env(t_prompt *prompt, char *path)
 {
+	char	*new_path;
+	t_env_list	*temp;
+
+	new_path = NULL;
+	temp = prompt->env_list;
+	while (temp != NULL)
+	{
+		if (temp && !ft_strncmp(temp->key, path, ft_strlen(temp->key)))
+			new_path = temp->value;
+		temp = temp->next;
+	}
+	return (new_path);
+}
+
+static int	change_path(t_prompt *prompt, char *path)
+{
+	char	*temp;
+	int	decree;
+	
+	temp = get_env(prompt, path);
+	// colocar aqui cenas para !temp
+	decree = chdir(temp);
+	//free (temp);
+	if (decree != 0)
+	{
+		ft_putstr_fd("cd: ", STDERR_FILENO);
+		ft_putstr_fd(path, STDERR_FILENO);
+		ft_putstr_fd(" No such file or directory\n", STDERR_FILENO);
+	}
+	return (decree);
+}
+
+static void	add_path(t_prompt *prompt)
+{
+	t_env_list *env;
+	char	*tmp;
+	char	*oldpath;
+
+	oldpath = get_env(prompt, "PWD");
+	env = prompt->env_list;
+	while (env)
+	{
+		if (!ft_strncmp(env->key, "PWD", 4))
+		{
+			//if (env->value)
+				//free(env->value);
+			tmp = getcwd(NULL, 0);
+			env->value = ft_strdup(tmp);
+			free(tmp);
+		}
+		else if (!ft_strncmp(env->key, "OLDPWD", 7))
+		{
+			if (env->value)
+				free(env->value);
+			env->value = ft_strdup(oldpath);
+		}
+		env = env->next;
+	}
+	free(oldpath);
+}
+
+int	cd(t_prompt *prompt)
+{
+	int	decree;
 	t_lexer	*temp;
 
-	// aqui tem de ter um home = HOME (variavel do env)
 	temp = prompt->parser->command->next;
 	if (!temp || !temp->content[0] || (temp->content[0]
 			&& !ft_strncmp(temp->content, "~", 2) && !temp->content[1]))
-		printf("HOME\n"); // isto tem de ir buscar ao env e atualizar o env, tem de atualizar o PWD e o OLDPWD
-}
+		decree = change_path(prompt, "HOME");
+	else if (!ft_strncmp(temp->content, "-", 1))
+		decree = change_path(prompt, "OLDPWD");
+	else if (!ft_strncmp(temp->content, "..", 3))
+        decree = chdir("..");
+	else if (temp->next != NULL)
+	{
+		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
+		return (1);
+	}
+	add_path(prompt);
+	return (decree);
+} // falta tratar de diretorios absolutos e de --
 
 void	exec_builtins(t_prompt *prompt)
 {

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/07 14:35:13 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 15:08:58 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,6 +145,7 @@ void    pwd(void);
 void	echo(t_parser *parser);
 void	env_builtin(t_prompt *prompt);
 void	exec_builtins(t_prompt *prompt);
+char	*get_env(t_prompt *prompt, char *path);
 
 
 

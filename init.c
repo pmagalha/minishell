@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/05 16:32:51 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 15:46:11 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,3 +62,5 @@ t_parser	*init_parser(t_parser *parser)
 	parser->hd_file = NULL;
 	return (parser);
 }
+
+// adicionar aqui uma cena para abrir minishells dentro de minishells

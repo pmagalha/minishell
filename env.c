@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/07 14:36:31 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 16:27:39 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,8 +187,6 @@ void	set_env(char **env, t_prompt *prompt)
 		i++;
 	}
 }
-
-
 
 void	print_env_list(t_env_list *head)
 {

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/07 14:35:22 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 16:52:33 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ int main(int argc, char **argv, char **env)
 	prompt = NULL;
 	prompt = init(prompt, env);
 	(void)argc;
-
+	set_env(env, prompt);
 	while (1)
 	{
 		if (argv[1])
@@ -134,7 +134,7 @@ int main(int argc, char **argv, char **env)
 			add_history(input);
 			
 			get_token(input, prompt);
-			set_env(env, prompt);
+			
 			get_parser(prompt);
 			
 			//temp = prompt->env_list; // isto era para testar printar o env na main
