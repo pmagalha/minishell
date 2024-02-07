@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/06 19:27:34 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 12:19:45 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ void	get_parser(t_prompt *prompt)
 			get_command(prompt);
 			get_redirects(prompt);
 		}
+		if (prompt->parser->command->content)
+				exec_builtins(prompt);
 		if (prompt->lexer && prompt->lexer->next && prompt->lexer->type == PIPE)
 		{
 			if (prompt->lexer->next->type == PIPE) // this is the condition for the double pipes case, (it will ignore the second)
@@ -45,7 +47,6 @@ void	get_parser(t_prompt *prompt)
 			add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
 			prompt->lexer = prompt->lexer->next;
 		}
-		exec_builtins(prompt);
 	}
 	
 	prompt->parser = p_start;

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:07:55 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/02/06 17:11:02 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 11:47:55 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,6 @@ void	expander(t_lexer *lexer, t_env_list *env_list)
 
 	while (head != NULL)
 	{
-		printf("CONTENT: [%s]\n", head->content);
 		if (head->content[0] == '$' && !head->content[1])
 			return ;
 		else if (head->content[0] == '$' && head->content[1] == '\"'

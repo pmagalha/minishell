@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/05 16:19:13 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 14:35:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ int	dev_mod(t_prompt *prompt)
 	int n = 1;
 	while (process)
 	{
-		printf("\n\n\033[32;1mPROCESS (%d): \033[0m", n++);
+		printf("\n\n\033[32;1mPARSER (%d): \033[0m", n++);
 		printf("\n");
-		printf("\033[34m   ARGS: \033[0m");
+		printf("\033[34m   COMMANDS: \033[0m");
 		if (process->command)
 		{
 			if (!process->command)
@@ -134,7 +134,7 @@ int main(int argc, char **argv, char **env)
 			add_history(input);
 			
 			get_token(input, prompt);
-			get_env(env, prompt);
+			set_env(env, prompt);
 			get_parser(prompt);
 			
 			//temp = prompt->env_list; // isto era para testar printar o env na main

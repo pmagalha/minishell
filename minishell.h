@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/06 18:16:07 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 14:35:13 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ char	**duplicate_env(char **env);
 // Env list aux
 void        print_env(char **env);
 void        print_env_list(t_env_list *head);
-void        get_env(char **dup_env, t_prompt *prompt);
+void        set_env(char **dup_env, t_prompt *prompt);
 void    token_add_back_env(t_env_list **env_list, t_env_list *new);
 t_env_list	*create_key_value(char *key, char *value, char *string);
 

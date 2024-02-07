@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/06 19:33:14 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/07 14:40:59 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,33 @@
 
 void	pwd(void)
 {
-	printf("%s\n", (getcwd(NULL, 0)));
+	ft_putstr_fd((getcwd(NULL, 0)), STDOUT_FILENO);
+	ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
 void	echo(t_parser *parser)
 {
-	float	flg;
-	int		i;
+	t_lexer	*temp;
+	bool	suppress_newline ;
 
-	flg = false;
-	i = 0;
-	while (parser->command->content && parser->command->content && parser->command->content[0] == '-'
-			&& parser->command->content[1] == 'n')
+	suppress_newline = false;
+	temp = parser->command->next; // incrementa para passar a frente o echo
+	while (temp != NULL) 
 	{
-		while (parser->command->content[i] == 'n')
-			parser->command = parser->command->next;
-		if (parser->command->content[i] == '\0')
-			flg = true;
-		else
-			break ;
-		i++;
+    	if (strcmp(temp->content, "-n") == false) 
+			suppress_newline = true;  // mete a flag para dar suppress da newline 
+		else 
+		{
+    		ft_putstr_fd(temp->content, STDOUT_FILENO);
+			if (temp->next != NULL)
+    			ft_putchar_fd(' ', STDOUT_FILENO);
+		}
+		temp = temp->next;
 	}
-	parser->command = parser->command->next;
-	while (parser->command != NULL)
-	{
-		ft_putstr_fd(parser->command->content, STDOUT_FILENO);
-		if (parser->command->next != NULL)
-			ft_putchar_fd(' ', STDOUT_FILENO);
-		parser->command = parser->command->next;
-	}
-	if (flg == false)
-		ft_putchar_fd('\n', STDOUT_FILENO);
+	if (!suppress_newline)
+        ft_putchar_fd('\n', STDOUT_FILENO);
+	free(temp);
 }
-
-// este echo da segfault com dois pipes. Tem de haver uma condicao que diz que so faz o ultimo echo do ultimo pipe e o resto ignora
 
 void	env_builtin(t_prompt *prompt)
 {
@@ -56,9 +49,23 @@ void	env_builtin(t_prompt *prompt)
 	current = prompt->env_list;
 	while (current != NULL)
 	{
-		printf("%s=%s\n", current->key, current->value);
+		ft_putstr_fd(current->key, STDOUT_FILENO);
+		ft_putchar_fd('=', STDOUT_FILENO);
+		ft_putstr_fd(current->value, STDOUT_FILENO);
+		ft_putchar_fd('\n', STDOUT_FILENO);
 		current = current->next;
 	}
+}
+
+void	cd(t_prompt *prompt)
+{
+	t_lexer	*temp;
+
+	// aqui tem de ter um home = HOME (variavel do env)
+	temp = prompt->parser->command->next;
+	if (!temp || !temp->content[0] || (temp->content[0]
+			&& !ft_strncmp(temp->content, "~", 2) && !temp->content[1]))
+		printf("HOME\n"); // isto tem de ir buscar ao env e atualizar o env, tem de atualizar o PWD e o OLDPWD
 }
 
 void	exec_builtins(t_prompt *prompt)
@@ -69,8 +76,8 @@ void	exec_builtins(t_prompt *prompt)
 		pwd();
 	else if (!ft_strncmp(prompt->parser->command->content, "env", 4))
 		env_builtin(prompt); 
-	/*else if (!ft_strncmp(prompt->lexer->content, "cd", 3))
-		cd();*/
+	else if (!ft_strncmp(prompt->parser->command->content, "cd", 3))
+		cd(prompt);
 	/*else if (!ft_strncmp(prompt->lexer->content, "export", 7))
 		export();
 	else if (!ft_strncmp(prompt->lexer->content, "unset", 6))
