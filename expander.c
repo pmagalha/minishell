@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:07:55 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/02/07 11:47:55 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/08 17:22:32 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,36 @@ static int	count_signs(char *str, char c)
 	i = 0;
 	while (str[i] == c)
 		i++;
-	printf("NUMBER OF SIGNS: %d\n", i);
 	return (i);
 }
 
-static char	*set_sign_value(char *content, int signs, char *value) // PENSAR NOUTRO NOME PARA ESTA FUNCAO
+static char	*handle_digits(char *content, int signs)
+{
+	char	*new_content;
+	char	*temp;
+
+	new_content = NULL;
+	temp = NULL;
+	new_content = ft_strdup(content + signs);
+	if (signs == 1)
+		return (new_content);
+	if (ft_isdigit(new_content[1]))
+	{
+		temp = new_content;
+		new_content = ft_strdup(new_content + 1);
+		free (temp);
+	}
+	while (signs > 0)
+	{
+		temp = new_content;
+		new_content = ft_strjoin("$", new_content);
+		free (temp);
+		signs -= 1;
+	}
+	return (new_content);
+}
+
+static char	*set_sign_value(char *content, int signs, char *value) // FUNCAO PARA ATRIBUIR O VALOR DA VARIAVEL AO NODE DO LEXER E FAZ O REPLACE DOS CIFROES
 {
 	char	*new_content;
 	char	*temp;
@@ -84,11 +109,21 @@ char	*set_key_value(char *content, t_env_list *env_list)
 {
 	t_env_list	*head;
 	char		*new_value;
+	char		*temp;
 	int			signs;
 
 	head = env_list;
 	new_value = NULL;
+	temp = NULL;
 	signs = count_signs(content, '$');
+	if (ft_isdigit(content[signs]))
+	{
+		temp = content;
+		content = handle_digits(content, signs);
+		free (temp);
+		if (signs == 1)
+			return (content);
+	}
 	while (head != NULL)
 	{
 		if (!ft_strncmp(content + signs, head->key, ft_strlen(head->key)))
@@ -105,6 +140,6 @@ char	*set_key_value(char *content, t_env_list *env_list)
 		free (content);
 		return (new_value);
 	}	
-	return (""); // PERGUNTAR AO DIOGO QUAL SERA O RETURN NO CASO DE FAZERMOS ECHO >> $BOAS visto que $BOAS NAO EXISTE
+	return (content); // PERGUNTAR AO DIOGO QUAL SERA O RETURN NO CASO DE FAZERMOS ECHO >> $BOAS visto que $BOAS NAO EXISTE
 }
 // IMPORTANTE : TRATAR DO CASO DE SER $1USER E DAS MERDAS DAS QUOTES
