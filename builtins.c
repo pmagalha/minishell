@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/07 17:33:22 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/08 19:13:34 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,27 +25,27 @@ void	echo(t_parser *parser)
 
 	suppress_newline = false;
 	temp = parser->command->next; // incrementa para passar a frente o echo
-	while (temp != NULL) 
+	if (!ft_strncmp(temp->content, "-n", ft_strlen(temp->content)))
 	{
-    	if (strcmp(temp->content, "-n") == false) 
-			suppress_newline = true;  // mete a flag para dar suppress da newline 
-		else 
-		{
-    		ft_putstr_fd(temp->content, STDOUT_FILENO);
-			if (temp->next != NULL)
-    			ft_putchar_fd(' ', STDOUT_FILENO);
-		}
+		suppress_newline = true;  // mete a flag para dar suppress da newline 
 		temp = temp->next;
 	}
+	while (temp != NULL)
+	{
+			ft_putstr_fd(temp->content, STDOUT_FILENO);
+			if (temp->next != NULL)
+				ft_putchar_fd(' ', STDOUT_FILENO);
+			temp = temp->next;
+	}
 	if (!suppress_newline)
-        ft_putchar_fd('\n', STDOUT_FILENO);
+		ft_putchar_fd('\n', STDOUT_FILENO);
 	free(temp);
-}
+} // o -n eh so no inicio depois do echo, e eu enganei me e meti a funcionar em toda a string
 
 void	env_builtin(t_prompt *prompt)
 {
 	t_env_list	*temp;
-	
+
 	temp = prompt->env_list;
 	while (temp && temp->key)
 	{
@@ -59,7 +59,7 @@ void	env_builtin(t_prompt *prompt)
 
 char	*get_env(t_prompt *prompt, char *path)
 {
-	char	*new_path;
+	char		*new_path;
 	t_env_list	*temp;
 
 	new_path = NULL;
@@ -76,26 +76,31 @@ char	*get_env(t_prompt *prompt, char *path)
 static int	change_path(t_prompt *prompt, char *path)
 {
 	char	*temp;
-	int	decree;
+	int		new_dir;
 	
 	temp = get_env(prompt, path);
-	// colocar aqui cenas para !temp
-	decree = chdir(temp);
-	//free (temp);
-	if (decree != 0)
+	if (!temp)
+	{
+		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		ft_putstr_fd(path, STDERR_FILENO);
+		ft_putstr_fd(" not set\n", STDERR_FILENO);
+		return (1);
+	}
+	new_dir = chdir(temp);
+	if (new_dir != 0)
 	{
 		ft_putstr_fd("cd: ", STDERR_FILENO);
 		ft_putstr_fd(path, STDERR_FILENO);
 		ft_putstr_fd(" No such file or directory\n", STDERR_FILENO);
 	}
-	return (decree);
+	return (new_dir);
 }
 
 static void	add_path(t_prompt *prompt)
 {
-	t_env_list *env;
-	char	*tmp;
-	char	*oldpath;
+	char		*tmp;
+	char		*oldpath;
+	t_env_list	*env;
 
 	oldpath = get_env(prompt, "PWD");
 	env = prompt->env_list;
@@ -103,44 +108,46 @@ static void	add_path(t_prompt *prompt)
 	{
 		if (!ft_strncmp(env->key, "PWD", 4))
 		{
-			//if (env->value)
-				//free(env->value);
 			tmp = getcwd(NULL, 0);
 			env->value = ft_strdup(tmp);
 			free(tmp);
 		}
-		else if (!ft_strncmp(env->key, "OLDPWD", 7))
-		{
-			if (env->value)
-				free(env->value);
+		if (!ft_strncmp(env->key, "OLDPWD", 7))
 			env->value = ft_strdup(oldpath);
-		}
 		env = env->next;
 	}
 	free(oldpath);
 }
 
+static int	absolute_path(t_prompt *prompt)
+{
+	int	new_path;
+
+	new_path = chdir(prompt->parser->command->next->content); // this works for .. and for cd without anything because the chdir function can receive those
+	return (new_path);
+}
+
 int	cd(t_prompt *prompt)
 {
-	int	decree;
+	int		new_path;
 	t_lexer	*temp;
 
 	temp = prompt->parser->command->next;
-	if (!temp || !temp->content[0] || (temp->content[0]
-			&& !ft_strncmp(temp->content, "~", 2) && !temp->content[1]))
-		decree = change_path(prompt, "HOME");
-	else if (!ft_strncmp(temp->content, "-", 1))
-		decree = change_path(prompt, "OLDPWD");
-	else if (!ft_strncmp(temp->content, "..", 3))
-        decree = chdir("..");
+	if (!temp || !temp->content[0] || (temp->content[0] &&
+			(!ft_strncmp(temp->content, "~", 2) || (temp->content[0] == '-' && (temp->content[1] == '-' && !temp->content[2])))))
+		new_path = change_path(prompt, "HOME");
+	else if (temp->content[0] == '-' && temp->content[1] != '-')
+		new_path = change_path(prompt, "OLDPWD");
 	else if (temp->next != NULL)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
 		return (1);
 	}
+	else
+		new_path = absolute_path(prompt);
 	add_path(prompt);
-	return (decree);
-} // falta tratar de diretorios absolutos e de --
+	return (new_path);
+}
 
 void	exec_builtins(t_prompt *prompt)
 {

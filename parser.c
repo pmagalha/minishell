@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/07 12:19:45 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/08 19:01:00 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	get_parser(t_prompt *prompt)
 	{
 		while (prompt->lexer && prompt->lexer->type != PIPE)
 		{
-			check_quotes(prompt->lexer->content); // inacabado, falta colocar flags para lidar com o caso de "some'thing"
+			check_quotes(prompt->lexer->content);
 			prompt->lexer->content = trim_quotes(prompt->lexer->content);
 			if (!prompt->parser->builtin)
 				prompt->parser->builtin = get_builtin(prompt);
@@ -48,7 +48,6 @@ void	get_parser(t_prompt *prompt)
 			prompt->lexer = prompt->lexer->next;
 		}
 	}
-	
 	prompt->parser = p_start;
 	prompt->lexer = start;
 }
