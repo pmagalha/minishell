@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/14 11:33:48 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/14 16:33:12 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,4 +95,11 @@ void free_env_list(t_env_list *head)
         free(current);
         current = next;
     }
+}
+
+void	free_data(t_prompt *prompt)
+{
+	free_env_list(prompt->env_list);
+	free_lexer_list(prompt->lexer);
+	free_parser_list(prompt->parser);
 }

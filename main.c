@@ -6,12 +6,13 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/08 18:51:34 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/14 16:39:20 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+int	g_code = 0;
 
 char	*print_type(t_type type)
 {
@@ -116,7 +117,6 @@ int main(int argc, char **argv, char **env)
     char *input;
 	t_prompt *prompt;
 	
-	
 	prompt = NULL;
 	prompt = init(prompt, env);
 	(void)argc;
@@ -146,13 +146,11 @@ int main(int argc, char **argv, char **env)
 		}
 		else
 		{
-			printf("\n"); // isto eh quando faz ctrl D (new line)
+			exit (1); // isto eh quando faz ctrl D (new line)
 			break ;
 		}
 	}
-	free_parser_list(prompt->parser);
-	free_lexer_list(prompt->lexer);
-	free_env_list(prompt->env_list);
+	free_data(prompt);
 	free(prompt);
 }
 

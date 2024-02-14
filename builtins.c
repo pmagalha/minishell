@@ -6,11 +6,13 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/14 10:50:32 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/14 17:13:01 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+extern int	g_code;
 
 void	ms_pwd(void)
 {
@@ -18,28 +20,42 @@ void	ms_pwd(void)
 	ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
-void	ms_echo(t_parser *parser)
+static void	ft_print(t_lexer *command)
 {
-	t_lexer	*temp;
-	bool	suppress_newline ;
+	while (command)
+	{
+		ft_putstr_fd(command->content, STDOUT_FILENO);
+		command = command->next;
+		if (command)
+			ft_putchar_fd(' ', STDOUT_FILENO);
+	}
+}
 
-	suppress_newline = false;
-	temp = parser->command->next; // incrementa para passar a frente o echo
-	if (!ft_strncmp(temp->content, "-n", ft_strlen(temp->content)))
+int	ms_echo(t_parser *parser)
+{
+	float	flg;
+	int		i;
+	t_parser *temp;
+
+	flg = false;
+	i = 1;
+	temp = parser;
+	temp->command = temp->command->next;
+	while (temp && temp->command && temp->command->content[0] == '-'
+				&& temp->command->content[1] == 'n')
 	{
-		suppress_newline = true;  // mete a flag para dar suppress da newline 
-		temp = temp->next;
+		while (temp->command->content[i] == 'n')
+			i++;
+		if (temp->command->content[i] == '\0')
+			flg = true;
+		else
+			break ;
+		temp->command = temp->command->next;
 	}
-	while (temp != NULL)
-	{
-			ft_putstr_fd(temp->content, STDOUT_FILENO);
-			if (temp->next != NULL)
-				ft_putchar_fd(' ', STDOUT_FILENO);
-			temp = temp->next;
-	}
-	if (!suppress_newline)
+	ft_print(temp->command);
+	if (flg == false)
 		ft_putchar_fd('\n', STDOUT_FILENO);
-	free(temp);
+	return (0);
 }
 
 void	ms_env(t_prompt *prompt)
@@ -141,7 +157,7 @@ int	ms_cd(t_prompt *prompt)
 	else if (temp->next != NULL)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
-		return (1);
+		return (1); // ja da para substituir isto por ms_exit I GUESS??
 	}
 	else
 		new_path = absolute_path(prompt);
@@ -149,7 +165,76 @@ int	ms_cd(t_prompt *prompt)
 	return (new_path);
 }
 
+void free_array(char **arr)
+{
+    int i = 0;
+    if (arr)
+    {
+        while (arr[i])
+            free(arr[i++]);
+        free(arr);
+    }
+}
 
+static void	exit_code(char **str)
+{
+	int	exit_code;
+
+	if (!str[0]) // sem argumentos, exit com 0
+		exit_code = 0;
+	else if (str[1]) // mais do que um argumento, printa erro
+	{
+		ft_putstr_fd("exit: too many arguments\n", STDERR_FILENO);
+		exit_code = 1;
+	}
+	else if (str[0][0] == '#') // (shell exit code)
+		exit_code = g_code;
+	else if (ft_isdigit(str[0][0])) // Checka se eh digito
+		exit_code = ft_atoi(str[0]);
+	else // se o argumento nao for valido
+	{
+		ft_putstr_fd("exit: numeric argument required\n", STDERR_FILENO);
+		exit_code = 2;
+	}
+	free_array(str);
+	exit(exit_code);
+}
+
+int ms_exit(t_parser *parser)
+{
+    char **str;
+    t_lexer *temp;
+    int size;
+    int i;
+
+    if (!parser)
+    {
+        free_parser_list(parser);
+        exit(g_code);
+    }
+    size = 0;
+    temp = parser->command->next;
+    while (temp)
+    {
+        size++;
+        temp = temp->next;
+    }
+    str = (char **)malloc((size + 1) * sizeof(char *));
+    temp = parser->command;
+    i = 0;
+    while (temp)
+    {
+        str[i] = ft_strdup(temp->content);
+        temp = temp->next;
+        i++;
+    }
+    str[size] = NULL;
+    free_parser_list(parser);
+    rl_clear_history();
+    exit_code(str);
+    free_array(str);
+    return (EXIT_SUCCESS);
+}
 
 void	exec_builtins(t_prompt *prompt)
 {
@@ -161,10 +246,10 @@ void	exec_builtins(t_prompt *prompt)
 		ms_env(prompt); 
 	else if (!ft_strncmp(prompt->parser->command->content, "cd", 3))
 		ms_cd(prompt);
+	else if (!ft_strncmp(prompt->parser->command->content, "exit", 5))
+		ms_exit(prompt->parser);
 	/*else if (!ft_strncmp(prompt->lexer->content, "export", 7))
 		export();
 	else if (!ft_strncmp(prompt->lexer->content, "unset", 6))
 		unset();*/
-	//else (!ft_strncmp(prompt->lexer->content, "exit", 5))
-	//	exit();
 }

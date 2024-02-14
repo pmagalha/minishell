@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/14 10:17:40 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/14 16:33:19 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
+
+extern int g_code;
 
 /*------------- Structures ---------------*/
 
@@ -135,6 +137,7 @@ void	get_redirects(t_prompt *prompt);
 void    free_parser_list(t_parser *head);
 void	free_lexer_list(t_lexer *head);
 void	free_env_list(t_env_list *head);
+void	free_data(t_prompt *prompt);
 
 //Expander
 void	expander(t_lexer *lexer, t_env_list *env_list);
@@ -142,10 +145,11 @@ char	*set_key_value(char *content, t_env_list *env_list);
 
 //Builtins
 void    ms_pwd(void);
-void	ms_echo(t_parser *parser);
+int	    ms_echo(t_parser *parser);
 void	ms_env(t_prompt *prompt);
 void	exec_builtins(t_prompt *prompt);
 char	*get_env(t_prompt *prompt, char *path);
+int	    ms_exit(t_parser *parser);
 
 
 
