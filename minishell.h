@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/07 15:08:58 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/14 10:17:40 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,9 +141,9 @@ void	expander(t_lexer *lexer, t_env_list *env_list);
 char	*set_key_value(char *content, t_env_list *env_list);
 
 //Builtins
-void    pwd(void);
-void	echo(t_parser *parser);
-void	env_builtin(t_prompt *prompt);
+void    ms_pwd(void);
+void	ms_echo(t_parser *parser);
+void	ms_env(t_prompt *prompt);
 void	exec_builtins(t_prompt *prompt);
 char	*get_env(t_prompt *prompt, char *path);
 

@@ -6,19 +6,19 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/08 19:13:34 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/14 10:50:32 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	pwd(void)
+void	ms_pwd(void)
 {
 	ft_putstr_fd((getcwd(NULL, 0)), STDOUT_FILENO);
 	ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
-void	echo(t_parser *parser)
+void	ms_echo(t_parser *parser)
 {
 	t_lexer	*temp;
 	bool	suppress_newline ;
@@ -40,9 +40,9 @@ void	echo(t_parser *parser)
 	if (!suppress_newline)
 		ft_putchar_fd('\n', STDOUT_FILENO);
 	free(temp);
-} // o -n eh so no inicio depois do echo, e eu enganei me e meti a funcionar em toda a string
+}
 
-void	env_builtin(t_prompt *prompt)
+void	ms_env(t_prompt *prompt)
 {
 	t_env_list	*temp;
 
@@ -127,7 +127,7 @@ static int	absolute_path(t_prompt *prompt)
 	return (new_path);
 }
 
-int	cd(t_prompt *prompt)
+int	ms_cd(t_prompt *prompt)
 {
 	int		new_path;
 	t_lexer	*temp;
@@ -149,16 +149,18 @@ int	cd(t_prompt *prompt)
 	return (new_path);
 }
 
+
+
 void	exec_builtins(t_prompt *prompt)
 {
 	if (!ft_strncmp(prompt->parser->command->content, "echo", 5))
-		echo(prompt->parser);
+		ms_echo(prompt->parser);
 	else if (!ft_strncmp(prompt->parser->command->content, "pwd", 4))
-		pwd();
+		ms_pwd();
 	else if (!ft_strncmp(prompt->parser->command->content, "env", 4))
-		env_builtin(prompt); 
+		ms_env(prompt); 
 	else if (!ft_strncmp(prompt->parser->command->content, "cd", 3))
-		cd(prompt);
+		ms_cd(prompt);
 	/*else if (!ft_strncmp(prompt->lexer->content, "export", 7))
 		export();
 	else if (!ft_strncmp(prompt->lexer->content, "unset", 6))

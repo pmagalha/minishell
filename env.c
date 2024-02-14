@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/08 14:26:36 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/14 10:55:55 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,13 @@ void	set_env(char **env, t_prompt *prompt)
 		new_node = create_key_value(key, value, string);
 		token_add_back_env(&(prompt->env_list), new_node);
 		i++;
+	}
+    if (!get_env(prompt, "OLDPWD")) // este caso eh para quando um OLDPWD nao exite, por exemplo se abrirmos o terminal diretamente da janela do ms
+	{
+        key = "OLDPWD";
+        value = get_env(prompt, "PWD");
+        new_node = create_key_value(key, value, string);
+        token_add_back_env(&(prompt->env_list), new_node);
 	}
 }
 

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/06 17:22:53 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/14 11:33:48 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ void	free_lexer_list(t_lexer *head)
 	while (current != NULL)
 	{
 		next = current->next;
-		free(current->content);
+		if (current->content)
+			free(current->content);
 		free(current);
 		current = next;
 	}
@@ -65,27 +66,33 @@ void	free_parser_list(t_parser *head)
 	while (current != NULL)
 	{
 		next = current->next;
-		free(current->command);
-		free(current->builtin);
-		free(current->redirects);
+		if (current->command)
+			free(current->command);
+		if (current->builtin)
+			free(current->builtin);
+		if (current->redirects)
+			free(current->redirects);
 		free(current);
 		current = next;
 	}
 }
 
-void	free_env_list(t_env_list *head)
+void free_env_list(t_env_list *head)
 {
-	t_env_list	*current;
-	t_env_list	*next;
+    t_env_list *current;
+    t_env_list *next;
 
-	current = head;
-	while (current != NULL)
+    current = head;
+    while (current != NULL) 
 	{
-		next = current->next;
-		free(current->key);
-		free(current->value);
-		free(current->full_string);
-		free(current);
-		current = next;
-	}
+        next = current->next;
+        if (current->key)
+            free(current->key);
+        if (current->value)
+            free(current->value);
+        if (current->full_string)
+            free(current->full_string);
+        free(current);
+        current = next;
+    }
 }
