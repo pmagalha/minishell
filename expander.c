@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:07:55 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/02/14 12:17:00 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/02/14 12:26:54 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,16 +30,18 @@ static char	*handle_digits(char *content, int signs)
 	new_content = NULL;
 	temp = NULL;
 	new_content = ft_strdup(content + signs);
-	if (signs == 1 && !ft_isdigit(new_content[1]))
+	printf("////// NEW CONTENT: [%s]\n", new_content);
+	if (signs == 1 && !ft_isdigit(new_content[0]))
 		return (new_content);
-	else if (signs == 1 && ft_isdigit(new_content[1]))
+	else if (signs == 1 && ft_isdigit(new_content[0]))
 	{
+		printf("ENTREI AQUI\n");
 		temp = new_content;
 		new_content = ft_strdup(new_content + 1);
 		free (temp);
 		return (new_content);
 	}
-	if (ft_isdigit(new_content[1]))
+	if (ft_isdigit(new_content[0]))
 	{
 		temp = new_content;
 		new_content = ft_strdup(new_content + 1);
