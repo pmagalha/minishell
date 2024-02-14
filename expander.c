@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:07:55 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/02/14 12:26:54 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/02/14 13:14:05 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,10 @@ static char	*handle_digits(char *content, int signs)
 	new_content = NULL;
 	temp = NULL;
 	new_content = ft_strdup(content + signs);
-	printf("////// NEW CONTENT: [%s]\n", new_content);
 	if (signs == 1 && !ft_isdigit(new_content[0]))
 		return (new_content);
 	else if (signs == 1 && ft_isdigit(new_content[0]))
 	{
-		printf("ENTREI AQUI\n");
 		temp = new_content;
 		new_content = ft_strdup(new_content + 1);
 		free (temp);
@@ -92,9 +90,26 @@ static char	*set_sign_value(char *content, int signs, char *value) // FUNCAO PAR
 	return (content);
 }
 
+static char	*handle_quotes(char *content)
+{
+	char	*new_content;
+	char	*temp;
+
+	temp = content;
+	new_content = NULL;
+	if (content[0] == '$')
+		new_content = ft_strdup(temp + 1);
+	else if (content[0] == '\"' || content[0] == '\'')
+		new_content = trim_quotes(content);
+	free (temp);
+	printf("/////// NEW CONTENT: [%s]\n", new_content);
+	return (new_content);
+}
+
 void	expander(t_lexer *lexer, t_env_list *env_list)
 {
 	t_lexer	*head;
+	char	quote;
 
 	head = lexer;
 
@@ -102,13 +117,15 @@ void	expander(t_lexer *lexer, t_env_list *env_list)
 	{
 		if (head->content[0] == '$' && !head->content[1])
 			return ;
-		else if (head->content[0] == '$' && head->content[1] == '\"'
-				&& head->content[ft_strlen(head->content)] == '\"')
+		else if ((head->content[0] == '$' && head->content[1] == '\"')
+				|| (head->content[0] == '\"' || head->content[0] == '\''))
 		{
-			head->content = trim_quotes(head->content);
-			return ;
+			quote = head->content[0];
+			head->content = handle_quotes(head->content);
+			if (quote == '\'')
+				return ;
 		}
-		else if (head->content[0] == '$' && head->content[1]) // verificar o caso de ter digitos NUMERARIOS depois do $
+		if (head->content[0] == '$' && head->content[1])
 			head->content = set_key_value(head->content, env_list); // funcao para trocar o conteudo da string content pelo valor correspondente do env_list
 		head = head->next;
 	}
@@ -149,6 +166,6 @@ char	*set_key_value(char *content, t_env_list *env_list)
 		free (content);
 		return (new_value);
 	}	
-	return (content); // PERGUNTAR AO DIOGO QUAL SERA O RETURN NO CASO DE FAZERMOS ECHO >> $BOAS visto que $BOAS NAO EXISTE
+	return (""); // PERGUNTAR AO DIOGO QUAL SERA O RETURN NO CASO DE FAZERMOS ECHO >> $BOAS visto que $BOAS NAO EXISTE
 }
 // IMPORTANTE : TRATAR DO CASO DE SER $1USER E DAS MERDAS DAS QUOTES
