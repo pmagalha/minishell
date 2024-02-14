@@ -3,14 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 16:07:55 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/02/09 18:44:39 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/14 12:17:00 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-#include "minishell.h"
 
 #include "minishell.h"
 
@@ -32,8 +30,15 @@ static char	*handle_digits(char *content, int signs)
 	new_content = NULL;
 	temp = NULL;
 	new_content = ft_strdup(content + signs);
-	if (signs == 1)
+	if (signs == 1 && !ft_isdigit(new_content[1]))
 		return (new_content);
+	else if (signs == 1 && ft_isdigit(new_content[1]))
+	{
+		temp = new_content;
+		new_content = ft_strdup(new_content + 1);
+		free (temp);
+		return (new_content);
+	}
 	if (ft_isdigit(new_content[1]))
 	{
 		temp = new_content;
