@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+         #
+#    By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/17 15:32:44 by pmagalha          #+#    #+#              #
-#    Updated: 2023/08/29 10:55:13 by pmagalha         ###   ########.fr        #
+#    Updated: 2024/02/14 15:12:30 by joao-ppe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,11 +32,13 @@ MDT =	ft_atoi.c \
 	ft_split.c \
 	ft_strchr.c \
 	ft_strdup.c \
+	ft_strndup.c \
 	ft_striteri.c \
 	ft_strjoin.c \
 	ft_strlcat.c \
 	ft_strlcpy.c \
 	ft_strlen.c \
+	ft_strclen.c \
 	ft_strmapi.c \
 	ft_strncmp.c \
 	ft_strnstr.c \
