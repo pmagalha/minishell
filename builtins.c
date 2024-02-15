@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/14 17:13:01 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/15 12:56:15 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,21 +184,23 @@ static void	exit_code(char **str)
 		exit_code = 0;
 	else if (str[1]) // mais do que um argumento, printa erro
 	{
-		ft_putstr_fd("exit: too many arguments\n", STDERR_FILENO);
+		ft_putstr_fd("-minishell: exit: too many arguments\n", STDERR_FILENO);
 		exit_code = 1;
+		return ;
 	}
-	else if (str[0][0] == '#') // (shell exit code)
+	else if (str[0][0] == '#') // (shell exit code) MAYBE NOT NECESSARY IDK
 		exit_code = g_code;
 	else if (ft_isdigit(str[0][0])) // Checka se eh digito
 		exit_code = ft_atoi(str[0]);
 	else // se o argumento nao for valido
 	{
-		ft_putstr_fd("exit: numeric argument required\n", STDERR_FILENO);
+		ft_putstr_fd("-minishell: exit: numeric argument required\n", STDERR_FILENO);
 		exit_code = 2;
 	}
 	free_array(str);
 	exit(exit_code);
 }
+// valor maximo de erro eh 256. se o valor ultrapassar isto, tem de voltar atras. tipo se for 256 + 1 vai para 0 I GUESS
 
 int ms_exit(t_parser *parser)
 {
@@ -220,7 +222,7 @@ int ms_exit(t_parser *parser)
         temp = temp->next;
     }
     str = (char **)malloc((size + 1) * sizeof(char *));
-    temp = parser->command;
+    temp = parser->command->next;
     i = 0;
     while (temp)
     {
@@ -229,8 +231,9 @@ int ms_exit(t_parser *parser)
         i++;
     }
     str[size] = NULL;
-    free_parser_list(parser);
+    free_lexer_list(temp);
     rl_clear_history();
+	ft_putstr_fd("exit\n", STDERR_FILENO);
     exit_code(str);
     free_array(str);
     return (EXIT_SUCCESS);
