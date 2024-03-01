@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/08 19:01:00 by marvin           ###   ########.fr       */
+/*   Updated: 2024/02/28 16:00:26 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ void	get_parser(t_prompt *prompt)
 		printf("empty lexer");
 	add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
 	p_start = prompt->parser;
-	expander(prompt->lexer, prompt->env_list);
 	pipe_count = count_pipes(prompt->lexer);
 	while (pipe_count-- >= 0)
 	{

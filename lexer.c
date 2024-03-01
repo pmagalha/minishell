@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/08 17:21:26 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/01 19:18:43 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,21 @@
 void	get_token(char *input, t_prompt *prompt)
 {
 	char	*content;
+	char	*temp;
 	t_type	type;
-
+	
+	temp = NULL;
+	//printf("\033[32;1m=========== EXPANDER DEV MOD ==========\033[0m\n");
+	if (sign_exists(input, '$'))
+	{
+		temp = input;
+		input = expander(input, prompt->env_list);
+		free (temp);
+	}
+	//printf("[%s] ////////// INPUT AFTER EXPANDER\n", input);
 	while (*input)
 	{
-		while (*input == ' ')
+		while (*input == 32)
 			input++;
 		if (!*input)
 			break ;
@@ -29,7 +39,7 @@ void	get_token(char *input, t_prompt *prompt)
 		token_add_back(&(prompt->lexer), create_node(content, type));
         if (prompt->lexer->type == PIPE && !prompt->lexer->next) // this is the case for when there is only a single PIPE and nothing after it
 		{
-			printf("minishell: syntax error near unexpected token `|'\n"); // o exit code vai ser 2
+			ft_printf("minishell: syntax error near unexpected token `|'\n"); // o exit code vai ser 2
 			exit(2); // fazer um msexit para quando houver um erro fazer os frees e dar exit do programa | 
             // lidar com erro para quando ha redirect e nada depois. O nome do erro eh "minishell: syntax error near unexpected token `newline' (mas se for tipo >>>> tem de dar ">>") o exit code disto vai ser 2"
             // quando a palavra a frente do redirect eh uma variavel env que tem de ser substituida mas nao existe. Nome "minishell: ambiguous redirect" e o exit code eh 1
@@ -157,5 +167,3 @@ char    *other_content(char *input)
 // Comandos para testar tipo: echo "$?" $? '$?' "'"$?"'" """'$?'"""
 
 // echo $9$?I$SER$2USER$USER
-
-

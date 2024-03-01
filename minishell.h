@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/14 16:33:19 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/01 17:50:39 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,8 +140,14 @@ void	free_env_list(t_env_list *head);
 void	free_data(t_prompt *prompt);
 
 //Expander
-void	expander(t_lexer *lexer, t_env_list *env_list);
-char	*set_key_value(char *content, t_env_list *env_list);
+char	*expander(char *content, t_env_list *env_list);
+
+//Expander Utils
+int		count_signs(char *str, char c);
+bool	sign_exists(char *str, char c);
+char	*copy_content(char *new_str, char *input);
+char	*get_key_value(char *new_str, char *input, t_env_list *env_list);
+char	next_char(char *input);
 
 //Builtins
 void    ms_pwd(void);

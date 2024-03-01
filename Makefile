@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+         #
+#    By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/12 20:33:55 by pmagalha          #+#    #+#              #
-#    Updated: 2024/02/01 13:26:23 by pmagalha         ###   ########.fr        #
+#    Updated: 2024/02/28 15:48:57 by joao-ppe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@
 #                                  SOURCE FILES                                #
 ################################################################################
 
-SRC = main.c lexer.c init.c lexer_utils.c env.c expander.c parser.c parser_utils.c quotes_utils.c builtins.c
+SRC = main.c lexer.c init.c lexer_utils.c env.c expander.c expander_utils.c parser.c parser_utils.c quotes_utils.c builtins.c
 OBJS = $(SRC:.c=.o)
 DEPS = libft/libft.a
 
