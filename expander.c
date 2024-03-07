@@ -15,31 +15,35 @@
 char	*expander(char *input, t_env_list *env_list)
 {
 	char	*new;
-	//int		i;
 
-	//i = 1;
 	new = NULL;
-	//printf("[%s] ////////// RAW INPUT\n", input);
+	//printf("RAW INPUT =================== [%s]\n", input);
 	while (*input != '\0')
 	{
-		//printf("============== WORD [%d] - [%s] ==============\n", i, input);
-		if (*input != '$')
+		if (*input != '$' || (*input == '\'' && *(input + 1) == '$'))
 		{
-			new = copy_content(new, input); // copiar content até ao '$'
-			//printf("////////// INPUT POS [%s] ///////// NEXT CHAR [%c] /////// SIZE TILL NEXT CHAR [%ld]\n", input, next_char(input), ft_strclen(input, next_char(input)));
-			input += ft_strclen(input, next_char(input)); // avancar ate ao '$'
-			//printf("[%s] ////////// INPUT AFTER COPY\n", input);
+			new = copy_content(new, input);
+			input += ft_strclen(input, next_char(input));
 		}
-	 	else if (*input == '$')
+		else if (*input == '$' && *(input + 1) == '$')
 		{
-			//printf("============== FOUND '$' FIRST ==============\n");
+			if (new)
+				new = ft_strjoin(new, ft_itoa(getpid()));
+			else
+				new = ft_strdup(ft_itoa(getpid()));
+			input += 1;
+		}
+	 	else if (*input == '$' && *(input + 1) != '$')
+		{
 			new = get_key_value(new, input, env_list);
-			//printf("[%s] ////////// NEW AFTER SWAP\n", new);
 			input += ft_strclen(input + 1, next_char(input + 1));
-			//printf("[%s] ////////// INPUT AFTER ADD\n", input);
+			//printf("OUTPUT     =================== [%s]\n", new);
+			//printf("INPUT LOOP =================== [%s]\n", input);
 		}
-		//i++; // o i só serve para contar a palavra em que estou, em debug. depois é apagar
 		input++;
 	}
 	return (new);
 }
+
+// IMPORTANTE - EXPANDER
+// CORRIGIR ESTE CASO: [$12PWD$USER$$LANG$LSCOLORS] - depois do $$ imprime tudo fodido

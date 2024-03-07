@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/01 17:50:39 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/07 15:53:16 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,7 +147,8 @@ int		count_signs(char *str, char c);
 bool	sign_exists(char *str, char c);
 char	*copy_content(char *new_str, char *input);
 char	*get_key_value(char *new_str, char *input, t_env_list *env_list);
-char	next_char(char *input);
+char	*handle_digits(char *new, char *input);
+char	next_char(char *str);
 
 //Builtins
 void    ms_pwd(void);

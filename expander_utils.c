@@ -12,18 +12,23 @@
 
 #include "minishell.h"
 
-char	next_char(char *input)
+char	next_char(char *str)
 {
 	int		i;
 
 	i = -1;
-	while (input[++i])
+	while (str[++i])
 	{
-		if (!ft_isalpha(input[i]))
-			return (input[i]);
+		if (!ft_isalpha(str[i]) && !ft_isdigit(str[i]))
+			return (str[i]);
 	}
 	return (0);
 }
+
+/* char	*expand_quotes(char *new, char *input, t_env_list *env_list)
+{
+
+} */
 
 char	*copy_content(char *new_str, char *input)
 {
@@ -52,7 +57,6 @@ static char	*find_value(char *key, t_env_list *env_list)
 
 	head = env_list;
 	
-	//printf("[%s] ////////// KEY TO FIND\n", key);
 	while (head != NULL)
 	{
 		if (!ft_strncmp(key, head->key, ft_strlen(head->key)))
@@ -69,26 +73,55 @@ char	*get_key_value(char *new_str, char *input, t_env_list *env_list)
 	char	*new;
 
 	new = NULL;
+	if (*(input + 1) == '\0') // no caso do input ser por exemplo só "$" ou "echo $", sem qualquer tipo de key ou conteudo depois do cifrão
+		return (ft_strjoin(new_str, "$"));
+	else if (*input == '$' && ft_isdigit(*(input + 1))) // no caso de haver numeros depois do 
+		return (handle_digits(new_str, input));
 	key = ft_strndup(input + 1, ft_strclen(input + 1, ' ')); // isolar a key do INPUT, sem espacos e $ para ser mais facil comparar na lista do ENV
 	value = find_value(key, env_list);
-	//printf("[%s] ////////// VALUE AFTER SEARCH\n", value);
 	if (new_str && value)
 		new = ft_strjoin(new_str, value);
 	else if (!new_str && value)
 		new = ft_strdup(value);
 	else if (!new_str && !value)
-		new = ft_strdup("");
+		new = ("");
+	else if (new_str && !value)
+		new = ft_strdup(new_str);
 	if (key)
 		free (key);
-	//printf("============== ENTREEEEEEEEEEEEEEEEEEEEEEEEEEI ==============\n");
 	if (new_str)
 		free (new_str);
-	if (value != NULL)
+	if (value)
 		free (value);
 	return (new);
 }
 
-bool	sign_exists(char *str, char c) // pensar noutro nome desta funcao, meter algo mais bacano
+char	*handle_digits(char *new_str, char *input)
+{
+	char	*temp;
+	char	*new;
+
+	new = NULL;
+	temp = NULL;
+	//printf("[%s] =================== HANDLE DIGITS RAW INPUT\n", input);
+	input = input + 2;
+	//printf("[%s] =================== HANDLE DIGITS INPUT AFTER ADD\n", input);
+	if (input) {
+		//printf("NEXT CHAR: [%c]\n", next_char(input));
+		temp = ft_strndup(input, ft_strclen(input, next_char(input)) - 1);
+	}
+	//printf("[%s] =================== HANDLE DIGITS KEY\n", temp);
+	if (new_str)
+	{
+		new = ft_strjoin(new_str, temp);
+		//free (new_str);
+	}
+	else
+		new = ft_strdup(temp);
+	return (new);
+}
+
+bool	sign_exists(char *str, char c)
 {
 	int	i;
 	
