@@ -32,18 +32,13 @@ char	*copy_content(char *new_str, char *input)
 
 	new = NULL;
 	if (!new_str) // new_str eh a string antiga
-	{
 		new = ft_strndup(input, ft_strclen(input, '$') - 1);
-		return (new);
-	}
+	else if (*input == 32)
+		new = ft_strjoin(new_str, " ");
 	else
-	{
-		//printf("////////// START COPY [%s] ///////// N BYTES [%ld]\n", input, ft_strclen(input, next_char(input)));
 		new = ft_strjoin(new_str, ft_strndup(input, ft_strclen(input, next_char(input)) - 1));
-		//printf("[%s] ////////// NEW 1\n", new);
-		if (new_str)
-			free (new_str);
-	}
+	if (new_str)
+		free (new_str);
 	return (new);
 }
 
@@ -99,21 +94,17 @@ char	*handle_digits(char *new_str, char *input)
 
 	new = NULL;
 	temp = NULL;
-	//printf("[%s] =================== HANDLE DIGITS RAW INPUT\n", input);
 	input = input + 2;
-	//printf("[%s] =================== HANDLE DIGITS INPUT AFTER ADD\n", input);
-	if (input) {
-		//printf("NEXT CHAR: [%c]\n", next_char(input));
+	if (input)
 		temp = ft_strndup(input, ft_strclen(input, next_char(input)) - 1);
-	}
-	//printf("[%s] =================== HANDLE DIGITS KEY\n", temp);
 	if (new_str)
 	{
 		new = ft_strjoin(new_str, temp);
-		//free (new_str);
 	}
 	else
 		new = ft_strdup(temp);
+	if (new_str)
+		free (new_str);
 	return (new);
 }
 

@@ -22,8 +22,9 @@ char	*expander(char *input, t_env_list *env_list)
 	while (*input != '\0')
 	{
 		//printf("INPUT POS =================== [%s]\n", input);
-		if (*input != '$' || (*input == '\'' && *(input + 1) == '$'))
+		if (*input != '$' || *input == 32 || (*input == '\'' && *(input + 1) == '$'))
 		{
+			//printf("\033[32;1m=========== ENTREI ==========\033[0m\n");
 			new = copy_content(new, input);
 			if (next_char(input) == 32)
 				input += ft_strclen(input, next_char(input));
@@ -46,11 +47,11 @@ char	*expander(char *input, t_env_list *env_list)
 			//printf("OUTPUT     =================== [%s]\n", new);
 			//printf("INPUT LOOP =================== [%s]\n", input);
 		}
+		//printf("NEW         =================== [%s]\n", new);
+		//sleep(1);//para debug apenas, apagar depois
 		if (!*(input + 1) || !*input) // para evitar copiar merdas desnecessárias no fim, não sei o porquê deste bug
 			break ;
 		input++;
-		//printf("NEW ========================= [%s]\n", new);
-		//sleep(1); para debug apenas, apagar depois
 	}
 	return (new);
 }
