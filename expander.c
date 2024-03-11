@@ -18,12 +18,18 @@ char	*expander(char *input, t_env_list *env_list)
 
 	new = NULL;
 	//printf("RAW INPUT =================== [%s]\n", input);
+	//printf("______________________________________________________\n");
 	while (*input != '\0')
 	{
+		//printf("INPUT POS =================== [%s]\n", input);
 		if (*input != '$' || (*input == '\'' && *(input + 1) == '$'))
 		{
 			new = copy_content(new, input);
-			input += ft_strclen(input, next_char(input));
+			if (next_char(input) == 32)
+				input += ft_strclen(input, next_char(input));
+			else
+				input += ft_strclen(input, next_char(input)) - 1;
+			//printf("INPUT AFTER COPY =================== [%s]\n", input);
 		}
 		else if (*input == '$' && *(input + 1) == '$')
 		{
@@ -40,10 +46,15 @@ char	*expander(char *input, t_env_list *env_list)
 			//printf("OUTPUT     =================== [%s]\n", new);
 			//printf("INPUT LOOP =================== [%s]\n", input);
 		}
+		if (!*(input + 1) || !*input) // para evitar copiar merdas desnecessárias no fim, não sei o porquê deste bug
+			break ;
 		input++;
+		//printf("NEW ========================= [%s]\n", new);
+		//sleep(1); para debug apenas, apagar depois
 	}
 	return (new);
 }
 
 // IMPORTANTE - EXPANDER
 // CORRIGIR ESTE CASO: [$12PWD$USER$$LANG$LSCOLORS] - depois do $$ imprime tudo fodido
+// [$12PWD$USER$$LANG$LSCOLORS$$$32LANG] / testar este caso

@@ -19,16 +19,12 @@ char	next_char(char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if (!ft_isalpha(str[i]) && !ft_isdigit(str[i]))
+		if ((!ft_isalpha(str[i]) && !ft_isdigit(str[i]))
+			|| str[i] == ' ')
 			return (str[i]);
 	}
 	return (0);
 }
-
-/* char	*expand_quotes(char *new, char *input, t_env_list *env_list)
-{
-
-} */
 
 char	*copy_content(char *new_str, char *input)
 {
@@ -43,7 +39,7 @@ char	*copy_content(char *new_str, char *input)
 	else
 	{
 		//printf("////////// START COPY [%s] ///////// N BYTES [%ld]\n", input, ft_strclen(input, next_char(input)));
-		new = ft_strjoin(new_str, ft_strndup(input, ft_strclen(input, next_char(input))));
+		new = ft_strjoin(new_str, ft_strndup(input, ft_strclen(input, next_char(input)) - 1));
 		//printf("[%s] ////////// NEW 1\n", new);
 		if (new_str)
 			free (new_str);
