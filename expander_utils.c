@@ -33,8 +33,7 @@ char	*copy_content(char *new_str, char *input)
 	new = NULL;
 	if (!new_str) // new_str eh a string antiga
 		new = ft_strndup(input, ft_strclen(input, '$') - 1);
-	else if (*input == 32)
-		new = ft_strjoin(new_str, " ");
+ 		new = ft_strjoin(new_str, " ");
 	else
 		new = ft_strjoin(new_str, ft_strndup(input, ft_strclen(input, next_char(input)) - 1));
 	if (new_str)

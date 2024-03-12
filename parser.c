@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/28 16:00:26 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/12 13:32:11 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ void	get_parser(t_prompt *prompt)
 	{
 		while (prompt->lexer && prompt->lexer->type != PIPE)
 		{
-			check_quotes(prompt->lexer->content);
-			prompt->lexer->content = trim_quotes(prompt->lexer->content);
 			if (!prompt->parser->builtin)
 				prompt->parser->builtin = get_builtin(prompt);
 			get_command(prompt);

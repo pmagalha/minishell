@@ -6,55 +6,38 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:39:05 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/14 14:41:27 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/12 15:01:40 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	check_quotes(char *str)
+int check_quotes(char *str) 
 {
-	if (check_dquotes(str) || check_squotes(str))
-	{
-		printf("Error in check quotes: Uneven number of quotes\n");
-		exit (1);
-	}
-	else
-		return (0);
-}
+    int num_quotes = 0;
+    bool inside_squotes = false;
+	bool inside_dquotes = false;
 
-int	check_squotes(char *str)
-{
-	int	num_squotes;
-
-	num_squotes = 0;
+	printf("%s\n", str);
 	while (*str)
 	{
-		if (*str == '\'')
-			num_squotes++;
+		if (*str == '\'' && inside_dquotes == false)
+		{
+			num_quotes++;
+			inside_squotes = !inside_squotes;
+		}
+		if (*str == '"' && inside_squotes == false)
+		{
+			num_quotes++;
+			inside_dquotes = !inside_dquotes;
+		}
 		str++;
 	}
-	if (num_squotes % 2 == 0)
-		return (0);
-	else
-		return (1);
-}
-
-int	check_dquotes(char *str)
-{
-	int	num_dquotes;
-
-	num_dquotes = 0;
-	while (*str)
-	{
-		if (*str == '"')
-			num_dquotes++;
-		str++;
-	}
-	if (num_dquotes % 2 == 0)
-		return (0);
-	else
-		return (1);
+	printf("%d\n", num_quotes);
+	if (num_quotes % 2 == 0)
+        return 1;
+	printf("Error in check quotes: Uneven number of quotes\n");
+    return (0);
 }
 
 char	get_first_quote(char *str)

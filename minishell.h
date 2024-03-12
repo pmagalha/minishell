@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/09 15:38:19 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/12 14:11:29 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,8 +118,8 @@ t_env_list	*create_key_value(char *key, char *value, char *string);
 char	count_words(t_prompt *prompt);
 int	count_pipes (t_lexer *lexer);
 int check_quotes(char *str);
-int check_squotes(char *str);
 int check_dquotes(char *str);
+int check_squotes(char *str);
 char	*trim_quotes(char *string);
 void   get_parser(t_prompt *prompt);
 t_parser *dup_parser(t_lexer *lexer);

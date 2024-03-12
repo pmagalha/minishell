@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/01 19:18:43 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/12 15:48:36 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@ void	get_token(char *input, t_prompt *prompt)
 	
 	temp = NULL;
 	//printf("\033[32;1m=========== EXPANDER DEV MOD ==========\033[0m\n");
+	if (!check_quotes(input))
+			exit (1);
+	
 	if (sign_exists(input, '$'))
 	{
 		temp = input;
@@ -27,13 +30,19 @@ void	get_token(char *input, t_prompt *prompt)
 		free (temp);
 	}
 	//printf("[%s] ////////// INPUT AFTER EXPANDER\n", input);
+
+	//ESTE TRIM QUOTES TEM DE SER ATIVADO QUANDO O EXPANDER ESTIVER BOM
+	//input = trim_quotes(input);
 	while (*input)
 	{
 		while (*input == 32)
 			input++;
 		if (!*input)
 			break ;
+		//CHECKING QUOTES HERE
+		
 		content = get_token_content(input);
+		
 		type = get_type(content);
 		input += ft_strlen(content);
 		token_add_back(&(prompt->lexer), create_node(content, type));
