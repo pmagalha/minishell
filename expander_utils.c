@@ -31,11 +31,10 @@ char	*copy_content(char *new_str, char *input)
 	char	*new; // nova string para onde se copia tudo
 
 	new = NULL;
-	if (!new_str) // new_str eh a string antiga
+	if (!new_str)
 		new = ft_strndup(input, ft_strclen(input, '$') - 1);
- 		new = ft_strjoin(new_str, " ");
 	else
-		new = ft_strjoin(new_str, ft_strndup(input, ft_strclen(input, next_char(input)) - 1));
+		new = ft_strjoin(new_str, ft_strndup(input, ft_strclen(input, '$') - 1));
 	if (new_str)
 		free (new_str);
 	return (new);
