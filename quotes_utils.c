@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:39:05 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/12 15:01:40 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/13 16:40:48 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int check_quotes(char *str)
     bool inside_squotes = false;
 	bool inside_dquotes = false;
 
-	printf("%s\n", str);
+	//printf("%s\n", str);
 	while (*str)
 	{
 		if (*str == '\'' && inside_dquotes == false)
@@ -33,7 +33,7 @@ int check_quotes(char *str)
 		}
 		str++;
 	}
-	printf("%d\n", num_quotes);
+	//printf("%d\n", num_quotes);
 	if (num_quotes % 2 == 0)
         return 1;
 	printf("Error in check quotes: Uneven number of quotes\n");

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/12 14:11:29 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/16 16:19:49 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,11 +143,12 @@ void	free_data(t_prompt *prompt);
 char	*expander(char *content, t_env_list *env_list);
 
 //Expander Utils
-int		count_signs(char *str, char c);
+//int		count_signs(char *str, char c); // apagar maybe?
 bool	sign_exists(char *str, char c);
-char	*copy_content(char *new_str, char *input);
+char	*copy_content(char *new_str, char *input, char c);
 char	*get_key_value(char *new_str, char *input, t_env_list *env_list);
-char	*handle_digits(char *new, char *input);
+char	*expand_digits(char *new, char *input);
+char	*expand_quotes(char *input);
 char	next_char(char *str);
 
 //Builtins
