@@ -28,13 +28,18 @@ char	next_char(char *str)
 char	*copy_content(char *new_str, char *input, char c)
 {
 	char	*new;
+	char	*tmp;
 
 	new = NULL;
 	//printf("COPY CONT        =================== [%s]\n", input);
 	if (!new_str)
 		new = ft_strndup(input, ft_strclen(input, c) - 1);
 	else
-		new = ft_strjoin(new_str, ft_strndup(input, ft_strclen(input, c) - 1));
+	{
+		tmp = ft_strndup(input, ft_strclen(input, c) - 1);
+		new = ft_strjoin(new_str, tmp);
+		free (tmp);
+	}
 	if (new_str)
 		free (new_str);
 	return (new);

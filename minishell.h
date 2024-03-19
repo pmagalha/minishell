@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/16 16:19:49 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/19 14:59:24 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,9 +152,9 @@ char	*expand_quotes(char *input);
 char	next_char(char *str);
 
 //Builtins
-void    ms_pwd(void);
-int	    ms_echo(t_parser *parser);
-void	ms_env(t_prompt *prompt);
+int		ms_pwd(void);
+int		ms_echo(t_parser *parser);
+int		ms_env(t_prompt *prompt);
 void	exec_builtins(t_prompt *prompt);
 char	*get_env(t_prompt *prompt, char *path);
 int	    ms_exit(t_parser *parser);

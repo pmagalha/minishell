@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/15 12:32:00 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/19 15:41:00 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,23 +131,26 @@ int main(int argc, char **argv, char **env)
 		input = readline("minishell$ ");
 		if (input != NULL)
 		{
-			add_history(input);
-			
-			get_token(input, prompt);
-			
-			get_parser(prompt);
-			dev_mod(prompt);
+			if (input[0])
+			{
+				add_history(input);
+				
+				get_token(input, prompt);
+				
+				get_parser(prompt);
+				dev_mod(prompt);
 
-			//temp = prompt->env_list; // isto era para testar printar o env na main
-			//print_env_list(temp); // funcao para printar a lista de env com todos os seus nodes
-			prompt->lexer = NULL;
-			prompt->parser = NULL;
-			free(input);
+				//temp = prompt->env_list; // isto era para testar printar o env na main
+				//print_env_list(temp); // funcao para printar a lista de env com todos os seus nodes
+				prompt->lexer = NULL;
+				prompt->parser = NULL;
+				free(input);
+			}
 		}
 		else
 		{
-			exit (1); // isto eh quando faz ctrl D (new line)
-			break ;
+			printf("exit\n");
+			exit(g_code); // isto eh quando faz ctrl D (new line)
 		}
 	}
 	free_data(prompt);
