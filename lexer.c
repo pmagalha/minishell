@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/19 15:40:20 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/16 15:48:50 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,11 @@ void	get_token(char *input, t_prompt *prompt)
 	printf("\033[32;1m=========== EXPANDER DEV MOD ==========\033[0m\n");
 	if (!check_quotes(input))
 			exit (1);
-	if (sign_exists(input, '$'))
+  	if (sign_exists(input, '$'))
 	{
 		temp = input;
 		input = expander(input, prompt->env_list);
-		if (temp)
-			free (temp);
+		free (temp);
 	}
 	//printf("[%s] ////////// INPUT AFTER EXPANDER\n", input);
 

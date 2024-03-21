@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/19 14:59:24 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/20 17:23:01 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,12 +152,20 @@ char	*expand_quotes(char *input);
 char	next_char(char *str);
 
 //Builtins
-int		ms_pwd(void);
-int		ms_echo(t_parser *parser);
-int		ms_env(t_prompt *prompt);
+void    ms_pwd(void);
+int	    ms_echo(t_parser *parser);
+void	ms_env(t_prompt *prompt);
 void	exec_builtins(t_prompt *prompt);
 char	*get_env(t_prompt *prompt, char *path);
 int	    ms_exit(t_parser *parser);
+
+// Export
+void print_export(t_env_list *head);
+void insert(t_env_list **head, char *key, char *value) ;
+void    ms_export(t_prompt *prompt);
+void insert_sorted(t_env_list **head, t_env_list *node);
+void	add_value(char *variable, t_prompt *prompt);
+void	ms_unset(t_prompt *prompt);
 
 
 

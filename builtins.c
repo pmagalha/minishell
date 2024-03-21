@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/19 13:48:06 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/21 15:42:35 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,10 @@
 
 extern int	g_code;
 
-int	ms_pwd(void)
+void	ms_pwd(void)
 {
 	ft_putstr_fd((getcwd(NULL, 0)), STDOUT_FILENO);
 	ft_putchar_fd('\n', STDOUT_FILENO);
-	return (0);
 }
 
 static void	ft_print(t_lexer *command)
@@ -59,27 +58,30 @@ int	ms_echo(t_parser *parser)
 	return (0);
 }
 
-int	ms_env(t_prompt *prompt)
+void	ms_env(t_prompt *prompt)
 {
 	t_env_list	*temp;
 
 	temp = prompt->env_list;
-	if (prompt->parser->command->next)
+	while (temp)
 	{
-		ft_putstr_fd("env: '", STDOUT_FILENO);
-		ft_putstr_fd(prompt->parser->command->next->content, STDOUT_FILENO);
-		ft_putstr_fd("': No such file or directory\n", STDOUT_FILENO);
-		return (1);
+		if (temp->value && *temp->value)
+			{
+			ft_putstr_fd(temp->key, STDOUT_FILENO);
+			ft_putchar_fd('=', STDOUT_FILENO);
+			ft_putstr_fd(temp->value, STDOUT_FILENO);
+			ft_putchar_fd('\n', STDOUT_FILENO);
+			temp = temp->next;
+			}
+		else if (temp->value && !*temp->value)
+		{
+			ft_putstr_fd(temp->key, STDOUT_FILENO);
+			ft_putstr_fd("=""\n", STDOUT_FILENO);
+			temp = temp->next;
+		}
+		else
+			temp = temp->next;
 	}
-	while (temp && temp->key)
-	{
-		ft_putstr_fd(temp->key, STDOUT_FILENO);
-		ft_putchar_fd('=', STDOUT_FILENO);
-		ft_putstr_fd(temp->value, STDOUT_FILENO);
-		ft_putchar_fd('\n', STDOUT_FILENO);
-		temp = temp->next;
-	}
-	return (0);
 }
 
 char	*get_env(t_prompt *prompt, char *path)
@@ -166,15 +168,12 @@ int	ms_cd(t_prompt *prompt)
 	else if (temp->next != NULL)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
-		g_code = 1;
-		return (1);
+		return (1); // ja da para substituir isto por ms_exit I GUESS??
 	}
 	else
 		new_path = absolute_path(prompt);
 	add_path(prompt);
-	(void)new_path;
-	g_code = 0;
-	return (0);
+	return (new_path);
 }
 
 void free_array(char **arr)
@@ -193,24 +192,23 @@ static void	exit_code(char **str)
 	int	exit_code;
 
 	if (!str[0]) // sem argumentos, exit com 0
-		g_code = 0;
+		exit_code = 0;
 	else if (str[1]) // mais do que um argumento, printa erro
 	{
 		ft_putstr_fd("-minishell: exit: too many arguments\n", STDERR_FILENO);
-		g_code = 1;
+		exit_code = 1;
 		return ;
 	}
-	//else if (str[0][0] == '#') // (shell exit code) MAYBE NOT NECESSARY IDK
-	//	exit_code = g_code;
+	else if (str[0][0] == '#') // (shell exit code) MAYBE NOT NECESSARY IDK
+		exit_code = g_code;
 	else if (ft_isdigit(str[0][0])) // Checka se eh digito
-		g_code = ft_atoi(str[0]);
+		exit_code = ft_atoi(str[0]);
 	else // se o argumento nao for valido
 	{
 		ft_putstr_fd("-minishell: exit: numeric argument required\n", STDERR_FILENO);
-		g_code = 2;
+		exit_code = 2;
 	}
 	free_array(str);
-	exit_code = g_code;
 	exit(exit_code);
 }
 // valor maximo de erro eh 256. se o valor ultrapassar isto, tem de voltar atras. tipo se for 256 + 1 vai para 0 I GUESS
@@ -227,6 +225,7 @@ int ms_exit(t_parser *parser)
         free_parser_list(parser);
         exit(g_code);
     }
+    size = 0;
     temp = parser->command->next;
     while (temp)
     {
@@ -254,17 +253,17 @@ int ms_exit(t_parser *parser)
 void	exec_builtins(t_prompt *prompt)
 {
 	if (!ft_strncmp(prompt->parser->command->content, "echo", 5))
-		g_code = ms_echo(prompt->parser);
+		ms_echo(prompt->parser);
 	else if (!ft_strncmp(prompt->parser->command->content, "pwd", 4))
-		g_code = ms_pwd();
+		ms_pwd();
 	else if (!ft_strncmp(prompt->parser->command->content, "env", 4))
-		g_code = ms_env(prompt); 
+		ms_env(prompt); 
 	else if (!ft_strncmp(prompt->parser->command->content, "cd", 3))
-		g_code = ms_cd(prompt);
+		ms_cd(prompt);
 	else if (!ft_strncmp(prompt->parser->command->content, "exit", 5))
-		g_code = ms_exit(prompt->parser);
-	/*else if (!ft_strncmp(prompt->lexer->content, "export", 7))
-		export();
-	else if (!ft_strncmp(prompt->lexer->content, "unset", 6))
-		unset();*/
+		ms_exit(prompt->parser);
+	else if (!ft_strncmp(prompt->parser->command->content, "export", 7))
+		ms_export(prompt);
+	else if (!ft_strncmp(prompt->parser->command->content, "unset", 6))
+		ms_unset(prompt);
 }
