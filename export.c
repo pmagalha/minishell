@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/21 16:23:46 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/03/21 23:31:09 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,13 @@ t_env_list	*create_dup(t_env_list *env_list)
 {
 	char		*dup_key;
 	char		*dup_value;
-	t_env_list	**dup_env;
+	t_env_list	*dup_env;
 	t_env_list	*new_node;
 	t_env_list	*head;
 
 	head = env_list;
 	new_node = NULL;
-	dup_env = (t_env_list **)malloc(sizeof(t_env_list *));
+	dup_env = NULL;
 	while (head != NULL)
 	{
 		dup_key = ft_strdup(head->key);
@@ -47,10 +47,10 @@ t_env_list	*create_dup(t_env_list *env_list)
 		else
 			dup_value = NULL;
 		new_node = create_key_value2(dup_key, dup_value);
-		token_add_back_env(dup_env, new_node);
+		token_add_back_env(&dup_env, new_node);
 		head = head->next;
 	}
-	return (*dup_env);
+	return (dup_env);
 }
 
 void	swap(t_env_list *node1, t_env_list *node2)
@@ -134,25 +134,18 @@ void	ms_export(t_prompt *prompt)
 		{
 			if (current->value && current->value[0])
 			{
-				// se houver key e value
-				printf("11111111\n\n");
 				printf("declare -x %s=\"%s\"\n", current->key, current->value);
 				current = current->next;
 			}
-			// se nao houver value
 			else
 			{
-				// se houver key mas o value for ""
 				if (current->value && current->value[0] == '\0')
 				{
-					printf("2222222\n\n");
 					printf("declare -x %s=\"\"\n", current->key);
 					current = current->next;
 				}
-				// se houver key e o value nao existir
 				else
 				{
-					printf("333333333\n\n");
 					printf("declare -x %s\n", current->key);
 					current = current->next;
 				}
@@ -246,10 +239,8 @@ void	remove_value(char *variable, t_prompt *prompt)
 		return ;
 	while (current != NULL)
 	{
-		if (!strcmp(current->key, variable))
+		if (!ft_strncmp(current->key, variable, ft_strlen(variable)))
 		{
-			int i = 0;
-			printf("%d, prev eh igual a NULL\n", i);
 			prev->next = current->next;
 			delete_env(current);
 			return ;
