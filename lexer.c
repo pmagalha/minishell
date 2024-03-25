@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/24 20:53:26 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/25 17:34:57 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,35 +16,30 @@ void	get_token(char *input, t_prompt *prompt)
 {
 	char	*content;
 	char	*temp;
+	int		len;
 	t_type	type;
 	
 	temp = NULL;
+	len = 0;
 	printf("\033[32;1m=========== EXPANDER DEV MOD ==========\033[0m\n");
  	if (!check_quotes(input))
 			exit (1);
-  	if (sign_exists(input, '$') || sign_exists(input, '\"') || sign_exists(input, '\''))
-	{
-		temp = input;
-		input = expander(input, prompt->env_list);
-		if (temp)
-			free (temp);
-	}
-	//printf("[%s] ////////// INPUT AFTER EXPANDER\n", input);
-
-	//ESTE TRIM QUOTES TEM DE SER ATIVADO QUANDO O EXPANDER ESTIVER BOM
-	//input = trim_quotes(input);
 	while (*input)
 	{
 		while (*input == 32)
 			input++;
 		if (!*input)
 			break ;
-		//CHECKING QUOTES HERE
-		
-		content = get_token_content(input);
-		
+		//ft_printf("CONTENT AFTER EXPANDER: [%s]\n", content);
+		content = get_token_content(prompt, input);
+		temp = content;
+		len = ft_strlen(temp);
+		printf("\033[32;1m=========== EXPANDER DEV MOD [%s] ==========\033[0m\n", content);
+		content = expander(content, prompt->env_list);
 		type = get_type(content);
-		input += ft_strlen(content);
+		input += len;
+		if (temp)
+			free (temp);
 		token_add_back(&(prompt->lexer), create_node(content, type));
         if (prompt->lexer->type == PIPE && !prompt->lexer->next) // this is the case for when there is only a single PIPE and nothing after it
 		{
@@ -58,12 +53,12 @@ void	get_token(char *input, t_prompt *prompt)
 
 // Content: [$'HOME'] | Type: [OTHER] o lexer tem de dizer que se houver um $, tem de mandar com as quotes
 
-char	*get_token_content(char *content)
+char	*get_token_content(t_prompt *prompt, char *content)
 {
 	if (*content == '>' || *content == '<' || *content == '|')
 		return (get_operator(content));
 	else if (*content == '"' || *content == '\'')
-		return (get_quoted_content(content));
+		return (get_quoted_content(prompt, content));
 	else
 		return (other_content(content));
 }
@@ -99,25 +94,26 @@ t_type	get_type(char *content)
 		return (OTHER);
 }
 
-char	*get_quoted_content(char *input) //function working, ommented just to create another and test
+bool	quotes_flag(t_prompt *prompt, char c)
+{
+	if (c == '"' && !prompt->quotes[0])
+		prompt->quotes[1] = !prompt->quotes[1];
+	else if (c == '\'' && !prompt->quotes[1])
+		prompt->quotes[0] = !prompt->quotes[0];
+	return (prompt->quotes[0] || prompt->quotes[1]);
+}
+
+char	*get_quoted_content(t_prompt *prompt, char *input) //function working, ommented just to create another and test
 {
 	char	*res;
-	char	quote;
 	int		i;
 	bool	in_quotes;
 
 	i = 0;
-	quote = input[0];
-	in_quotes = true;
+	in_quotes = quotes_flag(prompt, input[i]);
 	while (input[i++])
 	{
-		if (input[i] == quote)
-		{
-			if (in_quotes)
-				in_quotes = false;
-			else
-				in_quotes = true;
-		}
+		in_quotes = quotes_flag(prompt, input[i]);
 		if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
 			|| input[i] == '|') && !in_quotes) // it breaks and exists the loop in case it finds any operator and is not between quotes
 			break ;

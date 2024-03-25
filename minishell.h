@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/25 14:02:45 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/03/25 17:29:34 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ typedef struct  s_prompt
     t_lexer     *lexer;
     t_lexer		**token_lst;
     t_parser    *parser;
+	bool		quotes[2];
     //t_parser    *comands; maybe use this for storing commands between pipes
 }               t_prompt;
 
@@ -86,8 +87,8 @@ typedef struct  s_prompt
 
 char	*get_operator(char *content);
 char	*other_content(char *content);
-char	*get_token_content(char *content);
-char	*get_quoted_content(char *input);
+char	*get_token_content(t_prompt *prompt, char *content);
+char	*get_quoted_content(t_prompt *prompt, char *input);
 void    get_token(char *input, t_prompt *prompt);
 t_type  get_type(char *content);
 
@@ -162,17 +163,19 @@ char	*get_env(t_prompt *prompt, char *path);
 int	    ms_exit(t_parser *parser);
 
 // Export
-void print_export(t_env_list *head);
-void insert(t_env_list **head, char *key, char *value) ;
+void	print_export(t_env_list *head);
+void	insert(t_env_list **head, char *key, char *value) ;
 void    ms_export(t_prompt *prompt);
-void insert_sorted(t_env_list **head, t_env_list *node);
+void	insert_sorted(t_env_list **head, t_env_list *node);
 void	add_value(char *variable, t_prompt *prompt);
 void	ms_unset(t_prompt *prompt);
-void add_on_env_list(t_env_list *env_list, char *key, char *value);
+void	add_on_env_list(t_env_list *env_list, char *key, char *value);
 char	*extract_key(char *variable);
 char	*extract_value(char *variable);
-void extract_variables(char *variable, char *key, char *value);
+void 	extract_variables(char *variable, char *key, char *value);
 
+// Export Utils
+void	sort_export(t_env_list *dup_env);
 // Unset
 void	remove_value(char *variable, t_prompt *prompt);
 void	delete_env(t_env_list *node);

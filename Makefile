@@ -14,7 +14,7 @@
 #                                  SOURCE FILES                                #
 ################################################################################
 
-SRC = main.c lexer.c init.c lexer_utils.c env.c expander.c expander_utils.c parser.c parser_utils.c quotes_utils.c builtins.c export.c unset.c
+SRC = main.c lexer.c init.c lexer_utils.c env.c expander.c expander_utils.c parser.c parser_utils.c quotes_utils.c builtins.c export.c export_utils.c unset.c
 OBJS = $(SRC:.c=.o)
 DEPS = libft/libft.a
 
