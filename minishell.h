@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/24 18:32:55 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/25 14:02:45 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,6 +113,7 @@ void        print_env_list(t_env_list *head);
 void        set_env(char **dup_env, t_prompt *prompt);
 void    token_add_back_env(t_env_list **env_list, t_env_list *new);
 t_env_list	*create_key_value(char *key, char *value, char *string);
+t_env_list	*create_key_value2(char *key, char *value);
 
 // Parser
 char	count_words(t_prompt *prompt);
@@ -167,6 +168,16 @@ void    ms_export(t_prompt *prompt);
 void insert_sorted(t_env_list **head, t_env_list *node);
 void	add_value(char *variable, t_prompt *prompt);
 void	ms_unset(t_prompt *prompt);
+void add_on_env_list(t_env_list *env_list, char *key, char *value);
+char	*extract_key(char *variable);
+char	*extract_value(char *variable);
+void extract_variables(char *variable, char *key, char *value);
+
+// Unset
+void	remove_value(char *variable, t_prompt *prompt);
+void	delete_env(t_env_list *node);
+void	ms_unset(t_prompt *prompt);
+void	swap(t_env_list *node1, t_env_list *node2);
 
 
 
