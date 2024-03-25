@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/20 17:23:01 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/03/24 18:32:55 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,8 @@ bool	sign_exists(char *str, char c);
 char	*copy_content(char *new_str, char *input, char c);
 char	*get_key_value(char *new_str, char *input, t_env_list *env_list);
 char	*expand_digits(char *new, char *input);
-char	*expand_quotes(char *input);
+char	*expand_quotes(char *input, t_env_list *env_list);
+char	*expand_quoted_content(char *input, char quotes, t_env_list *env_list);
 char	next_char(char *str);
 
 //Builtins

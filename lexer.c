@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/21 22:45:34 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/24 20:53:26 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,12 @@ void	get_token(char *input, t_prompt *prompt)
 	printf("\033[32;1m=========== EXPANDER DEV MOD ==========\033[0m\n");
  	if (!check_quotes(input))
 			exit (1);
-  	if (sign_exists(input, '$'))
+  	if (sign_exists(input, '$') || sign_exists(input, '\"') || sign_exists(input, '\''))
 	{
 		temp = input;
 		input = expander(input, prompt->env_list);
-		free (temp);
+		if (temp)
+			free (temp);
 	}
 	//printf("[%s] ////////// INPUT AFTER EXPANDER\n", input);
 
