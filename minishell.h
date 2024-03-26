@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/25 17:29:34 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/26 12:06:35 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,6 +153,7 @@ char	*expand_digits(char *new, char *input);
 char	*expand_quotes(char *input, t_env_list *env_list);
 char	*expand_quoted_content(char *input, char quotes, t_env_list *env_list);
 char	next_char(char *str);
+char	next_char_space(char *str);
 
 //Builtins
 void    ms_pwd(void);

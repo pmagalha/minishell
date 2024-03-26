@@ -42,7 +42,20 @@ char	next_char(char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if (!ft_isalpha(str[i]) && !ft_isdigit(str[i]) && str[i] != 32) // verificar se esta merda funciona assim ou eh preciso tirar a comparacao do 32 (espaco)
+		if (!ft_isalpha(str[i]) && !ft_isdigit(str[i]) && str[i] != 32)
+			return (str[i]);
+	}
+	return (0);	
+}
+
+char	next_char_space(char *str)
+{
+	int		i;
+
+	i = -1;
+	while (str[++i])
+	{
+		if ((!ft_isalpha(str[i]) && !ft_isdigit(str[i])))
 			return (str[i]);
 	}
 	return (0);	
@@ -61,11 +74,12 @@ char	*copy_content(char *new_str, char *input, char c)
 	else
 	{
 		tmp = ft_strndup(input, ft_strclen(input, c) - 1);
-		new = ft_strjoin(new_str, input);
+		new = ft_strjoin(new_str, tmp);
 		free (tmp);
 	}
 	if (	new_str)
 		free (new_str);
+	//printf("NEW AFTER COPY        =================== [%s]\n", new);
 	return (new);
 }
 
@@ -95,7 +109,9 @@ char	*get_key_value(char *new_str, char *input, t_env_list *env_list)
 		return (ft_strjoin(new_str, "$"));
 	else if (*input == '$' && ft_isdigit(*(input + 1))) // no caso de haver numeros depois do 
 		return (expand_digits(new_str, input));
-	key = ft_strndup(input + 1, ft_strclen(input + 1, ' ')); // isolar a key do INPUT, sem espacos e $ para ser mais facil comparar na lista do ENV
+	printf("INPUT: [%s]\n", input);
+	key = ft_strndup(input + 1, ft_strclen(input + 1, next_char_space(input)) - 1); // isolar a key do INPUT, sem espacos e $ para ser mais facil comparar na lista do ENV
+	printf("KEY: [%s]\n", key);
 	new = copy_content(new, input, '$');
 	input += ft_strclen(input, '$') - 1;
 	value = find_value(key, env_list);

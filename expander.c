@@ -17,34 +17,43 @@ static char *expand_single_quotes(char *input)
 	char	*new;
 
 	new = NULL;
-	printf(" SINGLE QUOTE INPUT: [%s]\n", input);
+	//printf(" SINGLE QUOTE INPUT: [%s]\n", input);
 	new = copy_content(new, input + 1, '\'');
 	return (new);
 }
 
-static char *expand_double_quotes(char *input, t_env_list *env_list) // echo "Boas $USER 'tudo bem' '$PWD'"
+static char *expand_double_quotes(char *input, t_env_list *env_list)
 {
-	char	*new;
+	char	*new = NULL;
+	char	*value = NULL;
+	char	*newinput;
 
-	new = NULL;
-	(void)env_list;
-	while (*input)
+	newinput = ft_strndup(input, ft_strclen(input + 1, '"') + 1);
+	while (*newinput)
 	{
-		printf("INPUT POS: [%s]\n", input);
-		if (*input != '$' && *input != '\'' && *input != '\"')
+		if (*newinput == '$')
 		{
-			new = copy_content(new, input, next_char(input + 1));
-			input += ft_strclen(input, next_char(input + 1)) - 1;
-			printf("====== NEXT CHAR: [%c]\n", *input);
-		}
-		else if (*input == '$')
-		{
+			value = ft_strndup(newinput, ft_strclen(newinput, next_char_space(newinput + 1)) - 1); // nao mexer crl
 			if (new)
-				;
+				new = ft_strjoin(new, expander(value, env_list));
 			else
-				new = get_key_value(new, input, env_list);
+				new = expander(value, env_list);
+			newinput += ft_strclen(newinput, next_char_space(newinput + 1));
 		}
-		input++;
+		else if (*newinput != '\"' && *newinput != '\'' && *newinput != '$')
+		{
+			new = copy_content(new, newinput, next_char(newinput + 1));
+			newinput += ft_strclen(newinput, next_char(newinput + 1)) - 1;
+			if (*newinput == '"')
+				newinput++;
+		}
+		else if (*newinput == '\'' && sign_exists(newinput + 1, '\''))
+		{
+			new = ft_strjoin(new, expand_single_quotes(newinput));
+			newinput += ft_strclen(newinput, ft_strclen(newinput, '\'') + 1);
+		}
+		if (*newinput != '$' && *newinput != ' ')
+			newinput++;
 	}
 	return (new);
 }
