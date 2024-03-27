@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/27 17:53:36 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:33:55 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 void	get_token(char *input, t_prompt *prompt)
 {
 	char	*content;
-	char	*temp;
+	char	*new_content;
 	int		len;
 	t_type	type;
 	
-	temp = NULL;
+	new_content = NULL;
 	len = 0;
 	printf("\033[32;1m=========== EXPANDER DEV MOD ==========\033[0m\n");
  	if (!check_quotes(input))
@@ -32,17 +32,16 @@ void	get_token(char *input, t_prompt *prompt)
 			break ;
 		//ft_printf("CONTENT AFTER EXPANDER: [%s]\n", content);
 		content = get_token_content(prompt, input);
-		temp = content;
-		len = ft_strlen(temp);
+		len = ft_strlen(content);
 		//printf("\033[32;1m=========== EXPANDER DEV MOD [%s] ==========\033[0m\n", content);
-		content = expander(content, prompt->env_list);
+		new_content = expander(content, prompt->env_list);
 		input += len;
-		if (content == NULL)
+		if (new_content == NULL)
 			continue ;
-		type = get_type(content);
-		if (temp)
-			free (temp);
-		token_add_back(&(prompt->lexer), create_node(content, type));
+		type = get_type(new_content);
+		if (content)
+			free (content);
+		token_add_back(&(prompt->lexer), create_node(new_content, type));
         if (prompt->lexer->type == PIPE && !prompt->lexer->next) // this is the case for when there is only a single PIPE and nothing after it
 		{
 			ft_printf("minishell: syntax error near unexpected token `|'\n"); // o exit code vai ser 2

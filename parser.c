@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/25 18:36:54 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:03:06 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	get_redirects(t_prompt *prompt)
 				redirect = redirect->next;
 			redirect->next = malloc(sizeof(t_lexer));
 			redirect->next->type = prompt->lexer->type;
-			redirect->next->content = trim_quotes(strdup(prompt->lexer->next->content));
+			redirect->next->content = trim_quotes(ft_strdup(prompt->lexer->next->content));
 			redirect->next->next = NULL;
 			redirect->next->prev = redirect->next;
 		}

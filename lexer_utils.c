@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/14 16:33:12 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/27 18:43:41 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,20 @@ void	free_parser_list(t_parser *head)
 	t_parser	*current;
 	t_parser	*next;
 
+	if (!head)
+		return ;
 	current = head;
 	while (current != NULL)
 	{
 		next = current->next;
 		if (current->command)
-			free(current->command);
+			free_lexer_list(current->command);
 		if (current->builtin)
 			free(current->builtin);
 		if (current->redirects)
-			free(current->redirects);
+			free_lexer_list(current->redirects);
+		if (current->hd_file)
+			free (current->hd_file);
 		free(current);
 		current = next;
 	}

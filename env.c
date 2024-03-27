@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/25 13:58:35 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:47:13 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,9 @@ t_env_list	*create_key_value(char *key, char *value, char *string)
 	new = (t_env_list *)malloc(sizeof(t_env_list));
 	if (new == NULL)
 		return (NULL);
-	new->key = ft_strdup(key);
-	new->value = ft_strdup(value);
-	new->full_string = ft_strdup(string);
+	new->key = key;
+	new->value = value;
+	new->full_string = string;
 	new->next = NULL;
 	return (new);
 }
@@ -98,7 +98,7 @@ void	set_env(char **env, t_prompt *prompt)
         token_add_back_env(&(prompt->env_list), new_node);
 	}
 }
-
+/* 
 void	print_env_list(t_env_list *head)
 {
 	t_env_list *current = head;
@@ -119,7 +119,8 @@ void	print_env(char **env)
 		printf("%s\n", env[i]);
 		i++;
 	}
-}
+} */
+
 
 //USAR A FUNCAO CREATE NODE PARA COLOCAR em env->key e env->value os valores antes e depois do =
 

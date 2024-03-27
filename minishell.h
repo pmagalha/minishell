@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/27 17:28:45 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:14:55 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,7 @@ int	    ms_echo(t_parser *parser);
 void	ms_env(t_prompt *prompt);
 void	exec_builtins(t_prompt *prompt);
 char	*get_env(t_prompt *prompt, char *path);
-int	    ms_exit(t_parser *parser);
+int	    ms_exit(t_parser *parser, t_prompt *prompt);
 
 // Export
 void	print_export(t_env_list *head);

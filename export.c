@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/25 14:03:31 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:55:55 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,4 +125,6 @@ void	ms_export(t_prompt *prompt)
 		}
 	}
 	check_export(prompt);
+	/* if (dup_env)
+		free_env_list(dup_env); THIS SHOULD PROBABLY BE DELETED (BREAKS EXPORT) */
 }

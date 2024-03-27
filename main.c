@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/27 17:46:24 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:53:13 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,8 +135,8 @@ int main(int argc, char **argv, char **env)
 			
 			get_token(input, prompt);
 			
-			dev_mod(prompt);
 			get_parser(prompt);
+			dev_mod(prompt);
 
 			//temp = prompt->env_list; // isto era para testar printar o env na main
 			//print_env_list(temp); // funcao para printar a lista de env com todos os seus nodes

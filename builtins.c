@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/25 14:02:02 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/03/27 18:15:42 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,7 +187,7 @@ void free_array(char **arr)
     }
 }
 
-static void	exit_code(char **str)
+static void	exit_code(char **str, t_prompt *prompt)
 {
 	int	exit_code;
 
@@ -209,11 +209,12 @@ static void	exit_code(char **str)
 		exit_code = 2;
 	}
 	free_array(str);
+	free_data(prompt);
 	exit(exit_code);
 }
 // valor maximo de erro eh 256. se o valor ultrapassar isto, tem de voltar atras. tipo se for 256 + 1 vai para 0 I GUESS
 
-int ms_exit(t_parser *parser)
+int ms_exit(t_parser *parser, t_prompt *prompt)
 {
     char **str;
     t_lexer *temp;
@@ -245,7 +246,7 @@ int ms_exit(t_parser *parser)
     free_lexer_list(temp);
     rl_clear_history();
 	ft_putstr_fd("exit\n", STDERR_FILENO);
-    exit_code(str);
+    exit_code(str, prompt);
     free_array(str);
     return (EXIT_SUCCESS);
 }
@@ -261,7 +262,7 @@ void	exec_builtins(t_prompt *prompt)
 	else if (!ft_strncmp(prompt->parser->command->content, "cd", 3))
 		ms_cd(prompt);
 	else if (!ft_strncmp(prompt->parser->command->content, "exit", 5))
-		ms_exit(prompt->parser);
+		ms_exit(prompt->parser, prompt);
 	else if (!ft_strncmp(prompt->parser->command->content, "export", 7))
 		ms_export(prompt);
 	else if (!ft_strncmp(prompt->parser->command->content, "unset", 6))
