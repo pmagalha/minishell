@@ -12,6 +12,26 @@
 
 #include "minishell.h"
 
+char	*ms_safejoin(char *str1, char *str2)
+{
+	char	*new;
+
+	new = NULL;
+	if (!str1 && !str2)
+		return (NULL);
+	else if (!str1 && str2)
+		return (str2);
+	else if (str1 && !str2)
+		return (str1);
+	else
+		new = ft_strjoin(str1, str2);
+	if (str1)
+		free (str1);
+	if (str2)
+		free (str2);
+	return (new);	
+}
+
 bool	sign_exists(char *str, char c)
 {
 	int	i;
@@ -55,7 +75,7 @@ char	next_char_space(char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if ((!ft_isalpha(str[i]) && !ft_isdigit(str[i])))
+		if ((!ft_isalpha(str[i]) && !ft_isdigit(str[i])) || str[i] == ' ')
 			return (str[i]);
 	}
 	return (0);	
@@ -64,21 +84,22 @@ char	next_char_space(char *str)
 char	*copy_content(char *new_str, char *input, char c)
 {
 	char	*new;
-	char	*tmp;
+	//char	*tmp;
 
 	new = NULL;
-	tmp = NULL;
+	//tmp = NULL;
 	//printf("COPY CONT        =================== [%s]\n", input);
-	if (!new_str)
+	new = ms_safejoin(new_str, ft_strndup(input, ft_strclen(input, c) - 1));
+	/* if (!new_str)
 		new = ft_strndup(input, ft_strclen(input, c) - 1);
 	else
 	{
 		tmp = ft_strndup(input, ft_strclen(input, c) - 1);
 		new = ft_strjoin(new_str, tmp);
 		free (tmp);
-	}
-	if (	new_str)
-		free (new_str);
+	} */
+	//if (	new_str)
+	//	free (new_str);
 	//printf("NEW AFTER COPY        =================== [%s]\n", new);
 	return (new);
 }
@@ -91,7 +112,7 @@ static char	*find_value(char *key, t_env_list *env_list)
 
 	while (head != NULL)
 	{
-		if (!ft_strncmp(key, head->key, ft_strlen(key)))
+		if (!ft_strncmp(key, head->key, ft_strlen(head->key)))
 			return (ft_strdup(head->value));
 		head = head->next;
 	}
@@ -109,10 +130,9 @@ char	*get_key_value(char *new_str, char *input, t_env_list *env_list)
 		return (ft_strjoin(new_str, "$"));
 	else if (*input == '$' && ft_isdigit(*(input + 1))) // no caso de haver numeros depois do 
 		return (expand_digits(new_str, input));
-	printf("INPUT: [%s]\n", input);
 	key = ft_strndup(input + 1, ft_strclen(input + 1, next_char_space(input)) - 1); // isolar a key do INPUT, sem espacos e $ para ser mais facil comparar na lista do ENV
-	printf("KEY: [%s]\n", key);
-	new = copy_content(new, input, '$');
+	//new = copy_content(new, input, '$'); // TALVEZ APAGAR ESTA LINHA!!!!
+	//printf("////////////////////////// NEW GET KEY VALUE: [%s]\n", new);
 	input += ft_strclen(input, '$') - 1;
 	value = find_value(key, env_list);
 	if (new_str && value) // caso exista string anterior e encontre o value na lista do env
@@ -120,7 +140,7 @@ char	*get_key_value(char *new_str, char *input, t_env_list *env_list)
 	else if (!new_str && value) // se nao existir string anterior e encontrar o value na lista do env
 		new = ft_strdup(value);
 	else if (!new_str && !value) // se nao existir na lista e nao encontrar o value na lista do env
-		new = ("");
+		new = NULL;
 	else if (new_str && !value) //se existir string anteriro e nao encontrar o value na lista do env
 		new = ft_strdup(new_str);
 	if (key)

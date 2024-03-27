@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/25 17:34:57 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/27 17:53:36 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,12 @@ void	get_token(char *input, t_prompt *prompt)
 		content = get_token_content(prompt, input);
 		temp = content;
 		len = ft_strlen(temp);
-		printf("\033[32;1m=========== EXPANDER DEV MOD [%s] ==========\033[0m\n", content);
+		//printf("\033[32;1m=========== EXPANDER DEV MOD [%s] ==========\033[0m\n", content);
 		content = expander(content, prompt->env_list);
-		type = get_type(content);
 		input += len;
+		if (content == NULL)
+			continue ;
+		type = get_type(content);
 		if (temp)
 			free (temp);
 		token_add_back(&(prompt->lexer), create_node(content, type));
@@ -49,6 +51,7 @@ void	get_token(char *input, t_prompt *prompt)
             // quando a palavra a frente do redirect eh uma variavel env que tem de ser substituida mas nao existe. Nome "minishell: ambiguous redirect" e o exit code eh 1
 		}
 	}
+	printf("\033[32;1m=========== EXPANDER GREAT SUCCESS ==========\033[0m\n");
 }
 
 // Content: [$'HOME'] | Type: [OTHER] o lexer tem de dizer que se houver um $, tem de mandar com as quotes

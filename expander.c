@@ -12,36 +12,67 @@
 
 #include "minishell.h"
 
+static int	is_identifier(char c)
+{
+	return (c == '|' || c == '<' || c == '>' || c == '[' || c == ']'
+		|| c == '\'' || c == '\"' || c == ' ' || c == ',' || c == '.'
+		|| c == ':' || c == '/' || c == '{' || c == '}' || c == '+'
+		|| c == '^' || c == '%' || c == '#' || c == '@' || c == '!'
+		|| c == '~'	|| c == '=' || c == '-' || c == '?' || c == '&' || c == '*');
+}
+
 static char *expand_single_quotes(char *input)
 {
 	char	*new;
 
 	new = NULL;
-	//printf(" SINGLE QUOTE INPUT: [%s]\n", input);
 	new = copy_content(new, input + 1, '\'');
 	return (new);
 }
 
+// echo -n hello $false $USER file | cat $$ $USER$PWD$2LANG $? file_2 | pwd | "$?" | '$LANG' $"test" |
 static char *expand_double_quotes(char *input, t_env_list *env_list)
 {
 	char	*new = NULL;
-	char	*value = NULL;
+	char	*key = NULL;
 	char	*newinput;
+	char	*tmp;
 
+	////////printf("QUOTES INPUT: [%s]\n", input);
 	newinput = ft_strndup(input, ft_strclen(input + 1, '"') + 1);
+	key = NULL;
+	tmp = newinput;
 	while (*newinput)
 	{
-		if (*newinput == '$')
+		if (*newinput == '$' && *(newinput + 1))
 		{
-			value = ft_strndup(newinput, ft_strclen(newinput, next_char_space(newinput + 1)) - 1); // nao mexer crl
-			if (new)
-				new = ft_strjoin(new, expander(value, env_list));
+			if (is_identifier(*(newinput + 1)) || *(newinput + 1) == '$')
+			{
+				key = ft_strndup(newinput, 1);
+				newinput += 2;
+			}
 			else
-				new = expander(value, env_list);
-			newinput += ft_strclen(newinput, next_char_space(newinput + 1));
+			{
+				key = ft_strndup(newinput, ft_strclen(newinput + 1, next_char_space(newinput + 1))); // nao mexer crl
+				newinput += ft_strclen(newinput + 1, next_char_space(newinput + 1));
+			}
+			if (new)
+				new = ft_strjoin(new, expander(key, env_list));
+			else
+				new = expander(key, env_list);
 		}
-		else if (*newinput != '\"' && *newinput != '\'' && *newinput != '$')
+		else if ((*newinput != '\"' && *newinput != '\'' && *newinput != '$'))
 		{
+			if (is_identifier(*input))
+			{
+				new = ms_safejoin(new, ft_substr(newinput, 0, 1));
+				/* if (new)
+					new = ft_strjoin(new, ft_substr(newinput, 0, 1));
+				else
+					new = ft_substr(newinput, 0, 1); */
+			}
+			newinput++;
+			continue ;
 			new = copy_content(new, newinput, next_char(newinput + 1));
 			newinput += ft_strclen(newinput, next_char(newinput + 1)) - 1;
 			if (*newinput == '"')
@@ -49,12 +80,14 @@ static char *expand_double_quotes(char *input, t_env_list *env_list)
 		}
 		else if (*newinput == '\'' && sign_exists(newinput + 1, '\''))
 		{
-			new = ft_strjoin(new, expand_single_quotes(newinput));
-			newinput += ft_strclen(newinput, ft_strclen(newinput, '\'') + 1);
+			new = ms_safejoin(new, expand_single_quotes(newinput));
+			newinput += ft_strclen(newinput + 1, '\'');
 		}
-		if (*newinput != '$' && *newinput != ' ')
+		if (*newinput != '$')
 			newinput++;
 	}
+	if (tmp)
+		free(tmp);
 	return (new);
 }
 
@@ -74,45 +107,54 @@ char	*expand_quotes(char *input, t_env_list *env_list)
 }
 
 // 'dadawdwad'   $USER $$$PWD       "$USER"'"$USER"' boas?
-// verificar o caso de não haver '$' no input, as quotes não são tratadas direito. ver se é preciso passar tudo por aqui na mesma, mesmo que não tenha '$'
 char	*expander(char *input, t_env_list *env_list)
 {
 	char	*new;
 
 	new = NULL;
-	printf("RAW INPUT: [%s]\n", input);
+	//////printf("RAW INPUT: [%s]\n", input);
 	while (*input != '\0')
 	{
-		if (*input != '$' && *input != '\'' && *input != '\"')
+		if ((*input != '$' && *input != '\'' && *input != '\"')
+			|| *input == '>')
 		{
+			if (is_identifier(*input))
+			{
+				new = ms_safejoin(new, ft_substr(input, 0, 1));
+				/* if (new)
+					new = ft_strjoin(new, ft_substr(input, 0, 1));
+				else
+					new = ft_substr(input, 0, 1); */
+				input++;
+				continue ;
+			}
 			new = copy_content(new, input, next_char(input + 1));
 			input += ft_strclen(input, next_char(input + 1)) - 1;
 		}
 		else if (*input == '\'' || *input == '\"')
 		{
-			if (new)
+			new = ms_safejoin(new, expand_quotes(input, env_list));
+			/* if (new)
 				new = ft_strjoin(new, expand_quotes(input, env_list));
 			else
-				new = expand_quotes(input, env_list);
+				new = expand_quotes(input, env_list); */
 			input += ft_strclen(input + 1, *input) + 1;
 		}
 		else if (*input == '$' && *(input + 1) == '?')
 		{
-			if (new)
+			new = ms_safejoin(new, ft_itoa(g_code));
+			/* if (new)
 				new = ft_strjoin(new, ft_itoa(g_code));
 			else
-				new = ft_strdup(ft_itoa(g_code));
+				new = ft_strdup(ft_itoa(g_code)); */
 			input += 1;
 		}
 		else if (*input == '$' && *(input + 1) == '$')
 		{
-			if (new)
-				new = ft_strjoin(new, ft_itoa(getpid()));
-			else
-				new = ft_strdup(ft_itoa(getpid()));
+			new = ms_safejoin(new, ft_itoa(getpid()));
 			input += 1;
 		}
-	 	else if (*input == '$' && *(input + 1) != '$')
+	 	else if (*input == '$' && *(input + 1))
 		{
 			new = get_key_value(new, input, env_list);
 			input += ft_strclen(input + 1, next_char(input + 1));

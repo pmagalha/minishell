@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/15 12:32:00 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/27 17:46:24 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,11 @@ int	dev_mod(t_prompt *prompt)
 	if (prompt->lexer)
 	{
 		t_lexer	*lexer = NULL;
-		printf("\n\033[32;1mLEXER: \033[0m");
+		printf("\n\033[32;1mLEXER: \n\033[0m");
 		lexer = prompt->lexer;
 		while(lexer)
 		{
-			printf("String: [%s] " "Type: [%s] ", lexer->content, print_type(lexer->type));
+			printf("String: [%s] " "Type: [%s] \n", lexer->content, print_type(lexer->type));
 			lexer = lexer->next;
 		}
 	}
@@ -135,8 +135,8 @@ int main(int argc, char **argv, char **env)
 			
 			get_token(input, prompt);
 			
-			get_parser(prompt);
 			dev_mod(prompt);
+			get_parser(prompt);
 
 			//temp = prompt->env_list; // isto era para testar printar o env na main
 			//print_env_list(temp); // funcao para printar a lista de env com todos os seus nodes
