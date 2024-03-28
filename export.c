@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/27 18:55:55 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/28 10:20:36 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ t_env_list	*create_dup(t_env_list *env_list)
 			dup_value = ft_strdup(head->value);
 		else
 			dup_value = NULL;
-		new_node = create_key_value2(dup_key, dup_value);
+		new_node = create_key_value(dup_key, dup_value);
 		token_add_back_env(&dup_env, new_node);
 		head = head->next;
 	}

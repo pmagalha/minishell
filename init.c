@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/02/07 15:46:11 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/28 10:17:30 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,6 @@ t_env_list	*init_env(t_env_list *env_list)
 	env_list = malloc(sizeof(t_env_list));
 	if (!env_list)
 		return (NULL);
-	env_list->full_string = NULL;
 	env_list->key = NULL;
 	env_list->value = NULL;
 	env_list->next = NULL;

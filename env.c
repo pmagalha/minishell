@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/27 18:47:13 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/28 10:20:17 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	count_lines(char **env)
 	return (count);
 }
 
-t_env_list	*create_key_value(char *key, char *value, char *string)
+/* t_env_list	*create_key_value(char *key, char *value, char *string)
 {
 	t_env_list	*new;
 
@@ -37,20 +37,20 @@ t_env_list	*create_key_value(char *key, char *value, char *string)
 	new->full_string = string;
 	new->next = NULL;
 	return (new);
-}
+} */
 
-t_env_list	*create_key_value2(char *key, char *value)
+t_env_list	*create_key_value(char *key, char *value)
 {
 	t_env_list	*new;
 
 	new = (t_env_list *)malloc(sizeof(t_env_list));
 	if (!new)
 		return (NULL);
-	new->key = ft_strdup(key);
+	new->key = (key);
 	if (!value)
 		new->value = NULL;
 	else
-		new->value = ft_strdup(value);
+		new->value = (value);
 	new->next = NULL;
 	return (new);
 }
@@ -76,7 +76,6 @@ void	set_env(char **env, t_prompt *prompt)
 	int			lines;
 	char		*key;
 	char		*value;
-	char		*string;
 	t_env_list	*new_node;
 
 	i = 0;
@@ -85,8 +84,7 @@ void	set_env(char **env, t_prompt *prompt)
 	{
 		key = ft_substr(env[i], 0, ft_strchr(env[i], '=') - env[i]);
 		value = ft_substr(env[i], ft_strchr(env[i], '=') - env[i] + 1, ft_strlen(env[i]));
-		string = ft_strdup(env[i]);
-		new_node = create_key_value(key, value, string);
+		new_node = create_key_value(key, value);
 		token_add_back_env(&(prompt->env_list), new_node);
 		i++;
 	}
@@ -94,7 +92,7 @@ void	set_env(char **env, t_prompt *prompt)
 	{
         key = "OLDPWD";
         value = get_env(prompt, "PWD");
-        new_node = create_key_value(key, value, string);
+        new_node = create_key_value(key, value);
         token_add_back_env(&(prompt->env_list), new_node);
 	}
 }

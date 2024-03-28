@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/27 18:43:41 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/28 10:39:09 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_lexer	*create_node(void *content, t_type type)
+t_lexer	*create_node(char *content, t_type type)
 {
 	t_lexer	*new;
 
@@ -41,44 +41,54 @@ void	token_add_back(t_lexer **token_lst, t_lexer *new)
 	}
 }
 
-void	free_lexer_list(t_lexer *head)
+void free_lexer_list(t_lexer *head)
 {
-	t_lexer	*current;
-	t_lexer	*next;
+    t_lexer *current;
+    t_lexer *next;
 
-	current = head;
-	while (current != NULL)
-	{
-		next = current->next;
-		if (current->content)
-			free(current->content);
-		free(current);
-		current = next;
-	}
+    current = head;
+    while (current != NULL)
+    {
+        next = current->next;
+        if (current->content) // libertar content alocado pela str_dup
+            free(current->content);
+        free(current);
+        current = next;
+    }
 }
 
-void	free_parser_list(t_parser *head)
+void free_parser_list(t_parser *head)
 {
-	t_parser	*current;
-	t_parser	*next;
+    t_lexer *temp;
+	t_parser *parser;
+    t_parser *next_parser;
+	
+	parser = head;
+	next_parser = parser->next;
+    while (parser != NULL)
+    {
+        // Free dos nodes
+        while (parser->command != NULL)
+        {
+            temp = parser->command;
+            parser->command = parser->command->next;
+            free(temp->content); // libertar content alocado pela str_dup
+            free(temp);
+        }
+        // Free dos redirect nodes
+        while (parser->redirects != NULL)
+        {
+            temp = parser->redirects;
+            parser->redirects = parser->redirects->next;
+            free(temp->content); // libertar content alocado pela str_dup
+            free(temp);
+        }
+        free(parser->builtin); // Libertar memoria allocada para os builtins
+        free(parser->hd_file); // Libertar memoria allocada para os hd_files (wtv that is)
 
-	if (!head)
-		return ;
-	current = head;
-	while (current != NULL)
-	{
-		next = current->next;
-		if (current->command)
-			free_lexer_list(current->command);
-		if (current->builtin)
-			free(current->builtin);
-		if (current->redirects)
-			free_lexer_list(current->redirects);
-		if (current->hd_file)
-			free (current->hd_file);
-		free(current);
-		current = next;
-	}
+        free(parser);
+        parser = next_parser;
+    }
 }
 
 void free_env_list(t_env_list *head)
@@ -94,8 +104,6 @@ void free_env_list(t_env_list *head)
             free(current->key);
         if (current->value)
             free(current->value);
-        if (current->full_string)
-            free(current->full_string);
         free(current);
         current = next;
     }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 13:55:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/25 13:56:47 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/03/28 10:21:03 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	add_on_env_list(t_env_list *env_list, char *key, char *value)
 {
 	t_env_list	*new_node;
 
-	new_node = create_key_value2(key, value);
+	new_node = create_key_value(key, value);
 	if (new_node)
 		token_add_back_env(&env_list, new_node);
 }
