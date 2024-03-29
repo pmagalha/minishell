@@ -21,7 +21,7 @@ char	*ft_strndup(char *src, int len)
 	new = (char *)malloc(sizeof(char) * (len + 1));
 	if (!new)
 		return (NULL);
-	while (i <= len)
+	while (i < len)
 		new[i++] = *src++;
 	new[i] = '\0';
 	return (new);

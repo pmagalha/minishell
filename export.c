@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/28 10:20:36 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/29 15:02:59 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,9 +111,11 @@ void	ms_export(t_prompt *prompt)
 	t_lexer		*command;
 	t_env_list	*dup_env;
 	t_env_list	*current;
+	t_env_list	*head;
 
 	dup_env = create_dup(prompt->env_list);
 	command = prompt->parser->command->next;
+	head = dup_env;
 	if (!command)
 	{
 		current = dup_env;
@@ -125,6 +127,5 @@ void	ms_export(t_prompt *prompt)
 		}
 	}
 	check_export(prompt);
-	/* if (dup_env)
-		free_env_list(dup_env); THIS SHOULD PROBABLY BE DELETED (BREAKS EXPORT) */
+	free_env_list(head);
 }

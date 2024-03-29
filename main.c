@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/28 09:57:50 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/29 14:05:13 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ int main(int argc, char **argv, char **env)
 		if (argv[1])
 		{
 			printf("Wrong number of arguments\n");
-			break ;
+			exit (2);
 		}
 		input = readline("minishell$ ");
 		if (input != NULL)

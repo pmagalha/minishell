@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/27 18:15:42 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/29 13:55:58 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,18 +253,18 @@ int ms_exit(t_parser *parser, t_prompt *prompt)
 
 void	exec_builtins(t_prompt *prompt)
 {
-	if (!ft_strncmp(prompt->parser->command->content, "echo", 5))
+	if (!ft_strncmp(prompt->parser->builtin, "echo", 4))
 		ms_echo(prompt->parser);
-	else if (!ft_strncmp(prompt->parser->command->content, "pwd", 4))
+	else if (!ft_strncmp(prompt->parser->builtin, "pwd", 3))
 		ms_pwd();
-	else if (!ft_strncmp(prompt->parser->command->content, "env", 4))
+	else if (!ft_strncmp(prompt->parser->builtin, "env", 3))
 		ms_env(prompt); 
-	else if (!ft_strncmp(prompt->parser->command->content, "cd", 3))
+	else if (!ft_strncmp(prompt->parser->builtin, "cd", 2))
 		ms_cd(prompt);
-	else if (!ft_strncmp(prompt->parser->command->content, "exit", 5))
+	else if (!ft_strncmp(prompt->parser->builtin, "exit", 4))
 		ms_exit(prompt->parser, prompt);
-	else if (!ft_strncmp(prompt->parser->command->content, "export", 7))
+	else if (!ft_strncmp(prompt->parser->builtin, "export", 6))
 		ms_export(prompt);
-	else if (!ft_strncmp(prompt->parser->command->content, "unset", 6))
+	else if (!ft_strncmp(prompt->parser->builtin, "unset", 5))
 		ms_unset(prompt);
 }

@@ -38,7 +38,7 @@ char	*ms_safejoin(char *str1, char *str2)
 		free (str1);
 	if (str2)
 		free (str2);
-	return (new);	
+	return (new);
 }
 
 bool	sign_exists(char *str, char sign, char c)
@@ -97,23 +97,9 @@ char	next_char_space(char *str) // procura o proximo caracter nao alfanumerico I
 char	*copy_content(char *new_str, char *input, char c)
 {
 	char	*new;
-	char	*tmp;
 
 	new = NULL;
-	tmp = NULL;
-	//printf("COPY CONT        =================== [%s]\n", input);
-	//new = ms_safejoin(new_str, ft_strndup(input, ft_strclen(input, c) - 1));
-	if (!new_str)
-		new = ft_strndup(input, ft_strclen(input, c) - 1);
-	else
-	{
-		tmp = ft_strndup(input, ft_strclen(input, c) - 1);
-		new = ft_strjoin(new_str, tmp);
-		free (tmp);
-	}
-	if (new_str)
-		free (new_str);
-	//printf("NEW AFTER COPY        =================== [%s]\n", new);
+	new = ms_safejoin(new_str, ft_strndup(input, ft_strclen(input, c)));
 	return (new);
 }
 
@@ -143,23 +129,13 @@ char	*get_key_value(char *new_str, char *input, t_env_list *env_list)
 		return (ft_strjoin(new_str, "$"));
 	else if (*input == '$' && ft_isdigit(*(input + 1))) // no caso de haver numeros depois do 
 		return (expand_digits(new_str, input));
-	key = ft_strndup(input + 1, ft_strclen(input + 1, next_char_space(input)) - 1); // isolar a key do INPUT, sem espacos e $ para ser mais facil comparar na lista do ENV
+	key = ft_strndup(input + 1, ft_strclen(input + 1, next_char_space(input))); // isolar a key do INPUT, sem espacos e $ para ser mais facil comparar na lista do ENV
+	printf("KEEEEEEEEEEEEEEEEEEEEEEEEY: [%s]\n", key);
 	input += ft_strclen(input, '$') - 1;
 	value = find_value(key, env_list);
-	if (new_str && value) // caso exista string anterior e encontre o value na lista do env
-		new = ft_strjoin(new_str, value);
-	else if (!new_str && value) // se nao existir string anterior e encontrar o value na lista do env
-		new = ft_strdup(value);
-	else if (!new_str && !value) // se nao existir na lista e nao encontrar o value na lista do env
-		new = NULL;
-	else if (new_str && !value) //se existir string anteriro e nao encontrar o value na lista do env
-		new = ft_strdup(new_str);
+	new = ms_safejoin(new_str, value);
 	if (key)
 		free (key);
-	if (new_str)
-		free (new_str);
-	if (value)
-		free (value);
 	return (new);
 }
 
@@ -172,7 +148,7 @@ char	*expand_digits(char *new_str, char *input)
 	temp = NULL;
 	input = input + 2;
 	if (input)
-		temp = ft_strndup(input, ft_strclen(input, next_char(input)) - 1);
+		temp = ft_strndup(input, ft_strclen(input, next_char(input)));
 	if (new_str)
 	{
 		new = ft_strjoin(new_str, temp);

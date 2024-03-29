@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/28 10:26:02 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/29 14:12:21 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,13 @@ void	get_parser(t_prompt *prompt)
 			get_command(prompt);
 			get_redirects(prompt);
 		}
-		if (prompt->parser->command->content)
+		if (prompt->parser->builtin)
 				exec_builtins(prompt);
+		else
+		{
+			printf("command %s not found\n", prompt->parser->command->content);
+			return ;
+		}
 		if (prompt->lexer && prompt->lexer->next && prompt->lexer->type == PIPE)
 		{
 			if (prompt->lexer->next->type == PIPE) // this is the condition for the double pipes case, (it will ignore the second)
@@ -93,7 +98,7 @@ void	get_command(t_prompt *prompt)
 	if (prompt->lexer->type == OTHER)
 	{
 		if (!prompt->parser->command)
-			prompt->parser->command = create_node(ft_strdup(prompt->lexer->content), prompt->lexer->type);
+			prompt->parser->command = create_node(ms_safejoin(prompt->lexer->content, NULL), prompt->lexer->type);
 		else
 		{
 			command_node = prompt->parser->command;
@@ -101,7 +106,7 @@ void	get_command(t_prompt *prompt)
 				command_node = command_node->next;
 			command_node->next = malloc(sizeof(t_lexer));
 			command_node->next->type = prompt->lexer->type;
-			command_node->next->content = ft_strdup(prompt->lexer->content);
+			command_node->next->content = ms_safejoin(prompt->lexer->content, NULL);
 			command_node->next->next = NULL;
 			command_node->next->prev = command_node;
 		}
@@ -128,7 +133,7 @@ void	get_redirects(t_prompt *prompt)
 				redirect = redirect->next;
 			redirect->next = malloc(sizeof(t_lexer));
 			redirect->next->type = prompt->lexer->type;
-			redirect->next->content = trim_quotes(ft_strdup(prompt->lexer->next->content));
+			redirect->next->content = ms_safejoin(prompt->lexer->next->content, NULL);
 			redirect->next->next = NULL;
 			redirect->next->prev = redirect->next;
 		}
