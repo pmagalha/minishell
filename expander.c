@@ -10,79 +10,70 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+/*
+$? | '$?' | echo '$?' "$?" $? "'$?'" '"$?"' $USER $KILLME
+echo -n "hello done " "'hello'" 'test' "" "  " $'HOME' >> file |ls<$USER| ls <$USER || $pwd (NA)
+echo "test'test" 'test"test' "test"test test"test" '$USER"test' "$USER'test" "" '' """" ""test"" ''"test"'' "'test'" '"test"' "''test''"
+echo -n hello $false > file | cat < $USER > file_2 | pwd || $? | >> test | ""
+*/
 
-static int	is_identifier(char c)
-{
-	return (c == '|' || c == '<' || c == '>' || c == '[' || c == ']'
-		|| c == '\'' || c == '\"' || c == ' ' || c == ',' || c == '.'
-		|| c == ':' || c == '/' || c == '{' || c == '}' || c == '+'
-		|| c == '^' || c == '%' || c == '#' || c == '@' || c == '!'
-		|| c == '~'	|| c == '=' || c == '-' || c == '?' || c == '&' || c == '*');
-}
+#include "minishell.h"
 
 static char *expand_single_quotes(char *input)
 {
 	char	*new;
 
 	new = NULL;
-	new = copy_content(new, input + 1, '\'');
+	new = ms_safejoin(new, ft_strndup(input + 1, ft_strclen(input + 1, '\'') - 1));
+
 	return (new);
 }
 
+// Known bugs: echo "boas $'USER tudo $PWD" - nao esta a imprimir o $ antes do 'USER - TO DO
+//	     	   echo "boas $'USER $PWD' tudo $HOME" - o $PWD tem que ser expandido :facepalm: !!!  MAYBE FIXED (?)
 // echo -n hello $false $USER file | cat $$ $USER$PWD$2LANG $? file_2 | pwd | "$?" | '$LANG' $"test" |
 static char *expand_double_quotes(char *input, t_env_list *env_list)
 {
 	char	*new = NULL;
-	char	*key = NULL;
 	char	*newinput;
 	char	*tmp;
+	char	*key;
 
 	////////printf("QUOTES INPUT: [%s]\n", input);
 	newinput = ft_strndup(input, ft_strclen(input + 1, '"') + 1);
-	key = NULL;
 	tmp = newinput;
+	key = NULL;
 	while (*newinput)
 	{
-		if (*newinput == '$' && *(newinput + 1))
+		//printf("///////// NEWINPUT: [%s]\n", newinput);
+		if (*newinput == '$' && *(newinput + 1)) // fazer funcao para passar o &new e modificar diretamente na nova funcao, cuja funcao retorna o tamanho da key ?
 		{
-			if (is_identifier(*(newinput + 1)) || *(newinput + 1) == '$')
-			{
-				key = ft_strndup(newinput, 1);
-				newinput += 2;
-			}
-			else
-			{
-				key = ft_strndup(newinput, ft_strclen(newinput + 1, next_char_space(newinput + 1))); // nao mexer crl
-				newinput += ft_strclen(newinput + 1, next_char_space(newinput + 1));
-			}
-			if (new)
-				new = ft_strjoin(new, expander(key, env_list));
-			else
-				new = expander(key, env_list);
+			key = get_key(newinput);
+			new = ms_safejoin(new, expander(key, env_list));
+			newinput += ft_strlen(key);
+			ms_free_array(key);
+			continue ;
 		}
-		else if ((*newinput != '\"' && *newinput != '\'' && *newinput != '$'))
+		else if (*newinput != '\"' && *newinput != '\'')
 		{
-			if (is_identifier(*input))
+			if (is_identifier(*newinput))
 			{
 				new = ms_safejoin(new, ft_substr(newinput, 0, 1));
-				/* if (new)
-					new = ft_strjoin(new, ft_substr(newinput, 0, 1));
-				else
-					new = ft_substr(newinput, 0, 1); */
+				newinput++;
+				continue ;
 			}
-			newinput++;
-			continue ;
 			new = copy_content(new, newinput, next_char(newinput + 1));
 			newinput += ft_strclen(newinput, next_char(newinput + 1)) - 1;
 			if (*newinput == '"')
 				newinput++;
 		}
-		else if (*newinput == '\'' && sign_exists(newinput + 1, '\''))
+		else if (*newinput == '\'' && *(newinput - 1) != '$' && sign_exists(newinput + 1, '\'', '\"'))
 		{
 			new = ms_safejoin(new, expand_single_quotes(newinput));
-			newinput += ft_strclen(newinput + 1, '\'');
+			newinput += ft_strclen(newinput + 1, '\'') + 1;
 		}
+		else if (*newinput == '\'')
+			new = ms_safejoin(new, ft_substr(newinput, 0, 1));
 		if (*newinput != '$')
 			newinput++;
 	}
@@ -99,7 +90,7 @@ char	*expand_quotes(char *input, t_env_list *env_list)
 	if (*input == '\"' || *input == '\'')
 	{
 		if (*input == '\"')
-			new_input = expand_double_quotes(input, env_list);
+			new_input = expand_double_quotes(input + 1, env_list);
 		else if (*input == '\'')
 			new_input = expand_single_quotes(input);
 	}
@@ -112,19 +103,14 @@ char	*expander(char *input, t_env_list *env_list)
 	char	*new;
 
 	new = NULL;
-	//////printf("RAW INPUT: [%s]\n", input);
+	printf("RAW INPUT: [%s]\n", input);
 	while (*input != '\0')
 	{
-		if ((*input != '$' && *input != '\'' && *input != '\"')
-			|| *input == '>')
+		if (*input != '$' && *input != '\'' && *input != '\"')
 		{
 			if (is_identifier(*input))
 			{
 				new = ms_safejoin(new, ft_substr(input, 0, 1));
-				/* if (new)
-					new = ft_strjoin(new, ft_substr(input, 0, 1));
-				else
-					new = ft_substr(input, 0, 1); */
 				input++;
 				continue ;
 			}
@@ -134,19 +120,11 @@ char	*expander(char *input, t_env_list *env_list)
 		else if (*input == '\'' || *input == '\"')
 		{
 			new = ms_safejoin(new, expand_quotes(input, env_list));
-			/* if (new)
-				new = ft_strjoin(new, expand_quotes(input, env_list));
-			else
-				new = expand_quotes(input, env_list); */
 			input += ft_strclen(input + 1, *input) + 1;
 		}
 		else if (*input == '$' && *(input + 1) == '?')
 		{
 			new = ms_safejoin(new, ft_itoa(g_code));
-			/* if (new)
-				new = ft_strjoin(new, ft_itoa(g_code));
-			else
-				new = ft_strdup(ft_itoa(g_code)); */
 			input += 1;
 		}
 		else if (*input == '$' && *(input + 1) == '$')

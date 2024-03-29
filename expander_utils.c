@@ -12,6 +12,15 @@
 
 #include "minishell.h"
 
+int	is_identifier(char c)
+{
+	return (c == '|' || c == '<' || c == '>' || c == '[' || c == ']'
+		|| c == '\'' || c == '\"' || c == ' ' || c == ',' || c == '.'
+		|| c == ':' || c == '/' || c == '{' || c == '}' || c == '+'
+		|| c == '^' || c == '%' || c == '#' || c == '@' || c == '!'
+		|| c == '~'	|| c == '=' || c == '-' || c == '?' || c == '&' || c == '*');
+}
+
 char	*ms_safejoin(char *str1, char *str2)
 {
 	char	*new;
@@ -32,15 +41,19 @@ char	*ms_safejoin(char *str1, char *str2)
 	return (new);	
 }
 
-bool	sign_exists(char *str, char c)
+bool	sign_exists(char *str, char sign, char c)
 {
 	int	i;
 
-	i = -1;
-	while (str[++i])
+	i = 0;
+	if (!str || !str[1])
+		return (false);
+	//printf("SIGN EXISTS STR: [%s]\n", str);
+	while (str[i] != '\0' && str[i] != c)
 	{
-		if (str[i] == c)
+		if (str[i] == sign)
 			return (true);
+		i++;
 	}
 	return (false);
 }
@@ -55,27 +68,27 @@ int	count_signs(char *str, char c)
 	return (i);
 }
 
-char	next_char(char *str)
+char	next_char(char *str) // procura o proximo caracter nao alfanumerico e ignora espacos
 {
 	int		i;
 
 	i = -1;
 	while (str[++i])
 	{
-		if (!ft_isalpha(str[i]) && !ft_isdigit(str[i]) && str[i] != 32)
+		if (!ft_isalnum(str[i]) && str[i] != 32)
 			return (str[i]);
 	}
 	return (0);	
 }
 
-char	next_char_space(char *str)
+char	next_char_space(char *str) // procura o proximo caracter nao alfanumerico INCLUINDO espacos
 {
 	int		i;
 
 	i = -1;
 	while (str[++i])
 	{
-		if ((!ft_isalpha(str[i]) && !ft_isdigit(str[i])) || str[i] == ' ')
+		if (!ft_isalnum(str[i]) || str[i] == 32)
 			return (str[i]);
 	}
 	return (0);	
@@ -84,22 +97,22 @@ char	next_char_space(char *str)
 char	*copy_content(char *new_str, char *input, char c)
 {
 	char	*new;
-	//char	*tmp;
+	char	*tmp;
 
 	new = NULL;
-	//tmp = NULL;
+	tmp = NULL;
 	//printf("COPY CONT        =================== [%s]\n", input);
-	new = ms_safejoin(new_str, ft_strndup(input, ft_strclen(input, c) - 1));
-	/* if (!new_str)
+	//new = ms_safejoin(new_str, ft_strndup(input, ft_strclen(input, c) - 1));
+	if (!new_str)
 		new = ft_strndup(input, ft_strclen(input, c) - 1);
 	else
 	{
 		tmp = ft_strndup(input, ft_strclen(input, c) - 1);
 		new = ft_strjoin(new_str, tmp);
 		free (tmp);
-	} */
-	//if (	new_str)
-	//	free (new_str);
+	}
+	if (new_str)
+		free (new_str);
 	//printf("NEW AFTER COPY        =================== [%s]\n", new);
 	return (new);
 }
@@ -131,8 +144,6 @@ char	*get_key_value(char *new_str, char *input, t_env_list *env_list)
 	else if (*input == '$' && ft_isdigit(*(input + 1))) // no caso de haver numeros depois do 
 		return (expand_digits(new_str, input));
 	key = ft_strndup(input + 1, ft_strclen(input + 1, next_char_space(input)) - 1); // isolar a key do INPUT, sem espacos e $ para ser mais facil comparar na lista do ENV
-	//new = copy_content(new, input, '$'); // TALVEZ APAGAR ESTA LINHA!!!!
-	//printf("////////////////////////// NEW GET KEY VALUE: [%s]\n", new);
 	input += ft_strclen(input, '$') - 1;
 	value = find_value(key, env_list);
 	if (new_str && value) // caso exista string anterior e encontre o value na lista do env

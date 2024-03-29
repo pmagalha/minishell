@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/28 10:39:21 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/29 12:43:41 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ typedef struct  s_env_list
 {
     char    *key;
     char    *value;
+    char    *full_string;
     struct  s_env_list   *next;
 }               t_env_list;
 
@@ -93,7 +94,7 @@ t_type  get_type(char *content);
 
 //Lexer list aux
 
-t_lexer	*create_node(char *content, t_type type);
+t_lexer	*create_node(void *content, t_type type);
 void	token_add_back(t_lexer **token_lst, t_lexer *new);
 
 // Init
@@ -112,7 +113,8 @@ void        print_env(char **env);
 void        print_env_list(t_env_list *head);
 void        set_env(char **dup_env, t_prompt *prompt);
 void    token_add_back_env(t_env_list **env_list, t_env_list *new);
-t_env_list	*create_key_value(char *key, char *value);
+t_env_list	*create_key_value(char *key, char *value, char *string);
+t_env_list	*create_key_value2(char *key, char *value);
 
 // Parser
 char	count_words(t_prompt *prompt);
@@ -142,17 +144,21 @@ void	free_data(t_prompt *prompt);
 //Expander
 char	*expander(char *content, t_env_list *env_list);
 
+// Expander Quotes
+char	*expand_quoted_variable(char *key, t_env_list *env_list);
+char	*get_key(char *input);
+
 //Expander Utils
-//int		count_signs(char *str, char c); // apagar maybe?
-bool	sign_exists(char *str, char c);
+bool	sign_exists(char *str, char sign, char c);
 char	*copy_content(char *new_str, char *input, char c);
 char	*get_key_value(char *new_str, char *input, t_env_list *env_list);
 char	*expand_digits(char *new, char *input);
 char	*expand_quotes(char *input, t_env_list *env_list);
-char	*expand_quoted_content(char *input, char quotes, t_env_list *env_list);
+//char	*expand_quoted_content(char *input, char quotes, t_env_list *env_list); // funcao para modificar o new no caso das double quotes?
 char	next_char(char *str);
 char	next_char_space(char *str);
 char	*ms_safejoin(char *str1, char *str2);
+int		is_identifier(char c);
 
 //Builtins
 void    ms_pwd(void);
@@ -182,6 +188,7 @@ void	delete_env(t_env_list *node);
 void	ms_unset(t_prompt *prompt);
 void	swap(t_env_list *node1, t_env_list *node2);
 
-
+// Free Utils
+void	ms_free_array(char *str);
 
 # endif
