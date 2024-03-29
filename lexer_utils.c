@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 13:16:58 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/29 18:43:24 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,10 @@ void free_lexer_list(t_lexer *head)
     {
         next = current->next;
         if (current->content) // libertar content alocado pela str_dup
+        {
+            printf("Limpei o current content do lexer [%s]\n", current->content);
             free(current->content);
+        }
         free(current);
         current = next;
     }
@@ -72,7 +75,8 @@ void free_parser_list(t_parser *head)
         {
             temp = parser->command;
             parser->command = parser->command->next;
-            free(temp->content); // libertar content alocado pela str_dup
+            //printf("Limpei o parser command [%s]\n", parser->command->content);
+            ms_free_array(temp->content); // libertar content alocado pela str_dup
             free(temp);
         }
         // Free dos redirect nodes
@@ -80,13 +84,12 @@ void free_parser_list(t_parser *head)
         {
             temp = parser->redirects;
             parser->redirects = parser->redirects->next;
+            //printf("Limpei os parser redirects [%s]\n", parser->command->content);
             free(temp->content); // libertar content alocado pela str_dup
             free(temp);
         }
-		
         free(parser->builtin); // Libertar memoria allocada para os builtins
         free(parser->hd_file); // Libertar memoria allocada para os hd_files (wtv that is)
-
         free(parser);
         parser = next_parser;
     }

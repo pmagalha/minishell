@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 15:02:59 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/03/29 18:25:33 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,12 @@ int	check_export_arg(char *string)
 		if (isalpha(string[i]) || (string[i] == '=' && i != 0))
 			i++;
 		else
+		{
+			//ms_free_array(string);
 			return (1);
+		}
 	}
+	//ms_free_array(string);
 	return (0);
 }
 

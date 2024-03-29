@@ -44,7 +44,7 @@ static char *expand_double_quotes(char *input, t_env_list *env_list)
     key = NULL;
     while (*newinput)
     {
-        if (*newinput == '$' && *(newinput + 1)) // fazer funcao para passar o &new e modificar diretamente na nova funcao, cuja funcao retorna o tamanho da key ?
+        if (*newinput == '$') // fazer funcao para passar o &new e modificar diretamente na nova funcao, cuja funcao retorna o tamanho da key ?
         {
             if (*(newinput + 1) == '\'')
             {
@@ -53,6 +53,7 @@ static char *expand_double_quotes(char *input, t_env_list *env_list)
                 continue ;
             }
             key = get_key(newinput);
+            printf("KEY 2: [%s]\n", key);
             new = ms_safejoin(new, expander(key, env_list));
             newinput += ft_strlen(key);
             ms_free_array(key);
@@ -136,8 +137,9 @@ char    *expander(char *input, t_env_list *env_list)
             new = ms_safejoin(new, ft_itoa(getpid()));
             input += 1;
         }
-        else if (*input == '$' && *(input + 1))
+        else if (*input == '$')
         {
+            printf("entrei\n");
             new = get_key_value(new, input, env_list);
             input += ft_strclen(input + 1, next_char(input + 1));
         }

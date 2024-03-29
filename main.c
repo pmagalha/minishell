@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 14:05:13 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/03/29 18:36:00 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,14 @@ int	dev_mod(t_prompt *prompt)
 
 /* ============================  dev mod ============================ */
 
+void	reset_data(t_prompt *prompt)
+{
+	if (prompt->lexer)
+		free_lexer_list(prompt->lexer);
+	if (prompt->parser)
+		free_parser_list(prompt->parser);
+}
+
 int main(int argc, char **argv, char **env)
 {
     char *input;
@@ -138,8 +146,7 @@ int main(int argc, char **argv, char **env)
 			get_parser(prompt);
 			dev_mod(prompt);
 
-			prompt->lexer = NULL;
-			prompt->parser = NULL;
+			
 			free(input);
 		}
 		else
@@ -147,10 +154,14 @@ int main(int argc, char **argv, char **env)
 			exit (1); // isto eh quando faz ctrl D (new line)
 			break ;
 		}
+		//reset_data(prompt);
+		prompt->lexer = NULL;
+		prompt->parser = NULL;
 	}
 	free_data(prompt);
-	free(prompt);
 }
+
+// EXCLUIR LEAKS DO READLINE: valgrind -s --suppressions=readline_leaks.txt --leak-check=full --show-leak-kinds=all ./minishell
 
 // nao esquecer de fazer o add history nao guardar comandos vazios
 
