@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 12:43:41 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/03/29 13:14:01 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ typedef struct  s_env_list
 {
     char    *key;
     char    *value;
-    char    *full_string;
     struct  s_env_list   *next;
 }               t_env_list;
 
@@ -94,7 +93,7 @@ t_type  get_type(char *content);
 
 //Lexer list aux
 
-t_lexer	*create_node(void *content, t_type type);
+t_lexer	*create_node(char *content, t_type type);
 void	token_add_back(t_lexer **token_lst, t_lexer *new);
 
 // Init
@@ -113,8 +112,7 @@ void        print_env(char **env);
 void        print_env_list(t_env_list *head);
 void        set_env(char **dup_env, t_prompt *prompt);
 void    token_add_back_env(t_env_list **env_list, t_env_list *new);
-t_env_list	*create_key_value(char *key, char *value, char *string);
-t_env_list	*create_key_value2(char *key, char *value);
+t_env_list	*create_key_value(char *key, char *value);
 
 // Parser
 char	count_words(t_prompt *prompt);

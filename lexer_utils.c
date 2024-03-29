@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/28 10:39:09 by marvin           ###   ########.fr       */
+/*   Updated: 2024/03/29 13:16:58 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ void free_parser_list(t_parser *head)
             free(temp->content); // libertar content alocado pela str_dup
             free(temp);
         }
+		
         free(parser->builtin); // Libertar memoria allocada para os builtins
         free(parser->hd_file); // Libertar memoria allocada para os hd_files (wtv that is)
 
