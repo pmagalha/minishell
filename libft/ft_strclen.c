@@ -17,6 +17,8 @@ size_t	ft_strclen(char *str, char c)
 	int	i;
 
 	i = 0;
+	if (!str)
+		return (0);
 	while (str[i] != c && str[i] != '\0')
 		i++;
 	return (i);

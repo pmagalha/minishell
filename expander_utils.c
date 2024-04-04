@@ -21,23 +21,22 @@ int is_identifier(char c)
         || c == '~' || c == '=' || c == '-' || c == '?' || c == '&' || c == '*');
 }
 
-char    *ms_safejoin(char *str1, char *str2)
+char *ms_safejoin(char *str1, char *str2)
 {
-    char    *new;
+    char *new;
 
     new = NULL;
     if (!str1 && !str2)
-        return (NULL);
+        return NULL;
     else if (!str1 && str2)
-        return (str2);
+        new = ft_strdup(str2);
     else if (str1 && !str2)
-        return (str1);
+		new = ft_strdup(str1);
     else
-        new = ft_strjoin(str1, str2);
-    if (str1)
-        free (str1);
-    if (str2)
-        free (str2);
+		new = ft_strjoin(str1, str2);
+ 	ms_free_string(str1);
+	ms_free_string(str2);
+	//printf("STR 1: [%s] | STR 2: [%s]\n", str1, str2);
     return (new);
 }
 
@@ -77,7 +76,7 @@ char    next_char(char *str) // procura o proximo caracter nao alfanumerico e ig
         if (!ft_isalnum(str[i]) && str[i] != 32)
             return (str[i]);
     }
-    return (0); 
+    return (0);
 }
 
 char    next_char_space(char *str) // procura o proximo caracter nao alfanumerico INCLUINDO espacos
@@ -96,9 +95,13 @@ char    next_char_space(char *str) // procura o proximo caracter nao alfanumeric
 char    *copy_content(char *new_str, char *input, char c)
 {
     char    *new;
+	char	*temp;
 
     new = NULL;
-    new = ms_safejoin(new_str, ft_strndup(input, ft_strclen(input, c)));
+	temp = NULL;
+	if (input)
+		temp = ft_strndup(input, ft_strclen(input, c));
+    new = ms_safejoin(new_str, temp);
     return (new);
 }
 
@@ -110,7 +113,7 @@ static char *find_value(char *key, t_env_list *env_list)
 
     while (head != NULL)
     {
-        if (!ft_strncmp(key, head->key, ft_strlen(head->key)))
+        if (!ft_strncmp(key, head->key, ft_strlen(head->key) + 1))
             return (ft_strdup(head->value));
         head = head->next;
     }
@@ -122,16 +125,21 @@ char    *get_key_value(char *new_str, char *input, t_env_list *env_list)
     char    *key;
     char    *value;
     char    *new;
+	char	*temp;
 
     new = NULL;
+	temp = NULL;
     if (*(input + 1) == '\0') // no caso do input ser por exemplo só "$" ou "echo $", sem qualquer tipo de key ou conteudo depois do cifrão
-        return (ms_safejoin(new_str, ft_strdup("$")));
+	{
+		temp = ft_strdup("$");
+        return (ms_safejoin(new_str, temp));
+	}
     else if (*input == '$' && ft_isdigit(*(input + 1))) // no caso de haver numeros depois do 
         return (expand_digits(new_str, input));
     key = ft_strndup(input + 1, ft_strclen(input + 1, next_char_space(input))); // isolar a key do INPUT, sem espacos e $ para ser mais facil comparar na lista do ENV
-    printf("KEY 3: [%s]\n", key);
     input += ft_strclen(input, '$') - 1;
     value = find_value(key, env_list);
+	//printf("KEY: [%s] [%ld] | VALUE [%s] [%ld]\n", key, ft_strlen(key), value, ft_strlen(value));
     new = ms_safejoin(new_str, value);
     if (key)
         free (key);

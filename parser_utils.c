@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:37:48 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 14:27:05 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/01 18:28:10 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,9 @@ void	add_parser_back(t_parser **token_lst, t_parser *new)
 
 char	*get_builtin(t_prompt *prompt)
 {
-	if (!ft_strncmp(prompt->lexer->content, "echo", 5))
+	if (!prompt->lexer->content)
+		return (NULL);
+	else if (!ft_strncmp(prompt->lexer->content, "echo", 5))
 		return (ft_strdup("echo"));
 	else if (!ft_strncmp(prompt->lexer->content, "cd", 3))
 		return (ft_strdup("cd"));

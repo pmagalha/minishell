@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 18:30:46 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/04 14:13:58 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -223,7 +223,7 @@ int ms_exit(t_parser *parser, t_prompt *prompt)
 
     if (!parser)
     {
-        free_parser_list(parser);
+        free_parser_list(&parser);
         exit(g_code);
     }
     size = 0;
@@ -243,7 +243,7 @@ int ms_exit(t_parser *parser, t_prompt *prompt)
         i++;
     }
     str[size] = NULL;
-    free_lexer_list(temp);
+    free_lexer_list(&temp);
     rl_clear_history();
 	ft_putstr_fd("exit\n", STDERR_FILENO);
     exit_code(str, prompt);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 15:22:50 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/04 13:51:15 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	get_token(char *input, t_prompt *prompt)
 		len = ft_strlen(content);
 		//printf("\033[32;1m=========== EXPANDER DEV MOD [%s] ==========\033[0m\n", content);
 		new_content = expander(content, prompt->env_list);
+		//printf("NEW CONTENT [%s]\n", new_content);
 		input += len;
 		if (new_content == NULL)
 			continue ;
@@ -57,6 +58,8 @@ void	get_token(char *input, t_prompt *prompt)
 
 char	*get_token_content(t_prompt *prompt, char *content)
 {
+	if (!content)
+		return (NULL);
 	if (*content == '>' || *content == '<' || *content == '|')
 		return (get_operator(content));
 	else if (*content == '"' || *content == '\'')
@@ -120,7 +123,7 @@ char	*get_quoted_content(t_prompt *prompt, char *input) //function working, omme
 			|| input[i] == '|') && !in_quotes) // it breaks and exists the loop in case it finds any operator and is not between quotes
 			break ;
 	}
-	res = malloc(sizeof(char) * i + 2);
+	res = ft_calloc(i + 2, sizeof(char));
 	if (!res)
 		return (NULL); // or write any allocation error in the future
 	ft_strlcpy(res, input, i + 1);
@@ -130,34 +133,24 @@ char	*get_quoted_content(t_prompt *prompt, char *input) //function working, omme
 char    *other_content(char *input)
 {
     int i;
-    int j;
     bool in_quotes;
     char *res;
     int quote;
 
     i = 0;
-    j = 0;
     quote = -1;
     in_quotes = false;
     if (!input)
         return (NULL);
-    while (input[j++])
-    {
-        if (input[j] == '\'' || input[j] == '"')
-        {
-            quote = j;
-            j++;
-        }
-        else
-            j++;
-    }
     while (input[i++])
-    {
-        if (input[i] == quote)
+	{
+        if (input[i] == '\'' || input[i] == '\"')
         {
-            if (!in_quotes)
+			if (!in_quotes)
+				quote = i;
+            if (!in_quotes && input[i] == input[quote])
                 in_quotes = true;
-            else
+            else if (in_quotes && input[i] == input[quote])
                 in_quotes = false;
         }
         if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'

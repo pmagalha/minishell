@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 18:36:00 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/04 14:16:26 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,10 +114,14 @@ int	dev_mod(t_prompt *prompt)
 
 void	reset_data(t_prompt *prompt)
 {
+	if (!prompt)
+		return ;
 	if (prompt->lexer)
-		free_lexer_list(prompt->lexer);
+		free_lexer_list(&prompt->lexer);
 	if (prompt->parser)
-		free_parser_list(prompt->parser);
+		free_parser_list(&prompt->parser);
+	prompt->lexer = NULL;
+	prompt->parser = NULL;
 }
 
 int main(int argc, char **argv, char **env)
@@ -140,23 +144,19 @@ int main(int argc, char **argv, char **env)
 		if (input != NULL)
 		{
 			add_history(input);
-			
 			get_token(input, prompt);
-			
 			get_parser(prompt);
-			dev_mod(prompt);
-
-			
+			dev_mod(prompt); // aapaaaagare
 			free(input);
 		}
 		else
 		{
+			free_data(prompt);
 			exit (1); // isto eh quando faz ctrl D (new line)
-			break ;
 		}
-		//reset_data(prompt);
-		prompt->lexer = NULL;
-		prompt->parser = NULL;
+		reset_data(prompt);
+		//prompt->lexer = NULL;
+		//prompt->parser = NULL;
 	}
 	free_data(prompt);
 }

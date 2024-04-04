@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 18:43:24 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/04 14:26:51 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,81 +41,83 @@ void	token_add_back(t_lexer **token_lst, t_lexer *new)
 	}
 }
 
-void free_lexer_list(t_lexer *head)
+void free_lexer_list(t_lexer **lexer)
 {
-    t_lexer *current;
-    t_lexer *next;
+    t_lexer *head;
+	t_lexer	*tmp;
 
-    current = head;
-    while (current != NULL)
+	head = *lexer;
+	tmp = NULL;
+    while (head != NULL)
     {
-        next = current->next;
-        if (current->content) // libertar content alocado pela str_dup
+        // Free the content first
+        if (head->content != NULL)
         {
-            printf("Limpei o current content do lexer [%s]\n", current->content);
-            free(current->content);
+            //printf("Limpei o current content: [%s]\n", head->content);
+            free(head->content);
+			//printf("Limpei o current content AFTER: [%s]\n", head->content);
         }
-        free(current);
-        current = next;
+        // Now free the current node
+        //printf("Limpei o CURRENT: [%p]\n", head);
+		tmp = head;
+		head = head->next;
+        free(tmp);
+		//printf("Limpei o CURRENT POST FREE	: [%p]\n", head);
     }
 }
 
-void free_parser_list(t_parser *head)
+void free_parser_list(t_parser **parser)
 {
-    t_lexer *temp;
-	t_parser *parser;
-    t_parser *next_parser;
+	t_parser *head;
+    t_parser *tmp;
 	
-	parser = head;
-	next_parser = parser->next;
-    while (parser != NULL)
+	head = *parser;
+	tmp = NULL;
+    while (head != NULL)
     {
-        // Free dos nodes
-        while (parser->command != NULL)
-        {
-            temp = parser->command;
-            parser->command = parser->command->next;
-            //printf("Limpei o parser command [%s]\n", parser->command->content);
-            ms_free_array(temp->content); // libertar content alocado pela str_dup
-            free(temp);
-        }
+        if (head->command)
+			free_lexer_list(&head->command);
+		//printf("FREED PARSER | HEAD->COMMAND: [%s]\n", head->command->content);
         // Free dos redirect nodes
-        while (parser->redirects != NULL)
-        {
-            temp = parser->redirects;
-            parser->redirects = parser->redirects->next;
-            //printf("Limpei os parser redirects [%s]\n", parser->command->content);
-            free(temp->content); // libertar content alocado pela str_dup
-            free(temp);
-        }
-        free(parser->builtin); // Libertar memoria allocada para os builtins
-        free(parser->hd_file); // Libertar memoria allocada para os hd_files (wtv that is)
-        free(parser);
-        parser = next_parser;
+        if (head->redirects)
+            free_lexer_list(&head->redirects);
+		//printf("FREED PARSER | HEAD->REDIRECTS: [%s]\n", head->redirects->content);
+		if (head->builtin)
+        	free(head->builtin); // Libertar memoria allocada para os builtins
+		//printf("FREED PARSER | HEAD->BUILTIN: [%s]\n", head->builtin);
+        if (head->hd_file)
+			free(head->hd_file); // Libertar memoria allocada para os hd_files (wtv that is)
+        tmp = head;
+		//if (tmp != NULL)
+		//	free (tmp);
+		head = head->next;
     }
 }
 
-void free_env_list(t_env_list *head)
+void free_env_list(t_env_list **env)
 {
-    t_env_list *current;
-    t_env_list *next;
+    t_env_list *head;
+    t_env_list *tmp;
 
-    current = head;
-    while (current != NULL) 
+    head = *env;
+	tmp = NULL;
+    while (head != NULL) 
 	{
-        next = current->next;
-        if (current->key)
-            free(current->key);
-        if (current->value)
-            free(current->value);
-        free(current);
-        current = next;
+        if (head->key)
+            free(head->key);
+        if (head->value)
+            free(head->value);
+		tmp = head;
+		head = head->next;
+        free(tmp);
     }
 }
 
 void	free_data(t_prompt *prompt)
 {
-	free_env_list(prompt->env_list);
-	free_lexer_list(prompt->lexer);
-	free_parser_list(prompt->parser);
+	if (!prompt)
+		return ;
+	free_env_list(&prompt->env_list);
+	free_lexer_list(&prompt->lexer);
+	free_parser_list(&prompt->parser);
 }

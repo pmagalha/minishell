@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 13:14:01 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/04 14:08:15 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,9 +134,9 @@ void	get_redirects(t_prompt *prompt);
 
 
 //Frees
-void    free_parser_list(t_parser *head);
-void	free_lexer_list(t_lexer *head);
-void	free_env_list(t_env_list *head);
+void    free_parser_list(t_parser **parser);
+void	free_lexer_list(t_lexer **lexer);
+void	free_env_list(t_env_list **parser);
 void	free_data(t_prompt *prompt);
 
 //Expander
@@ -187,6 +187,6 @@ void	ms_unset(t_prompt *prompt);
 void	swap(t_env_list *node1, t_env_list *node2);
 
 // Free Utils
-void	ms_free_array(char *str);
+void	ms_free_string(char *str);
 
 # endif

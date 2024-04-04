@@ -22,7 +22,11 @@ char	*ft_strndup(char *src, int len)
 	if (!new)
 		return (NULL);
 	while (i < len)
-		new[i++] = *src++;
+	{
+		new[i] = *src;
+		i++;
+		src++;
+	}
 	new[i] = '\0';
 	return (new);
 }

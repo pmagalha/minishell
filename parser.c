@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/03/29 18:49:39 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/01 18:42:02 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,20 @@ void	get_parser(t_prompt *prompt)
 int	count_pipes(t_lexer *lexer)
 {
 	int	pipe_count;
+	t_lexer	*head;
 
 	pipe_count = 0;
-	while (lexer != NULL)
+	head = lexer;
+	while (head != NULL)
 	{
-		if (lexer->type == PIPE)
+		if (head->type == PIPE)
 			pipe_count++;
-		if (lexer->type == PIPE && !lexer->next) //condition in case there is only one pipe
+		if (head->type == PIPE && !head->next) //condition in case there is only one pipe
 		{
 			printf("minishell: syntax error near unexpected token `|'\n");
 			exit (1);
 		}
-		lexer = lexer->next;
+		head = head->next;
 	}
 	return (pipe_count);
 }
@@ -106,7 +108,7 @@ void	get_command(t_prompt *prompt)
 				command_node = command_node->next;
 			command_node->next = malloc(sizeof(t_lexer));
 			command_node->next->type = prompt->lexer->type;
-			command_node->next->content = prompt->lexer->content;
+			command_node->next->content = ft_strdup(prompt->lexer->content);
 			command_node->next->next = NULL;
 			command_node->next->prev = command_node;
 		}

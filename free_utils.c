@@ -6,15 +6,15 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 16:47:00 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/03/28 16:51:26 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/01 17:15:00 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	ms_free_array(char *str)
+void	ms_free_string(char *str)
 {
 	if (str)
-		free (str);
+		free(str);
 	return ;
 }
