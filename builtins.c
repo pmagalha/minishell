@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/04 14:13:58 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:30:14 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,39 +20,35 @@ void	ms_pwd(void)
 	ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
-static void	ft_print(t_lexer *command)
+static void ft_print(t_lexer *command)
 {
-	while (command)
+	t_lexer *temp = command;
+
+	while (temp)
 	{
-		ft_putstr_fd(command->content, STDOUT_FILENO);
-		command = command->next;
-		if (command)
+		ft_putstr_fd(temp->content, STDOUT_FILENO);
+		temp = temp->next;
+		if (temp)
 			ft_putchar_fd(' ', STDOUT_FILENO);
 	}
 }
 
 int	ms_echo(t_parser *parser)
 {
-	float	flg;
-	int		i;
-	t_parser *temp;
-
-	flg = false;
-	i = 1;
-	temp = parser;
-	temp->command = temp->command->next;
-	while (temp && temp->command && temp->command->content[0] == '-'
-				&& temp->command->content[1] == 'n')
+	int		i = 1;
+	float	flg = false;
+	t_lexer *temp = parser->command->next; // salta o primeiro command
+	while (temp && temp->content[0] == '-' && temp->content[1] == 'n')
 	{
-		while (temp->command->content[i] == 'n')
+		while (temp->content[i] == 'n')
 			i++;
-		if (temp->command->content[i] == '\0')
+		if (temp->content[i] == '\0')
 			flg = true;
 		else
-			break ;
-		temp->command = temp->command->next;
+			break;
+		temp = temp->next;
 	}
-	ft_print(temp->command);
+	ft_print(temp); // Printa os commands depois do echo
 	if (flg == false)
 		ft_putchar_fd('\n', STDOUT_FILENO);
 	return (0);
@@ -267,4 +263,5 @@ void	exec_builtins(t_prompt *prompt)
 		ms_export(prompt);
 	else if (!ft_strncmp(prompt->parser->builtin, "unset", 5))
 		ms_unset(prompt);
+		
 }

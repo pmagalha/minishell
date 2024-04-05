@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/04 14:08:15 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/05 09:58:58 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,5 +188,7 @@ void	swap(t_env_list *node1, t_env_list *node2);
 
 // Free Utils
 void	ms_free_string(char *str);
+
+void	print_parser(t_prompt *prompt);
 
 # endif

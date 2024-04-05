@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/04 14:16:26 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:30:29 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ int main(int argc, char **argv, char **env)
 			add_history(input);
 			get_token(input, prompt);
 			get_parser(prompt);
-			dev_mod(prompt); // aapaaaagare
+			//dev_mod(prompt); // aapaaaagare
 			free(input);
 		}
 		else
@@ -155,6 +155,10 @@ int main(int argc, char **argv, char **env)
 			exit (1); // isto eh quando faz ctrl D (new line)
 		}
 		reset_data(prompt);
+		
+		//printf("AFTER RESET DATA:\n");
+    	//print_parser(prompt);
+		
 		//prompt->lexer = NULL;
 		//prompt->parser = NULL;
 	}

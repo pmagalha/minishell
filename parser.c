@@ -3,16 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/01 18:42:02 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:13:43 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // meter erro para quando so tem redirect e nao tem ficheiro seguinte
+
+void	print_parser(t_prompt *prompt)
+{
+	int	i = 1;
+	t_parser *parser = prompt->parser;
+
+	while (parser)
+	{
+		printf("\nNODE [%d] = BUILTIN: [%s]\n", i, parser->builtin);
+
+		t_lexer *command = parser->command; // Reset command pointer for each parser node
+
+		while (command)
+		{
+			printf("COMMAND [%d] = COMMAND: [%s]\n", i, command->content);
+			command = command->next;
+		}
+
+		parser = parser->next;
+		i++;
+	}
+}
 
 void	get_parser(t_prompt *prompt)
 {
@@ -51,6 +73,7 @@ void	get_parser(t_prompt *prompt)
 		}
 	}
 	prompt->parser = p_start;
+	//print_parser(prompt);
 	prompt->lexer = start;
 }
 
@@ -90,6 +113,19 @@ char	count_words(t_prompt *prompt)
 	return (count);
 }
 
+/* static bool	is_builtin(char *input)
+{
+	if (!ft_strncmp(input, "echo", 4)
+		|| !ft_strncmp(input, "pwd", 3)
+		|| !ft_strncmp(input, "env", 3)
+		|| !ft_strncmp(input, "cd", 2)
+		|| !ft_strncmp(input, "exit", 4)
+		|| !ft_strncmp(input, "export", 6)
+		|| !ft_strncmp(input, "unset", 5))
+		return (true);
+	return (false);
+}
+ */
 void	get_command(t_prompt *prompt)
 {
 	t_lexer	*command_node;
@@ -99,6 +135,9 @@ void	get_command(t_prompt *prompt)
 		return ;
 	if (prompt->lexer->type == OTHER)
 	{
+		// comentei isto porque estava a avancar um node do echo
+		/* if (is_builtin(prompt->lexer->content) && prompt->lexer->next)
+			prompt->lexer = prompt->lexer->next; */
 		if (!prompt->parser->command)
 			prompt->parser->command = create_node(ft_strdup(prompt->lexer->content), prompt->lexer->type);
 		else

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/04 14:14:15 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/05 10:35:44 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int	check_export_arg(char *string)
 			return (1);
 		}
 	}
-	//ms_free_array(string);
+	free(string);
 	return (0);
 }
 
