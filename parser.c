@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 10:13:43 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:16:57 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,23 @@
 
 // meter erro para quando so tem redirect e nao tem ficheiro seguinte
 
-void	print_parser(t_prompt *prompt)
-{
-	int	i = 1;
-	t_parser *parser = prompt->parser;
+void print_parser(t_prompt *prompt) {
+    int i = 1;
+    t_parser *parser = prompt->parser;
 
-	while (parser)
-	{
-		printf("\nNODE [%d] = BUILTIN: [%s]\n", i, parser->builtin);
+    while (parser) {
+        printf("\nNODE [%d] = BUILTIN: [%s]\n", i, parser->builtin);
 
-		t_lexer *command = parser->command; // Reset command pointer for each parser node
+        t_lexer *command = parser->command; // Reset command pointer for each parser node
 
-		while (command)
-		{
-			printf("COMMAND [%d] = COMMAND: [%s]\n", i, command->content);
-			command = command->next;
-		}
+        while (command) {
+            printf("COMMAND [%d] = COMMAND: [%s]\n", i, command->content);
+            command = command->next;
+        }
 
-		parser = parser->next;
-		i++;
-	}
+        parser = parser->next;
+        i++;
+    }
 }
 
 void	get_parser(t_prompt *prompt)
@@ -58,7 +55,8 @@ void	get_parser(t_prompt *prompt)
 			get_redirects(prompt);
 		}
 		if (prompt->parser->builtin)
-				exec_builtins(prompt);
+				exec_builtins(prompt, start);
+				
 /* 		else
 		{
 			printf("command %s not found\n", prompt->parser->command->content);

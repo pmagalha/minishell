@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 09:58:58 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:00:13 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,9 +162,9 @@ int		is_identifier(char c);
 void    ms_pwd(void);
 int	    ms_echo(t_parser *parser);
 void	ms_env(t_prompt *prompt);
-void	exec_builtins(t_prompt *prompt);
+void	exec_builtins(t_prompt *prompt, t_lexer *start);
 char	*get_env(t_prompt *prompt, char *path);
-int	    ms_exit(t_parser *parser, t_prompt *prompt);
+int ms_exit(t_parser *parser, t_prompt *prompt, t_lexer *start);
 
 // Export
 void	print_export(t_env_list *head);
@@ -190,5 +190,7 @@ void	swap(t_env_list *node1, t_env_list *node2);
 void	ms_free_string(char *str);
 
 void	print_parser(t_prompt *prompt);
+
+int	dev_mod(t_prompt *prompt);
 
 # endif

@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 10:30:14 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:45:22 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,6 +142,10 @@ static void	add_path(t_prompt *prompt)
 	free(oldpath);
 }
 
+// tratar de ~/..
+// tratar do caso de ser um PATH maior do que permitido (checkar path max)
+// tratar de cd ../relative_directory
+
 static int	absolute_path(t_prompt *prompt)
 {
 	int	new_path;
@@ -172,31 +176,35 @@ int	ms_cd(t_prompt *prompt)
 	return (new_path);
 }
 
-void free_array(char **arr)
+void	free_array(char **arr)
 {
-    int i = 0;
-    if (arr)
-    {
-        while (arr[i])
-            free(arr[i++]);
-        free(arr);
-    }
+	int	i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+	{
+		free(arr[i]);
+		i++;
+	}
+	free(arr);
 }
 
-static void	exit_code(char **str, t_prompt *prompt)
+static void	exit_code(char **str/* , t_prompt *prompt */)
 {
 	int	exit_code;
 
+	//printf("A STRING[0] eh: %s\n", str[0]);
 	if (!str[0]) // sem argumentos, exit com 0
 		exit_code = 0;
 	else if (str[1]) // mais do que um argumento, printa erro
 	{
 		ft_putstr_fd("-minishell: exit: too many arguments\n", STDERR_FILENO);
 		exit_code = 1;
-		return ;
+		free_array(str);
+		exit(exit_code);
 	}
-	else if (str[0][0] == '#') // (shell exit code) MAYBE NOT NECESSARY IDK
-		exit_code = g_code;
 	else if (ft_isdigit(str[0][0])) // Checka se eh digito
 		exit_code = ft_atoi(str[0]);
 	else // se o argumento nao for valido
@@ -205,50 +213,62 @@ static void	exit_code(char **str, t_prompt *prompt)
 		exit_code = 2;
 	}
 	free_array(str);
-	free_data(prompt);
+	//free_data(prompt);
+	//print_parser(prompt);
+	//dev_mod(prompt);
+	//printf("SAIU AQUI\n");
 	exit(exit_code);
 }
 // valor maximo de erro eh 256. se o valor ultrapassar isto, tem de voltar atras. tipo se for 256 + 1 vai para 0 I GUESS
 
-int ms_exit(t_parser *parser, t_prompt *prompt)
+int ms_exit(t_parser *parser, t_prompt *prompt, t_lexer *start)
 {
     char **str;
     t_lexer *temp;
     int size;
     int i;
 
+	//printf("NODE DO LEXER: [%s]\n", prompt->lexer->content);
     if (!parser)
     {
-        free_parser_list(&parser);
+        free_data(prompt);
         exit(g_code);
     }
     size = 0;
     temp = parser->command->next;
+	//printf("COMMAND CONTENT: [%s]\n", parser->command->content);
+	//printf("COMMAND CONTENT: [%s]\n", parser->command->next->content);
     while (temp)
     {
         size++;
         temp = temp->next;
     }
-    str = (char **)malloc((size + 1) * sizeof(char *));
-    temp = parser->command->next;
+    str = (char **)ft_calloc(size + 1, sizeof(char *));
+	temp = start->next;
     i = 0;
     while (temp)
     {
-        str[i] = ft_strdup(temp->content);
-        temp = temp->next;
-        i++;
+		str[i] = ft_strdup(temp->content);
+		temp = temp->next;
+		i++;		
     }
-    str[size] = NULL;
-    free_lexer_list(&temp);
+	//printf("22222 A STRING[0] eh: %s\n", str[0]);
+	free_lexer_list(&start);
+/* 	for (int i = 0 ; str[i] != NULL; i++)
+		printf("STRING[i]: %s\n", str[i]); */
+	free_data(prompt);
     rl_clear_history();
 	ft_putstr_fd("exit\n", STDERR_FILENO);
-    exit_code(str, prompt);
-    free_array(str);
+    //printf("ISTO EH A STRING ANTES: [%s]\n", str[0]);
+    exit_code(str);
+	free_array(str);
+	//printf("ISTO EH A STRING DEPOIS: [%s]\n", str[0]);
     return (EXIT_SUCCESS);
 }
 
-void	exec_builtins(t_prompt *prompt)
+void	exec_builtins(t_prompt *prompt, t_lexer *start)
 {
+	//printf("NODE DO LEXER: [%s]\n", prompt->lexer->content);
 	if (!ft_strncmp(prompt->parser->builtin, "echo", 4))
 		ms_echo(prompt->parser);
 	else if (!ft_strncmp(prompt->parser->builtin, "pwd", 3))
@@ -257,11 +277,11 @@ void	exec_builtins(t_prompt *prompt)
 		ms_env(prompt); 
 	else if (!ft_strncmp(prompt->parser->builtin, "cd", 2))
 		ms_cd(prompt);
+		
 	else if (!ft_strncmp(prompt->parser->builtin, "exit", 4))
-		ms_exit(prompt->parser, prompt);
+		ms_exit(prompt->parser, prompt, start);
 	else if (!ft_strncmp(prompt->parser->builtin, "export", 6))
 		ms_export(prompt);
 	else if (!ft_strncmp(prompt->parser->builtin, "unset", 5))
 		ms_unset(prompt);
-		
 }

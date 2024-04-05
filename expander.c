@@ -20,6 +20,8 @@ echo -n hello $false > file | cat < $USER > file_2 | pwd || $? | >> test | "" - 
 // VERIFICAR CASO ""boas"" - ta fodido
 // VERIFICAR CASO de: "" e ''. uma das opcoes guarda um node nulo, e outra nao guarda nada. mais tarde podemos decidir qual das opcoes eh melhor
 
+// HA LEAKS EM "'test'" e "''test''" (ter double quote e single quote a seguir)
+
 #include "minishell.h"
 
 static char *expand_single_quotes(char *input)
