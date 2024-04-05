@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/04 13:51:15 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/05 16:01:28 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	get_token(char *input, t_prompt *prompt)
 	
 	new_content = NULL;
 	len = 0;
-	printf("\033[32;1m=========== EXPANDER DEV MOD ==========\033[0m\n");
+	//printf("\033[32;1m=========== EXPANDER DEV MOD ==========\033[0m\n");
  	if (!check_quotes(input))
 			exit (1);
 	while (*input)
@@ -35,7 +35,6 @@ void	get_token(char *input, t_prompt *prompt)
 		len = ft_strlen(content);
 		//printf("\033[32;1m=========== EXPANDER DEV MOD [%s] ==========\033[0m\n", content);
 		new_content = expander(content, prompt->env_list);
-		//printf("NEW CONTENT [%s]\n", new_content);
 		input += len;
 		if (new_content == NULL)
 			continue ;
@@ -51,10 +50,8 @@ void	get_token(char *input, t_prompt *prompt)
             // quando a palavra a frente do redirect eh uma variavel env que tem de ser substituida mas nao existe. Nome "minishell: ambiguous redirect" e o exit code eh 1
 		}
 	}
-	printf("\033[32;1m=========== EXPANDER GREAT SUCCESS ==========\033[0m\n");
+	//printf("\033[32;1m=========== EXPANDER GREAT SUCCESS ==========\033[0m\n");
 }
-
-// Content: [$'HOME'] | Type: [OTHER] o lexer tem de dizer que se houver um $, tem de mandar com as quotes
 
 char	*get_token_content(t_prompt *prompt, char *content)
 {

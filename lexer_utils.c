@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 11:16:34 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/05 16:33:34 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_lexer	*create_node(char *content, t_type type)
 	new->type = type;
 	new->next = NULL;
 	new->prev = NULL;
-	free(content);
+    free(content);
 	return (new);
 }
 

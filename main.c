@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 11:36:16 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/05 16:37:27 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ int main(int argc, char **argv, char **env)
 			add_history(input);
 			get_token(input, prompt);
 			get_parser(prompt);
-			//dev_mod(prompt); // aapaaaagare
+			dev_mod(prompt); // aapaaaagare
 			free(input);
 		}
 		else

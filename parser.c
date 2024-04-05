@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 13:16:57 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/05 16:39:22 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,15 @@ void print_parser(t_prompt *prompt) {
         printf("\nNODE [%d] = BUILTIN: [%s]\n", i, parser->builtin);
 
         t_lexer *command = parser->command; // Reset command pointer for each parser node
-
+		t_lexer *redirects = parser->redirects; // Reset command pointer for each parser node
+		
         while (command) {
             printf("COMMAND [%d] = COMMAND: [%s]\n", i, command->content);
             command = command->next;
+		}
+		while (redirects) {
+            printf("REDIRECTS [%d] = REDIR: [%s]\n", i, redirects->content);
+            redirects = redirects->next;
         }
 
         parser = parser->next;
@@ -160,22 +165,32 @@ void	get_redirects(t_prompt *prompt)
 	redirect = NULL;
 	if (!prompt->lexer)
 		return ;
+ 	if (!prompt->lexer->next)
+	{
+		printf("erro nos redirs\n");
+		return ; // adicionar ERROR AQUI
+	}
 	if (prompt->lexer->type == REDIR_OUT || prompt->lexer->type == REDIR2_OUT
 		|| prompt->lexer->type == REDIR_IN || prompt->lexer->type == HEREDOC)
 	{
 		if (!prompt->parser->redirects)
-			prompt->parser->redirects = create_node(trim_quotes(prompt->lexer->next->content), prompt->lexer->type);
-		else
+			prompt->parser->redirects = create_node(ft_strdup(prompt->lexer->next->content), prompt->lexer->type);
+		else if (prompt->parser->redirects)
 		{
 			redirect = prompt->parser->redirects;
 			while (redirect->next != NULL)
 				redirect = redirect->next;
 			redirect->next = malloc(sizeof(t_lexer));
 			redirect->next->type = prompt->lexer->type;
-			redirect->next->content = ms_safejoin(prompt->lexer->next->content, NULL);
+			redirect->next->content = ft_strjoin(prompt->lexer->content, NULL);
 			redirect->next->next = NULL;
-			redirect->next->prev = redirect->next;
+			redirect->next->prev = redirect;
 		}
-		prompt->lexer = prompt->lexer->next->next;
+		else
+			printf("error in redirects\n");
+		if (prompt->lexer->next->next)
+			prompt->lexer = prompt->lexer->next->next;
+		else
+			prompt->lexer = NULL;
 	}
 }

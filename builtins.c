@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 13:45:22 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:52:19 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,14 @@ extern int	g_code;
 
 void	ms_pwd(void)
 {
-	ft_putstr_fd((getcwd(NULL, 0)), STDOUT_FILENO);
+	char *temp;
+	
+	temp = getcwd(NULL, 0);
+	
+	ft_putstr_fd(temp, STDOUT_FILENO);
 	ft_putchar_fd('\n', STDOUT_FILENO);
+	if (temp)
+		free(temp);
 }
 
 static void ft_print(t_lexer *command)

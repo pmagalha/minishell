@@ -80,7 +80,7 @@ static char *expand_double_quotes(char *input, t_env_list *env_list)
             if (*newinput == '"')
                 newinput++;
         }
-        else if (*newinput == '\'' && *(newinput - 1) != '$' && sign_exists(newinput + 1, '\'', '\"'))
+        else if (*newinput == '\'' && sign_exists(newinput + 1, '\'', '\"'))
         {
 			tmp2 = expand_single_quotes(newinput);
             new = ms_safejoin(new, tmp2);
