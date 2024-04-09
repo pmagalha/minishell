@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/04 19:24:46 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/09 17:38:35 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,13 @@ t_env_list	*create_key_value(char *key, char *value)
 	new = (t_env_list *)malloc(sizeof(t_env_list));
 	if (!new)
 		return (NULL);
-	new->key = (key);
-	if (!value)
-		new->value = NULL;
+	new->key = ft_strdup(key);
+	//if (!value)
+	//	new->value = NULL;
+	if (value)
+		new->value = ft_strdup(value);
 	else
-		new->value = (value);
+		new->value = NULL;
 	new->next = NULL;
 	return (new);
 }
@@ -86,27 +88,31 @@ void	set_env(char **env, t_prompt *prompt)
 		value = ft_substr(env[i], ft_strchr(env[i], '=') - env[i] + 1, ft_strlen(env[i]));
 		new_node = create_key_value(key, value);
 		token_add_back_env(&(prompt->env_list), new_node);
+		ms_free_string(key);
+		ms_free_string(value);
 		i++;
 	}
     if (!get_env(prompt, "OLDPWD")) // este caso eh para quando um OLDPWD nao exite, por exemplo se abrirmos o terminal diretamente da janela do ms
 	{
-        key = "OLDPWD";
+        key = ft_strdup("OLDPWD");
         value = get_env(prompt, "PWD");
         new_node = create_key_value(key, value);
         token_add_back_env(&(prompt->env_list), new_node);
+		ms_free_string(key);
+		ms_free_string(value);
 	}
 }
-/* 
+
 void	print_env_list(t_env_list *head)
 {
 	t_env_list *current = head;
 	while (current != NULL)
 	{
-		printf("Key: %s | Value: %s | Full String: %s\n\n", current->key, current->value, current->full_string);
+		printf("Key: %s | Value: %s \n", current->key, current->value);
 		current = current->next;
 	}
 }
-
+/* 
 void	print_env(char **env)
 {
 	int i;

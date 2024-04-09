@@ -44,7 +44,7 @@ static char *expand_double_quotes(char *input, t_env_list *env_list)
     char    *key;
 	char	*tmp2;
 
-    ////////printf("QUOTES INPUT: [%s]\n", input);
+    printf("QUOTES INPUT: [%s]\n", input);
     newinput = ft_strndup(input, ft_strclen(input + 1, '"') + 1);
 	new = NULL;
     tmp = newinput;
@@ -107,7 +107,7 @@ char    *expand_quotes(char *input, t_env_list *env_list)
     if (*input == '\"' || *input == '\'')
     {
         if (*input == '\"')
-            new_input = expand_double_quotes(input + 1, env_list);
+            new_input = expand_double_quotes(input, env_list);
         else if (*input == '\'')
             new_input = expand_single_quotes(input);
     }

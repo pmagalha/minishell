@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 10:35:44 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/09 14:18:46 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	check_export_arg(char *string)
 	return (0);
 }
 
-void	check_export(t_prompt *prompt)
+int	check_export(t_prompt *prompt)
 {
 	t_lexer	*command;
 
@@ -76,9 +76,10 @@ void	check_export(t_prompt *prompt)
 		{
 			printf("minishell: export: `%s': not a valid identifier\n",
 				command->content);
-			return ;
+			return (1);
 		}
 	}
+	return (0);
 }
 
 void	add_value(char *variable, t_prompt *prompt)
@@ -110,7 +111,7 @@ void	add_value(char *variable, t_prompt *prompt)
 	add_on_env_list(prompt->env_list, key, value);
 }
 
-void	ms_export(t_prompt *prompt)
+int	ms_export(t_prompt *prompt)
 {
 	t_lexer		*command;
 	t_env_list	*dup_env;
@@ -130,6 +131,11 @@ void	ms_export(t_prompt *prompt)
 			current = current->next;
 		}
 	}
-	check_export(prompt);
+	if (check_export(prompt))
+	{
+		free_env_list(&head);
+		return (1);
+	}
 	free_env_list(&head);
+	return (0);
 }

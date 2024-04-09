@@ -36,7 +36,6 @@ char *ms_safejoin(char *str1, char *str2)
 		new = ft_strjoin(str1, str2);
  	ms_free_string(str1);
 	ms_free_string(str2);
-	//printf("STR 1: [%s] | STR 2: [%s]\n", str1, str2);
     return (new);
 }
 
@@ -45,9 +44,9 @@ bool    sign_exists(char *str, char sign, char c)
     int i;
 
     i = 0;
-    if (!str || !str[1])
+    if (!str && !str[1])
         return (false);
-    while (str[i] != '\0' && str[i] != c)
+    while (str[i] && str[i] != c)
     {
         if (str[i] == sign)
             return (true);
@@ -105,7 +104,7 @@ char    *copy_content(char *new_str, char *input, char c)
     return (new);
 }
 
-static char *find_value(char *key, t_env_list *env_list)
+char *find_value(char *key, t_env_list *env_list)
 {
     t_env_list  *head;
 

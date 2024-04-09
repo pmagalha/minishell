@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 16:39:22 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/08 16:18:04 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,8 +59,8 @@ void	get_parser(t_prompt *prompt)
 			get_command(prompt);
 			get_redirects(prompt);
 		}
-		if (prompt->parser->builtin)
-				exec_builtins(prompt, start);
+		/* if (prompt->parser->builtin)
+				exec_builtins(prompt, start, prompt->parser); */
 				
 /* 		else
 		{
@@ -76,7 +76,6 @@ void	get_parser(t_prompt *prompt)
 		}
 	}
 	prompt->parser = p_start;
-	//print_parser(prompt);
 	prompt->lexer = start;
 }
 
@@ -101,7 +100,7 @@ int	count_pipes(t_lexer *lexer)
 	return (pipe_count);
 }
 
-char	count_words(t_prompt *prompt)
+char	ms_count_words(t_prompt *prompt)
 {
 	int		count;
 	t_lexer	*temp;
@@ -165,11 +164,11 @@ void	get_redirects(t_prompt *prompt)
 	redirect = NULL;
 	if (!prompt->lexer)
 		return ;
- 	if (!prompt->lexer->next)
+ 	/* if (!prompt->lexer->next)
 	{
 		printf("erro nos redirs\n");
 		return ; // adicionar ERROR AQUI
-	}
+	} */
 	if (prompt->lexer->type == REDIR_OUT || prompt->lexer->type == REDIR2_OUT
 		|| prompt->lexer->type == REDIR_IN || prompt->lexer->type == HEREDOC)
 	{

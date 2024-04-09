@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 13:00:13 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/09 16:45:42 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include <signal.h>
+#include <sys/wait.h>
+# include <sys/stat.h>
 
 extern int g_code;
 
@@ -115,7 +117,7 @@ void    token_add_back_env(t_env_list **env_list, t_env_list *new);
 t_env_list	*create_key_value(char *key, char *value);
 
 // Parser
-char	count_words(t_prompt *prompt);
+char	ms_count_words(t_prompt *prompt);
 int	count_pipes (t_lexer *lexer);
 int check_quotes(char *str);
 int check_dquotes(char *str);
@@ -157,39 +159,44 @@ char	next_char(char *str);
 char	next_char_space(char *str);
 char	*ms_safejoin(char *str1, char *str2);
 int		is_identifier(char c);
+char *find_value(char *key, t_env_list *env_list);
 
 //Builtins
-void    ms_pwd(void);
+int     ms_pwd(void);
 int	    ms_echo(t_parser *parser);
-void	ms_env(t_prompt *prompt);
-void	exec_builtins(t_prompt *prompt, t_lexer *start);
+int     ms_env(t_prompt *prompt, t_parser *parser);
+int 	exec_builtins(t_prompt *prompt, t_parser *parser);
 char	*get_env(t_prompt *prompt, char *path);
-int ms_exit(t_parser *parser, t_prompt *prompt, t_lexer *start);
+int     ms_exit(t_parser *parser, t_prompt *prompt);
+void	free_array(char **arr);
 
 // Export
 void	print_export(t_env_list *head);
 void	insert(t_env_list **head, char *key, char *value) ;
-void    ms_export(t_prompt *prompt);
+int	    ms_export(t_prompt *prompt);
 void	insert_sorted(t_env_list **head, t_env_list *node);
 void	add_value(char *variable, t_prompt *prompt);
-void	ms_unset(t_prompt *prompt);
 void	add_on_env_list(t_env_list *env_list, char *key, char *value);
 char	*extract_key(char *variable);
 char	*extract_value(char *variable);
 void 	extract_variables(char *variable, char *key, char *value);
+int     check_export(t_prompt *prompt);
 
 // Export Utils
 void	sort_export(t_env_list *dup_env);
 // Unset
-void	remove_value(char *variable, t_prompt *prompt);
-void	delete_env(t_env_list *node);
-void	ms_unset(t_prompt *prompt);
+int	    remove_value(char *variable, t_prompt *prompt);
+int     delete_env(t_env_list *node);
+int	    ms_unset(t_prompt *prompt);
 void	swap(t_env_list *node1, t_env_list *node2);
 
 // Free Utils
 void	ms_free_string(char *str);
-
 void	print_parser(t_prompt *prompt);
+void	reset_data(t_prompt *prompt);
+
+// Executor
+void    single_command(t_prompt *prompt, t_parser *parser);
 
 int	dev_mod(t_prompt *prompt);
 

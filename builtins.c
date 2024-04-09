@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 13:52:19 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/09 18:26:43 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 extern int	g_code;
 
-void	ms_pwd(void)
+int	ms_pwd(void)
 {
 	char *temp;
 	
@@ -24,6 +24,7 @@ void	ms_pwd(void)
 	ft_putchar_fd('\n', STDOUT_FILENO);
 	if (temp)
 		free(temp);
+	return (0);
 }
 
 static void ft_print(t_lexer *command)
@@ -60,10 +61,15 @@ int	ms_echo(t_parser *parser)
 	return (0);
 }
 
-void	ms_env(t_prompt *prompt)
+int	ms_env(t_prompt *prompt, t_parser *parser)
 {
 	t_env_list	*temp;
 
+	if (parser->command->next)
+	{
+		//METER AQUI O PRINT DO ERRO QUANDO O ENV TEM ARGS A FRENTE
+		return (127);
+	}
 	temp = prompt->env_list;
 	while (temp)
 	{
@@ -84,6 +90,7 @@ void	ms_env(t_prompt *prompt)
 		else
 			temp = temp->next;
 	}
+	return (0);
 }
 
 char	*get_env(t_prompt *prompt, char *path)
@@ -125,30 +132,38 @@ static int	change_path(t_prompt *prompt, char *path)
 	return (new_dir);
 }
 
-static void	add_path(t_prompt *prompt)
+static void    add_path(t_prompt *prompt)
 {
-	char		*tmp;
-	char		*oldpath;
-	t_env_list	*env;
+    char        *tmp;
+    char        *old_value;
+    char        *old_path;
+    t_env_list  *env;
 
-	oldpath = get_env(prompt, "PWD");
-	env = prompt->env_list;
-	while (env)
-	{
-		if (!ft_strncmp(env->key, "PWD", 4))
-		{
-			tmp = getcwd(NULL, 0);
-			env->value = ft_strdup(tmp);
-			free(tmp);
-		}
-		if (!ft_strncmp(env->key, "OLDPWD", 7))
-			env->value = ft_strdup(oldpath);
-		env = env->next;
-	}
-	free(oldpath);
+    old_path = get_env(prompt, "PWD");
+    env = prompt->env_list;
+    while (env != NULL)
+    {
+        if (!ft_strncmp(env->key, "PWD", 4))
+        {
+            old_value = env->value;
+            tmp = getcwd(NULL, 0);
+            env->value = ft_strdup(tmp);
+			if (tmp)
+				free (tmp);
+        }
+        else if (!ft_strncmp(env->key, "OLDPWD", 7))
+        {
+            old_value = env->value;
+            env->value = ft_strdup(old_path);
+            if (old_value)
+				free (old_value);
+        }
+        env = env->next;
+    }
+	free (old_path);
 }
 
-// tratar de ~/..
+// tratar de ~/.. - vai para o home/user mas uma pasta acima, tipo so home memo tipo /home/
 // tratar do caso de ser um PATH maior do que permitido (checkar path max)
 // tratar de cd ../relative_directory
 
@@ -157,6 +172,12 @@ static int	absolute_path(t_prompt *prompt)
 	int	new_path;
 
 	new_path = chdir(prompt->parser->command->next->content); // this works for .. and for cd without anything because the chdir function can receive those
+	if (new_path != 0)
+	{
+		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		ft_putstr_fd(prompt->parser->command->next->content, STDERR_FILENO);
+		perror(" ");
+	}
 	return (new_path);
 }
 
@@ -174,7 +195,7 @@ int	ms_cd(t_prompt *prompt)
 	else if (temp->next != NULL)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
-		return (1); // ja da para substituir isto por ms_exit I GUESS??
+		return (1);
 	}
 	else
 		new_path = absolute_path(prompt);
@@ -191,13 +212,13 @@ void	free_array(char **arr)
 	i = 0;
 	while (arr[i])
 	{
-		free(arr[i]);
+		ms_free_string(arr[i]);
 		i++;
 	}
 	free(arr);
 }
 
-static void	exit_code(char **str/* , t_prompt *prompt */)
+static void	exit_code(char **str)
 {
 	int	exit_code;
 
@@ -227,7 +248,7 @@ static void	exit_code(char **str/* , t_prompt *prompt */)
 }
 // valor maximo de erro eh 256. se o valor ultrapassar isto, tem de voltar atras. tipo se for 256 + 1 vai para 0 I GUESS
 
-int ms_exit(t_parser *parser, t_prompt *prompt, t_lexer *start)
+int ms_exit(t_parser *parser, t_prompt *prompt)
 {
     char **str;
     t_lexer *temp;
@@ -250,7 +271,7 @@ int ms_exit(t_parser *parser, t_prompt *prompt, t_lexer *start)
         temp = temp->next;
     }
     str = (char **)ft_calloc(size + 1, sizeof(char *));
-	temp = start->next;
+	temp = prompt->lexer->next;
     i = 0;
     while (temp)
     {
@@ -259,35 +280,36 @@ int ms_exit(t_parser *parser, t_prompt *prompt, t_lexer *start)
 		i++;		
     }
 	//printf("22222 A STRING[0] eh: %s\n", str[0]);
-	free_lexer_list(&start);
-/* 	for (int i = 0 ; str[i] != NULL; i++)
-		printf("STRING[i]: %s\n", str[i]); */
-	free_data(prompt);
+	//printf("EXIT LEXER: [%s]\n", prompt->lexer->content);
+	//free_lexer_list(&prompt->lexer);
     rl_clear_history();
 	ft_putstr_fd("exit\n", STDERR_FILENO);
     //printf("ISTO EH A STRING ANTES: [%s]\n", str[0]);
+	free_data(prompt);
     exit_code(str);
 	free_array(str);
 	//printf("ISTO EH A STRING DEPOIS: [%s]\n", str[0]);
     return (EXIT_SUCCESS);
 }
 
-void	exec_builtins(t_prompt *prompt, t_lexer *start)
+int	exec_builtins(t_prompt *prompt, t_parser *parser)
 {
-	//printf("NODE DO LEXER: [%s]\n", prompt->lexer->content);
-	if (!ft_strncmp(prompt->parser->builtin, "echo", 4))
-		ms_echo(prompt->parser);
-	else if (!ft_strncmp(prompt->parser->builtin, "pwd", 3))
-		ms_pwd();
-	else if (!ft_strncmp(prompt->parser->builtin, "env", 3))
-		ms_env(prompt); 
-	else if (!ft_strncmp(prompt->parser->builtin, "cd", 2))
-		ms_cd(prompt);
-		
-	else if (!ft_strncmp(prompt->parser->builtin, "exit", 4))
-		ms_exit(prompt->parser, prompt, start);
-	else if (!ft_strncmp(prompt->parser->builtin, "export", 6))
-		ms_export(prompt);
-	else if (!ft_strncmp(prompt->parser->builtin, "unset", 5))
-		ms_unset(prompt);
+	int 	status;
+
+	status = 1; 
+	if (!ft_strncmp(prompt->parser->builtin, "echo", 5))
+		status = ms_echo(parser);
+	else if (!ft_strncmp(prompt->parser->builtin, "pwd", 4))
+		status = ms_pwd();
+	else if (!ft_strncmp(prompt->parser->builtin, "env", 4))
+		status = ms_env(prompt, parser); 
+	else if (!ft_strncmp(prompt->parser->builtin, "cd", 3))
+		status = ms_cd(prompt);
+	else if (!ft_strncmp(prompt->parser->builtin, "exit", 5))
+		return (ms_exit(parser, prompt));
+	else if (!ft_strncmp(prompt->parser->builtin, "export", 7))
+		status = ms_export(prompt);
+	else if (!ft_strncmp(prompt->parser->builtin, "unset", 6))
+		status = ms_unset(prompt);
+	return (status);
 }

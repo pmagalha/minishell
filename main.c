@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 16:37:27 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/09 18:40:07 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,8 @@ int	dev_mod(t_prompt *prompt)
 	printf("\033[32;1m=========== DEV MOD ==========\033[0m\n");
 	if (prompt->lexer)
 	{
-		t_lexer	*lexer = NULL;
+		t_lexer	*lexer = prompt->lexer;
 		printf("\n\033[32;1mLEXER: \n\033[0m");
-		lexer = prompt->lexer;
 		while(lexer)
 		{
 			printf("String: [%s] " "Type: [%s] \n", lexer->content, print_type(lexer->type));
@@ -53,21 +52,12 @@ int	dev_mod(t_prompt *prompt)
 		printf("\033[34m   COMMANDS: \033[0m");
 		if (process->command)
 		{
-			if (!process->command)
+			t_lexer *temp_command = process->command; // Create a temporary pointer
+			while (temp_command)
 			{
-				printf("[");
-				printf("\033[90m(null)\033[0m");
-				printf("]");
+				printf("[%s]  ", temp_command->content);
+				temp_command = temp_command->next; // Move the temporary pointer
 			}
-			else
-			{
-				while (process->command)
-				{
-					printf("[%s]  ", process->command->content);
-					process->command = process->command->next;
-				}
-			}
-	
 		}
 		else
 			printf("\033[90m(null)\033[0m");
@@ -98,8 +88,6 @@ int	dev_mod(t_prompt *prompt)
 		}
 		printf("\n\033[34m   HD_FILE: \033[0m");
 		if (process->hd_file)
-			printf("%s", process->hd_file);
-		else		if (process->hd_file)
 			printf("%s", process->hd_file);
 		else
 			printf("\033[90m(null)\033[0m");
@@ -146,6 +134,7 @@ int main(int argc, char **argv, char **env)
 			add_history(input);
 			get_token(input, prompt);
 			get_parser(prompt);
+			single_command(prompt, prompt->parser);
 			dev_mod(prompt); // aapaaaagare
 			free(input);
 		}

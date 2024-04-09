@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 16:01:28 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/09 18:34:19 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,12 @@ void	get_token(char *input, t_prompt *prompt)
 		new_content = expander(content, prompt->env_list);
 		input += len;
 		if (new_content == NULL)
-			continue ;
-		type = get_type(new_content);
-		if (content)
+		{	
 			free (content);
+			continue ;
+		}
+		type = get_type(new_content);
+		free (content);
 		token_add_back(&(prompt->lexer), create_node(new_content, type));
         if (prompt->lexer->type == PIPE && !prompt->lexer->next) // this is the case for when there is only a single PIPE and nothing after it
 		{

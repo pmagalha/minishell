@@ -1,0 +1,261 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   executor.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
+/*   Updated: 2024/04/09 16:48:19 by pmagalha         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "minishell.h"
+
+extern int	g_code;
+
+void	execute(t_prompt *prompt)
+{
+	t_parser	*parser;
+	
+	parser = prompt->parser;
+	if (!parser->next)
+		single_command(prompt, prompt->parser);
+}
+
+char	**get_paths(t_prompt *prompt)
+{
+	char	*path;
+	char	*tmp;
+	char	**paths;
+	int		i;
+
+	path = find_value("PATH", prompt->env_list);
+	if (!path)
+		return (NULL);
+	paths = ft_split(path, ':');
+	free(path);
+	i = -1;
+	while (paths[++i])
+	{
+		tmp = ft_strjoin(paths[i], "/");
+		free(paths[i]);
+		paths[i] = tmp;
+	}
+	return (paths);
+}
+
+static int	lexer_list_size(t_lexer *lexer)
+{
+	int count = 0;
+	t_lexer *current;
+
+	current = lexer;
+	while (current != NULL)
+	{
+		count++;
+		current = current->next;
+	}
+	return (count);
+}
+
+
+static int	env_list_size(t_env_list *env_list)
+{
+	int count = 0;
+	t_env_list *current = env_list;
+
+	while (current != NULL)
+	{
+		count++;
+		current = current->next;
+	}
+	return (count);
+}
+
+/* char	*get_full_string(t_env_list *env_list)
+{
+	int		i;
+	int		len;
+	char	*full_string;
+
+	i = 0;
+	len = ft_strlen(env);
+	full_string = malloc(sizeof(char) * len + 1);
+	if (!full_string)
+		return (NULL);
+	ft_strlcpy(full_string, env, len + 1);
+	
+	return (full_string);
+} 
+ */
+
+char	**convert_env(t_env_list *env_list)
+{
+	int			i;
+	int			size;
+	char 		**env_array;
+	t_env_list *head;
+	char 		*temp;
+
+	i = 0;
+	temp = NULL;
+	env_array = NULL;
+	head = env_list;
+	size = env_list_size(env_list);
+	env_array = (char **)ft_calloc(size + 1, sizeof(char *));
+	if (!env_array)
+		return (NULL);
+ 	while (head)
+	{
+		temp = ms_safejoin(head->key, NULL);
+		temp = ms_safejoin(temp, ft_strdup("="));
+		if (head->value && *head->value)
+			temp = ms_safejoin(temp, head->value);
+		env_array[i] = malloc((ft_strlen(temp) + 1) * sizeof(char));
+		if (!env_array[i])
+		{
+			free_array(env_array);
+			return (NULL);
+		}
+		ft_strlcpy(env_array[i], temp, ft_strlen(temp) + 1); 
+		ms_free_string(temp);
+		head = head->next;
+		i++;
+	}
+	return (env_array);
+}
+
+char	**convert_parser(t_prompt *prompt, t_parser *parser)
+{
+	char	**parser_array;
+	size_t	size;
+	t_lexer	*head;
+	int		i;
+	
+	i = 0;
+	size = lexer_list_size(parser->command);
+	head = prompt->parser->command;
+	parser_array = (char **)ft_calloc(size + 1, sizeof(char *));
+	if (!parser_array)
+		return (NULL);
+	while (head)
+	{
+		parser_array[i] = ft_strdup(head->content);
+		head = head->next;
+		i++;
+	}
+	return (parser_array);
+}
+
+
+static char	*file_dir_error(char *tmp)
+{
+	struct stat	st;
+	char		*str;
+
+	if (stat(tmp, &st) == 0)
+	{
+		if (S_ISDIR(st.st_mode))
+			str = ft_strjoin(tmp, ": Is a directory");
+		else if (S_IXUSR)
+			str = ft_strjoin(tmp, ": Permission denied");
+	}
+	else
+		str = ft_strjoin(tmp, ": No such file or directory\n");
+	return (str);
+}
+
+int	cmd_not_found(t_prompt *prompt, t_parser *parser)
+{
+	struct stat	st;
+	char		*str;
+	char		*tmp;
+	int			status;
+
+	status = 127;
+	(void)prompt;
+	if (!parser->command && !parser->command)
+		return (1);
+	if (parser->command->content[0])
+		tmp = ft_strdup(parser->command->content);
+	else
+		tmp = ft_strdup("\'\'");
+	if ((parser->command->content[0] == '/' || parser->command->content[0] == '.'))
+		str = file_dir_error(tmp);
+	else
+		str = ft_strjoin(tmp, ": command not found");
+	ft_putendl_fd(str, STDERR_FILENO);
+	if ((parser->command->content[0] == '/' || parser->command->content[0] == '.')
+		&& stat(tmp, &st) == 0 && (S_ISDIR(st.st_mode) | S_IXUSR))
+		status = 126;
+	free(tmp);
+	free(str);
+	return (status);
+}
+
+int	handle_command(t_prompt *prompt, t_parser *parser)
+{
+	int		i;
+	char	*path;
+	char	**paths;
+	char	**env_array;
+	char	**parser_array;
+
+	paths= NULL;
+	if (parser->builtin)
+	{
+		g_code = exec_builtins(prompt, parser);
+		free_data(prompt);
+		exit (g_code);
+	}
+	i = -1;
+	paths = get_paths(prompt);
+	while (paths[++i])
+	{
+		path = ft_strjoin(paths[i], prompt->parser->command->content);
+		if (!access(path, F_OK))
+		{
+			env_array = convert_env(prompt->env_list);
+			parser_array = convert_parser(prompt, prompt->parser);
+			execve(path, parser_array, env_array);
+			free(path);
+			free_array(env_array);
+			free_array(parser_array);
+			return (127);
+		}
+		free (path);
+	}
+	free_array(paths);
+	if (cmd_not_found(prompt, parser))
+	{
+		free_data(prompt);
+		exit (127);
+	}
+	return (cmd_not_found(prompt, parser));
+}
+
+void    single_command(t_prompt *prompt, t_parser *parser)
+{
+	int		pid;
+    int		status;
+    char	*command;
+	
+	status = 0;
+	command = parser->command->content;
+	if (command && (!ft_strncmp(command, "exit", 5) || !ft_strncmp(command, "cd", 3)
+			|| !ft_strncmp(command, "export", 7) || !ft_strncmp(command, "unset", 6)))
+	{
+		g_code = exec_builtins(prompt, parser);
+		return ;
+	}
+	pid = fork();
+	if (pid < 0)
+		exit (1); // OU WTV ERRO QUE SEJA
+	if (pid == 0)
+		handle_command(prompt, parser);
+	waitpid(pid, &status, 0);
+	printf("PIDE: [%d]\n", pid);
+	if (WIFEXITED(status))
+		g_code = WEXITSTATUS(status);
+}

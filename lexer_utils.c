@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/05 16:33:34 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/09 17:40:27 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ void free_env_list(t_env_list **env)
 
     head = *env;
 	tmp = NULL;
+    if (!env)
+        return ;
     while (head != NULL) 
 	{
         if (head->key)
@@ -113,14 +115,13 @@ void free_env_list(t_env_list **env)
 		head = head->next;
         free(tmp);
     }
+    //free(env);
 }
 
 void free_data(t_prompt *prompt)
 {
-    if (prompt == NULL) {
-        return; // Check for NULL pointer
-    }
-
+    if (!prompt)
+        return;
     free_env_list(&(prompt->env_list));
     free_lexer_list(&(prompt->lexer));
     free_parser_list(&(prompt->parser));
