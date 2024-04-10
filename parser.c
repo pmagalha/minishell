@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/10 15:44:13 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/10 18:33:48 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,10 +158,10 @@ void	get_redirects(t_prompt *prompt)
 		return ;
 	if (prompt->lexer->type == REDIR_OUT || prompt->lexer->type == REDIR2_OUT
 		|| prompt->lexer->type == REDIR_IN || prompt->lexer->type == HEREDOC)
-	{
-		if (!prompt->lexer->next) // caso seja por exemplo "ola >>" sem file ou path da erro, avanca para o proximo node da lista do lexer e continua
-		{ // talvez seja melhor dar erro depois no HEREDOC ou nas funcoes de REDIRECTS e deixar o parser criar todo direito
-			prompt->parser->redirects = create_node(ft_strdup(prompt->lexer->content), prompt->lexer->type);
+	{ // MUDAR DAQUI O HEREDOC PARA OUTRO SITIO PARA DAR HANDLE DELA ESPECIFICAMENTE
+		if (!prompt->lexer->next)
+		{
+			prompt->parser->redirects = NULL;
 			printf("Redirect: No such file or directory\n");
 			prompt->lexer = prompt->lexer->next;
 			return ;

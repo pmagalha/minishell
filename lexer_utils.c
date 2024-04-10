@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/09 17:40:27 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/10 18:26:36 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,13 +52,8 @@ void free_lexer_list(t_lexer **lexer)
 
     while (current != NULL)
     {
-        // Free the content
-        //printf("BEFORE FREED CURRENT COMMAND: [%s]\n", current->content);
-
         if (current->content)
             free(current->content);
-        //printf("AFTER FREED CURRENT COMMAND: [%s]\n", current->content);
-        // Save the next node before freeing the current one
         next = current->next;
         if (current)
             free(current);
@@ -82,10 +77,8 @@ void free_parser_list(t_parser **parser)
             free_lexer_list(&(current->command));
         if (current->redirects)
             free_lexer_list(&(current->redirects));
-        //printf("BEFORE FREED BUILTIN: [%s]\n", current->builtin);
         if (current->builtin)
             free(current->builtin);
-        //printf("AFTER FREED BUILTIN: [%s]\n", current->builtin);
         if (current->hd_file)
             free(current->hd_file);
         next = current->next;

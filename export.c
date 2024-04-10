@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/09 14:18:46 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/10 18:13:27 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ t_env_list	*create_dup(t_env_list *env_list)
 		else
 			dup_value = NULL;
 		new_node = create_key_value(dup_key, dup_value);
+		ms_free_string(dup_key);
+		ms_free_string(dup_value);
 		token_add_back_env(&dup_env, new_node);
 		head = head->next;
 	}
@@ -100,15 +102,21 @@ void	add_value(char *variable, t_prompt *prompt)
 	current = prompt->env_list;
 	while (current)
 	{
-		if (!strcmp(current->key, key))
+		if (!ft_strncmp(current->key, key, ft_strlen(key) + 1))
 		{
 			if (value)
+			{
 				current->value = ft_strdup(value);
+				ms_free_string(value);
+			}
+			ms_free_string(key);
 			return ;
 		}
 		current = current->next;
 	}
 	add_on_env_list(prompt->env_list, key, value);
+	ms_free_string(value);
+	ms_free_string(key);
 }
 
 int	ms_export(t_prompt *prompt)

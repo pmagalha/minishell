@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/10 17:08:22 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/10 18:31:46 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,6 +326,8 @@ void    single_command(t_prompt *prompt, t_parser *parser)
     char	*command;
 	
 	status = 0;
+	if (!prompt->parser->command)
+		return ;
 	command = prompt->parser->command->content;
 	if (command && (!ft_strncmp(command, "exit", 5) || !ft_strncmp(command, "cd", 3)
 			|| !ft_strncmp(command, "export", 7) || !ft_strncmp(command, "unset", 6)))
