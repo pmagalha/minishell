@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/09 16:45:42 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/10 16:47:20 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 #include <signal.h>
 #include <sys/wait.h>
 # include <sys/stat.h>
+# include <fcntl.h>
 
 extern int g_code;
 
@@ -197,6 +198,9 @@ void	reset_data(t_prompt *prompt);
 
 // Executor
 void    single_command(t_prompt *prompt, t_parser *parser);
+int		handle_redirects(t_prompt *prompt);
+int		set_fd_in(t_lexer *redir);
+int		set_fd_out(t_lexer *redir);
 
 int	dev_mod(t_prompt *prompt);
 

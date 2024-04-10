@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/09 16:48:19 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/10 17:08:22 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -181,8 +181,10 @@ int	cmd_not_found(t_prompt *prompt, t_parser *parser)
 		tmp = ft_strdup(parser->command->content);
 	else
 		tmp = ft_strdup("\'\'");
-	if ((parser->command->content[0] == '/' || parser->command->content[0] == '.'))
+	if ((parser->command->content[0] == '/' || parser->command->content[0] == '.') && parser->command->content[1])
+	{
 		str = file_dir_error(tmp);
+	}
 	else
 		str = ft_strjoin(tmp, ": command not found");
 	ft_putendl_fd(str, STDERR_FILENO);
@@ -194,27 +196,21 @@ int	cmd_not_found(t_prompt *prompt, t_parser *parser)
 	return (status);
 }
 
-int	handle_command(t_prompt *prompt, t_parser *parser)
+int	exec_path(t_prompt *prompt, char **paths)
 {
 	int		i;
 	char	*path;
-	char	**paths;
 	char	**env_array;
 	char	**parser_array;
 
-	paths= NULL;
-	if (parser->builtin)
-	{
-		g_code = exec_builtins(prompt, parser);
-		free_data(prompt);
-		exit (g_code);
-	}
 	i = -1;
-	paths = get_paths(prompt);
+	path = NULL;
+	if (!paths)
+		return (1);
 	while (paths[++i])
 	{
 		path = ft_strjoin(paths[i], prompt->parser->command->content);
-		if (!access(path, F_OK))
+		if (!access(path, F_OK) && prompt->parser->command->content[1])
 		{
 			env_array = convert_env(prompt->env_list);
 			parser_array = convert_parser(prompt, prompt->parser);
@@ -222,10 +218,34 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 			free(path);
 			free_array(env_array);
 			free_array(parser_array);
-			return (127);
+			g_code = 127;
+			return (g_code);
 		}
 		free (path);
 	}
+	return (0);
+}
+
+int	handle_command(t_prompt *prompt, t_parser *parser)
+{
+	char	**paths;
+
+	paths = NULL;
+	if (!parser->command && parser->redirects)
+	{
+		printf("ERROR: SHEET\n");
+		return (1);
+	}
+ 	else if (parser->redirects)
+		g_code = handle_redirects(prompt);
+	if (parser->builtin)
+	{
+		g_code = exec_builtins(prompt, parser);
+		free_data(prompt);
+		exit (g_code);
+	}
+	paths = get_paths(prompt);
+	g_code = exec_path(prompt, paths);
 	free_array(paths);
 	if (cmd_not_found(prompt, parser))
 	{
@@ -235,6 +255,70 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 	return (cmd_not_found(prompt, parser));
 }
 
+// tem que se verificar o caso de ter um redirect sem command. Ex: [>> oi] assim cria ficheiro 'oi' / [>>] Assim da erro / [<< oi] [<] Assim da erro
+
+int	set_fd_in(t_lexer *redir)
+{
+	int		fd;
+	char	*file;
+
+	file = redir->content;
+	fd = open(file, O_RDONLY);
+	if (dup2(fd, STDIN_FILENO) < 0)
+		return (1);
+	close(fd);
+	return (0);
+}
+
+int	set_fd_out(t_lexer *redir)
+{
+	int		fd;
+	char	*file;
+
+	file = redir->content;
+	fd = 0;
+	if (redir->type == REDIR2_OUT)
+		fd = open(file, O_CREAT | O_RDWR | O_APPEND, 0644);
+	else if (redir->type == REDIR_OUT)
+		fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);
+	if (fd < 0)
+	{
+		return (1);
+	}
+	if (dup2(fd, STDOUT_FILENO) < 0) {
+		return (1);
+	}
+	close(fd);
+	return (0);
+}
+
+// TRATAR DOS ERROS DA FUNCAO ABAIXO!!! IMPORTANTE CRL
+ int	handle_redirects(t_prompt *prompt)
+{
+	t_lexer		*redir;
+
+	redir = prompt->parser->redirects;
+	while (redir)
+	{
+		if (redir->type == REDIR_OUT || redir->type == REDIR2_OUT) // > / >>
+		{
+			if (set_fd_out(redir))
+				return (1);
+		}
+		else if (redir->type == REDIR_IN) // <
+		{
+			if (set_fd_in(redir))
+				return (1);
+		}
+		else if (redir->type == HEREDOC) // <<
+		{
+			;
+		}
+		redir = redir->next;
+	}
+	return (0);
+}
+
 void    single_command(t_prompt *prompt, t_parser *parser)
 {
 	int		pid;
@@ -242,7 +326,7 @@ void    single_command(t_prompt *prompt, t_parser *parser)
     char	*command;
 	
 	status = 0;
-	command = parser->command->content;
+	command = prompt->parser->command->content;
 	if (command && (!ft_strncmp(command, "exit", 5) || !ft_strncmp(command, "cd", 3)
 			|| !ft_strncmp(command, "export", 7) || !ft_strncmp(command, "unset", 6)))
 	{
@@ -250,12 +334,13 @@ void    single_command(t_prompt *prompt, t_parser *parser)
 		return ;
 	}
 	pid = fork();
+	command = parser->command->content;
 	if (pid < 0)
 		exit (1); // OU WTV ERRO QUE SEJA
 	if (pid == 0)
 		handle_command(prompt, parser);
 	waitpid(pid, &status, 0);
-	printf("PIDE: [%d]\n", pid);
+	//printf("PIDE: [%d]\n", pid);
 	if (WIFEXITED(status))
 		g_code = WEXITSTATUS(status);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/08 16:18:04 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/10 15:44:13 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,14 +59,6 @@ void	get_parser(t_prompt *prompt)
 			get_command(prompt);
 			get_redirects(prompt);
 		}
-		/* if (prompt->parser->builtin)
-				exec_builtins(prompt, start, prompt->parser); */
-				
-/* 		else
-		{
-			printf("command %s not found\n", prompt->parser->command->content);
-			return ;
-		} */
 		if (prompt->lexer && prompt->lexer->next && prompt->lexer->type == PIPE)
 		{
 			if (prompt->lexer->next->type == PIPE) // this is the condition for the double pipes case, (it will ignore the second)
@@ -164,14 +156,16 @@ void	get_redirects(t_prompt *prompt)
 	redirect = NULL;
 	if (!prompt->lexer)
 		return ;
- 	/* if (!prompt->lexer->next)
-	{
-		printf("erro nos redirs\n");
-		return ; // adicionar ERROR AQUI
-	} */
 	if (prompt->lexer->type == REDIR_OUT || prompt->lexer->type == REDIR2_OUT
 		|| prompt->lexer->type == REDIR_IN || prompt->lexer->type == HEREDOC)
 	{
+		if (!prompt->lexer->next) // caso seja por exemplo "ola >>" sem file ou path da erro, avanca para o proximo node da lista do lexer e continua
+		{ // talvez seja melhor dar erro depois no HEREDOC ou nas funcoes de REDIRECTS e deixar o parser criar todo direito
+			prompt->parser->redirects = create_node(ft_strdup(prompt->lexer->content), prompt->lexer->type);
+			printf("Redirect: No such file or directory\n");
+			prompt->lexer = prompt->lexer->next;
+			return ;
+		}
 		if (!prompt->parser->redirects)
 			prompt->parser->redirects = create_node(ft_strdup(prompt->lexer->next->content), prompt->lexer->type);
 		else if (prompt->parser->redirects)
