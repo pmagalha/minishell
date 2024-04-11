@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/11 17:14:50 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/11 17:45:17 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,7 +203,7 @@ int		set_fd_in(t_lexer *redir);
 int		set_fd_out(t_lexer *redir);
 char	*get_delimiter(t_parser *parser);
 void	set_heredoc(t_prompt *prompt);
-int		create_temp_file(char *input, char *file);
+int		create_temp_file(char *file);
 char	*get_hdfile(t_lexer *redir);
 
 int	dev_mod(t_prompt *prompt);

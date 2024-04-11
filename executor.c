@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/11 17:14:28 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/11 18:21:10 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,6 +271,7 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
  	if (parser->redirects)
 	{
 		g_code = handle_redirects(prompt);
+		exit (1);
 	}
 	if (parser->builtin)
 	{
@@ -280,6 +281,7 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 	}
 	paths = get_paths(prompt);
 	g_code = exec_path(prompt, paths);
+	printf("AI\n");
 	free_array(paths);
 	if (cmd_not_found(prompt, parser))
 	{
@@ -298,22 +300,28 @@ void	set_heredoc(t_prompt *prompt)
 	char	*file;
 
 	new_input = NULL;
+	input = NULL;
 	prompt->parser->hd_file = get_hdfile(prompt->parser->redirects);
 	file = prompt->parser->hd_file;
 	delimiter = get_delimiter(prompt->parser);
-	fd = create_temp_file(new_input, file);
-	while (ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
+	fd = create_temp_file(file);
+	while (1)
 	{
 		ms_free_string(input);
 		input = readline("> ");
-		if (input)
+		if (!ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
 		{
-			new_input = expander(input, prompt->env_list);
+			free_data(prompt);
+			break ;
 		}
+		if (input)
+			new_input = expander(input, prompt->env_list);
 		ft_putstr_fd(new_input, fd);
+		ft_putstr_fd("\n", fd);
+		ms_free_string(new_input);
 	}
-	ms_free_string(input);
 	close(fd);
+	ms_free_string(input);
 	ms_free_string(delimiter);
 }
 
@@ -324,30 +332,30 @@ char	*get_delimiter(t_parser *parser)
 
 	delimiter = NULL;
 	head = parser->redirects;
-	while (ft_strncmp(head->content, "<<", 3))
+	while (head->type != HEREDOC)
 		head = head->next;
-	if (head->content)
-		delimiter = ft_strdup(head->content);
-	return (delimiter);
-	
+	delimiter = ft_strdup(head->content);
+	return (delimiter);	
 }
 
-int	create_temp_file(char *input, char *file)
+int	create_temp_file(char *hdfile)
 {
 	int		fd;
+	char	*file;
 
 	fd = 0;
-	if (!file)
-		file = ft_strdup("temp");
-	if (input)
+	if (hdfile)
+		file = ft_strdup(hdfile);
+	else
+		file = ft_strdup("ztemp.txt");
+	fd = open(file, O_CREAT | O_RDWR | O_APPEND, 0644);
+	if (fd < 0)
 	{
-		fd = open(file, O_CREAT | O_RDWR | O_APPEND, 0644);
-		if (fd < 0)
-			return (1);
+		ms_free_string(file);
+		return (1);
 	}
 	ms_free_string(file);
 	return (fd);
-		
 }
 
 char	*get_hdfile(t_lexer *redir)
@@ -359,10 +367,16 @@ char	*get_hdfile(t_lexer *redir)
 	file = NULL;
 	if (!head->content)
 		return (file);
-	while (head && (ft_strncmp(head->content, ">", 2) && ft_strncmp(head->content, ">>", 3)))
+	while (head)
+	{
+		if ((head->type == REDIR_OUT || head->type == REDIR2_OUT) && !head->next)
+			file = ft_strdup(head->content);
+		printf("HEAD: [%s]\n", head->content);
+		if (head->next)
+			ms_free_string(file);
+		printf("FILE: [%s]\n", file);
 		head = head->next;
-	if (head->content && head->next->content)
-		file = ft_strdup(head->next->content);
+	}
 	return (file);
 }
 
