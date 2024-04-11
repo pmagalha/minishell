@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/10 18:36:07 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/11 14:27:55 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	dev_mod(t_prompt *prompt)
 		}
 		printf("\n\033[34m   HD_FILE: \033[0m");
 		if (process->hd_file)
-			printf("%s", process->hd_file);
+			printf("[%s]", process->hd_file);
 		else
 			printf("\033[90m(null)\033[0m");
 		process = process->next;
@@ -134,8 +134,8 @@ int main(int argc, char **argv, char **env)
 			add_history(input);
 			get_token(input, prompt);
 			get_parser(prompt);
-			dev_mod(prompt); // aapaaaagare
 			single_command(prompt, prompt->parser);
+			dev_mod(prompt); // aapaaaagare
 			free(input);
 		}
 		else

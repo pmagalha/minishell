@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/10 18:31:46 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/11 17:14:28 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,18 +226,52 @@ int	exec_path(t_prompt *prompt, char **paths)
 	return (0);
 }
 
+/* void    create_hdfile(t_prompt *prompt)
+{
+    if (prompt->parser && prompt->parser->redirects)
+    {
+        t_lexer *redirects = prompt->parser->redirects;
+        while (redirects)
+        {
+            if (ft_strncmp(redirects->content, ">"))
+            {
+                if (redirects && redirects->content)
+                {
+                    prompt->parser->hd_file = ft_strdup(prompt->parser->redirects->content);
+                    return;
+                }
+                else
+                {
+                    printf("Error: HEREDOC redirection missing filename.\n");
+                    return ;
+                }
+            }
+            redirects = redirects->next;
+        }
+        printf("Error: HEREDOC redirection missing.\n");
+    }
+    else
+    {
+        printf("Error: No redirections found for HEREDOC.\n");
+    }
+} */
+
 int	handle_command(t_prompt *prompt, t_parser *parser)
 {
 	char	**paths;
+	char	*file;
 
 	paths = NULL;
+	file = NULL;
 	if (!parser->command && parser->redirects)
 	{
 		printf("ERROR: SHEET\n");
 		return (1);
 	}
- 	else if (parser->redirects)
+ 	if (parser->redirects)
+	{
 		g_code = handle_redirects(prompt);
+	}
 	if (parser->builtin)
 	{
 		g_code = exec_builtins(prompt, parser);
@@ -255,8 +289,109 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 	return (cmd_not_found(prompt, parser));
 }
 
-// tem que se verificar o caso de ter um redirect sem command. Ex: [>> oi] assim cria ficheiro 'oi' / [>>] Assim da erro / [<< oi] [<] Assim da erro
+void	set_heredoc(t_prompt *prompt)
+{
+	int		fd;
+	char	*input;
+	char	*delimiter;
+	char	*new_input;
+	char	*file;
 
+	new_input = NULL;
+	prompt->parser->hd_file = get_hdfile(prompt->parser->redirects);
+	file = prompt->parser->hd_file;
+	delimiter = get_delimiter(prompt->parser);
+	fd = create_temp_file(new_input, file);
+	while (ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
+	{
+		ms_free_string(input);
+		input = readline("> ");
+		if (input)
+		{
+			new_input = expander(input, prompt->env_list);
+		}
+		ft_putstr_fd(new_input, fd);
+	}
+	ms_free_string(input);
+	close(fd);
+	ms_free_string(delimiter);
+}
+
+char	*get_delimiter(t_parser *parser)
+{
+	t_lexer	*head;
+	char	*delimiter;
+
+	delimiter = NULL;
+	head = parser->redirects;
+	while (ft_strncmp(head->content, "<<", 3))
+		head = head->next;
+	if (head->content)
+		delimiter = ft_strdup(head->content);
+	return (delimiter);
+	
+}
+
+int	create_temp_file(char *input, char *file)
+{
+	int		fd;
+
+	fd = 0;
+	if (!file)
+		file = ft_strdup("temp");
+	if (input)
+	{
+		fd = open(file, O_CREAT | O_RDWR | O_APPEND, 0644);
+		if (fd < 0)
+			return (1);
+	}
+	ms_free_string(file);
+	return (fd);
+		
+}
+
+char	*get_hdfile(t_lexer *redir)
+{
+	t_lexer	*head;
+	char	*file;
+
+	head = redir;
+	file = NULL;
+	if (!head->content)
+		return (file);
+	while (head && (ft_strncmp(head->content, ">", 2) && ft_strncmp(head->content, ">>", 3)))
+		head = head->next;
+	if (head->content && head->next->content)
+		file = ft_strdup(head->next->content);
+	return (file);
+}
+
+int	handle_redirects(t_prompt *prompt)
+{
+	t_lexer		*redir;
+
+	redir = prompt->parser->redirects;
+	while (redir)
+	{
+		if (redir->type == REDIR_OUT || redir->type == REDIR2_OUT) // > / >>
+		{
+			if (set_fd_out(redir))
+				return (1);
+		}
+		else if (redir->type == REDIR_IN) // <
+		{
+			if (set_fd_in(redir))
+				return (1);
+		}
+		else if (redir->type == HEREDOC) // <<
+		{
+			set_heredoc(prompt);
+			return (1);
+		}
+		redir = redir->next;
+	}
+	return (0);
+}
 int	set_fd_in(t_lexer *redir)
 {
 	int		fd;
@@ -293,31 +428,6 @@ int	set_fd_out(t_lexer *redir)
 }
 
 // TRATAR DOS ERROS DA FUNCAO ABAIXO!!! IMPORTANTE CRL
- int	handle_redirects(t_prompt *prompt)
-{
-	t_lexer		*redir;
-
-	redir = prompt->parser->redirects;
-	while (redir)
-	{
-		if (redir->type == REDIR_OUT || redir->type == REDIR2_OUT) // > / >>
-		{
-			if (set_fd_out(redir))
-				return (1);
-		}
-		else if (redir->type == REDIR_IN) // <
-		{
-			if (set_fd_in(redir))
-				return (1);
-		}
-		else if (redir->type == HEREDOC) // <<
-		{
-			;
-		}
-		redir = redir->next;
-	}
-	return (0);
-}
 
 void    single_command(t_prompt *prompt, t_parser *parser)
 {

@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/10 18:33:48 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/11 17:02:56 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,8 +152,10 @@ void	get_command(t_prompt *prompt)
 void	get_redirects(t_prompt *prompt)
 {
 	t_lexer	*redirect;
+	t_lexer	*new_node;
 
 	redirect = NULL;
+	new_node = NULL;
 	if (!prompt->lexer)
 		return ;
 	if (prompt->lexer->type == REDIR_OUT || prompt->lexer->type == REDIR2_OUT
@@ -170,14 +172,16 @@ void	get_redirects(t_prompt *prompt)
 			prompt->parser->redirects = create_node(ft_strdup(prompt->lexer->next->content), prompt->lexer->type);
 		else if (prompt->parser->redirects)
 		{
-			redirect = prompt->parser->redirects;
+			new_node = create_node(ft_strdup(prompt->lexer->next->content), prompt->lexer->type);
+			token_add_back(&prompt->parser->redirects, new_node);
+/* 			redirect = prompt->parser->redirects;
 			while (redirect->next != NULL)
 				redirect = redirect->next;
 			redirect->next = malloc(sizeof(t_lexer));
 			redirect->next->type = prompt->lexer->type;
 			redirect->next->content = ft_strjoin(prompt->lexer->content, NULL);
 			redirect->next->next = NULL;
-			redirect->next->prev = redirect;
+			redirect->next->prev = redirect; */
 		}
 		else
 			printf("error in redirects\n");
