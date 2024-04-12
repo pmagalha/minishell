@@ -3,25 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/11 18:21:10 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/12 18:39:59 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 extern int	g_code;
-
-void	execute(t_prompt *prompt)
-{
-	t_parser	*parser;
-	
-	parser = prompt->parser;
-	if (!parser->next)
-		single_command(prompt, prompt->parser);
-}
 
 char	**get_paths(t_prompt *prompt)
 {
@@ -218,43 +209,12 @@ int	exec_path(t_prompt *prompt, char **paths)
 			free(path);
 			free_array(env_array);
 			free_array(parser_array);
-			g_code = 127;
-			return (g_code);
+			return (127);
 		}
 		free (path);
 	}
 	return (0);
 }
-
-/* void    create_hdfile(t_prompt *prompt)
-{
-    if (prompt->parser && prompt->parser->redirects)
-    {
-        t_lexer *redirects = prompt->parser->redirects;
-        while (redirects)
-        {
-            if (ft_strncmp(redirects->content, ">"))
-            {
-                if (redirects && redirects->content)
-                {
-                    prompt->parser->hd_file = ft_strdup(prompt->parser->redirects->content);
-                    return;
-                }
-                else
-                {
-                    printf("Error: HEREDOC redirection missing filename.\n");
-                    return ;
-                }
-            }
-            redirects = redirects->next;
-        }
-        printf("Error: HEREDOC redirection missing.\n");
-    }
-    else
-    {
-        printf("Error: No redirections found for HEREDOC.\n");
-    }
-} */
 
 int	handle_command(t_prompt *prompt, t_parser *parser)
 {
@@ -279,8 +239,11 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 		free_data(prompt);
 		exit (g_code);
 	}
-	paths = get_paths(prompt);
-	g_code = exec_path(prompt, paths);
+	if (parser->command && parser->command->content)
+	{
+		paths = get_paths(prompt);
+		g_code = exec_path(prompt, paths);
+	}
 	printf("AI\n");
 	free_array(paths);
 	if (cmd_not_found(prompt, parser))
@@ -469,4 +432,108 @@ void    single_command(t_prompt *prompt, t_parser *parser)
 	//printf("PIDE: [%d]\n", pid);
 	if (WIFEXITED(status))
 		g_code = WEXITSTATUS(status);
+}
+
+
+int	dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2])
+{
+	(void)prompt;
+	
+	if (parser->prev && dup2(fd_in, STDIN_FILENO) < 0)
+		return (1);
+	close(end[0]);
+	if (parser->next && dup2(end[1], STDOUT_FILENO) < 0)
+		return (1);
+	close(end[1]);
+	if (parser->prev)
+		close (fd_in);
+	handle_command(prompt, parser);
+	return (0);
+}
+
+int	fork_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2])
+{
+	static int	i;
+	
+	if (!i)
+		i = 0;
+
+	prompt->pid[i] = fork();
+	printf("ISTO EH O PID: [%d]\n", prompt->pid[i]);
+	if (prompt->pid[i] < 0)
+		return (ms_error(5), 1);
+	if (prompt->pid[i] == 0)
+	{
+		if (dup_parser(prompt, parser, fd_in, end))
+			return (ms_error(4), 1);
+	}
+	i++;
+	return (0);
+}
+
+static void	wait_pipe(t_prompt *prompt, int *pid)
+{
+	t_parser 	*parser;
+	int			n_pipes;
+	int			i;
+	int			status;
+
+	parser = prompt->parser;
+	n_pipes = 0;
+	while (parser)
+	{
+		n_pipes++;
+		parser = parser->next;
+	}
+	i = -1;
+	while (++i < n_pipes - 1)
+		waitpid(pid[i], &status, 0);
+	waitpid(pid[i], &status, 0);
+	if (WIFEXITED(status))
+		g_code = WEXITSTATUS(status);
+}
+
+/* static int	check_fd(t_parser *parser, int end[2])
+{
+	int	fd_in;
+
+	fd_in = end[0];
+ 	if (prompt->heredoc)
+	{
+		close(end[0]);
+		if (process->hd_file)
+			fd_in = open(process->hd_file, O_RDONLY);
+	}
+	return (fd_in);
+} */
+
+void execute(t_prompt *prompt)
+{
+    t_parser *parser;
+    int end[2];
+    int fd_in;
+
+    fd_in = STDIN_FILENO;
+    parser = prompt->parser;
+    if (!parser->next)
+    {
+        single_command(prompt, parser);
+        return ;
+    }
+	else
+	{
+		while (parser)
+		{
+			if (parser->next)
+				pipe(end);
+			if (fork_parser(prompt, parser, fd_in, end))
+				return ;
+			close(end[1]);
+			if (parser->prev)
+				close(fd_in);
+			fd_in = end[0];
+			parser = parser->next;
+		}
+	}
+    wait_pipe(prompt, prompt->pid);
 }

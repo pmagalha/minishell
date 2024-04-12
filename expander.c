@@ -44,7 +44,6 @@ static char *expand_double_quotes(char *input, t_env_list *env_list)
     char    *key;
 	char	*tmp2;
 
-    printf("QUOTES INPUT: [%s]\n", input);
     newinput = ft_strndup(input, ft_strclen(input + 1, '"') + 1);
 	new = NULL;
     tmp = newinput;

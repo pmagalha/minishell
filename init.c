@@ -6,11 +6,31 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/08 12:52:29 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/12 16:40:10 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	init_pid(t_prompt *prompt)
+{
+	t_parser	*parser;
+	int			n_parsers;
+
+	parser = prompt->parser;
+	n_parsers = 0;
+	while (parser)
+	{
+		n_parsers++;
+		parser = parser->next;
+	}
+	if (!n_parsers)
+		return (1);
+	prompt->pid = malloc(n_parsers * sizeof(int));
+	if (!prompt->pid)
+		return (ms_error(1), 1);
+	return (0);
+}
 
 t_prompt	*init(t_prompt *prompt, char **env)
 {
@@ -24,7 +44,7 @@ t_prompt	*init(t_prompt *prompt, char **env)
 	prompt->env_list = NULL;
 	prompt->quotes[0] = false;
 	prompt->quotes[1] = false;
-	//prompt->exit_code = 0;
+	prompt->pid = NULL;
 	return (prompt);
 }
 

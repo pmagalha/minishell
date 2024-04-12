@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/11 17:45:17 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/12 16:40:59 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ typedef struct  s_prompt
     t_lexer		**token_lst;
     t_parser    *parser;
 	bool		quotes[2];
+    int         *pid;
     //t_parser    *comands; maybe use this for storing commands between pipes
 }               t_prompt;
 
@@ -105,6 +106,8 @@ t_lexer     *init_lexer(t_lexer *lexer);
 t_env_list   *init_env(t_env_list *env_list);
 t_parser    *init_parser(t_parser *parser);
 
+int	init_pid(t_prompt *prompt);
+
 
 // Env
 int		count_lines(char **env);
@@ -125,7 +128,7 @@ int check_dquotes(char *str);
 int check_squotes(char *str);
 char	*trim_quotes(char *string);
 void   get_parser(t_prompt *prompt);
-t_parser *dup_parser(t_lexer *lexer);
+int	dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2]);
 void    add_parser_back(t_parser **token_lst, t_parser *new);
 char	*get_builtin(t_prompt *prompt);
 char	get_first_quote(char *str);
@@ -205,6 +208,10 @@ char	*get_delimiter(t_parser *parser);
 void	set_heredoc(t_prompt *prompt);
 int		create_temp_file(char *file);
 char	*get_hdfile(t_lexer *redir);
+void	execute(t_prompt *prompt);
+
+// Error handling
+void	ms_error(int error);
 
 int	dev_mod(t_prompt *prompt);
 
