@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/12 16:40:59 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/16 16:26:38 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,6 @@ t_lexer     *init_lexer(t_lexer *lexer);
 t_env_list   *init_env(t_env_list *env_list);
 t_parser    *init_parser(t_parser *parser);
 
-int	init_pid(t_prompt *prompt);
-
 
 // Env
 int		count_lines(char **env);
@@ -128,7 +126,6 @@ int check_dquotes(char *str);
 int check_squotes(char *str);
 char	*trim_quotes(char *string);
 void   get_parser(t_prompt *prompt);
-int	dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2]);
 void    add_parser_back(t_parser **token_lst, t_parser *new);
 char	*get_builtin(t_prompt *prompt);
 char	get_first_quote(char *str);
@@ -200,19 +197,19 @@ void	print_parser(t_prompt *prompt);
 void	reset_data(t_prompt *prompt);
 
 // Executor
+void	execute(t_prompt *prompt);
 void    single_command(t_prompt *prompt, t_parser *parser);
 int		handle_redirects(t_prompt *prompt);
 int		set_fd_in(t_lexer *redir);
 int		set_fd_out(t_lexer *redir);
 char	*get_delimiter(t_parser *parser);
 void	set_heredoc(t_prompt *prompt);
-int		create_temp_file(char *file);
+int		create_temp_file(char *input, char *file);
 char	*get_hdfile(t_lexer *redir);
-void	execute(t_prompt *prompt);
-
-// Error handling
-void	ms_error(int error);
 
 int	dev_mod(t_prompt *prompt);
+
+int	init_pid(t_prompt *prompt);
+int	handle_command(t_prompt *prompt, t_parser *parser);
 
 # endif

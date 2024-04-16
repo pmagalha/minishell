@@ -6,13 +6,101 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/12 18:39:59 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/16 17:27:04 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 extern int	g_code;
+
+int	dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int *end)
+{
+	(void)prompt;
+
+	if (parser->prev && dup2(fd_in, STDIN_FILENO) < 0)
+		return (1);
+	close(end[0]);
+	if (parser->next && dup2(end[1], STDOUT_FILENO) < 0)
+		return (1);
+	close(end[1]);
+	if (parser->prev)
+		close(fd_in);
+	return (0);
+}
+
+int	fork_parser(t_prompt *prompt, t_parser *parser, int fd_in, int *end)
+{
+	static int	i;
+
+	if (!prompt->pid)
+		init_pid(prompt);
+	if (!i)
+		i = 0;
+	prompt->pid[i] = fork();
+	if (prompt->pid[i] < 0)
+	{
+		printf("error with pid\n");
+		exit (1); // METER AQUI UM ERRO DECENTE
+	}
+	if (prompt->pid[i] == 0)
+	{
+		dup_parser(prompt, parser, fd_in, end);
+		//ft_putstr_fd(parser->command->content, STDOUT_FILENO);
+		handle_command(prompt, parser);
+	}
+	return (0);
+}
+
+void	wait_pipe(t_prompt *prompt, int *pid)
+{
+	t_parser 	*parser;
+	int			n_pipes;
+	int			i;
+	int			status;
+
+	parser = prompt->parser;
+	n_pipes = 0;
+	while (parser)
+	{
+		n_pipes++;
+		parser = parser->next;
+	}
+	i = -1;
+	while (++i < n_pipes - 1)
+		waitpid(pid[i], &status, 0);
+	waitpid(pid[i], &status, 0);
+	if (WIFEXITED(status))
+		g_code = WEXITSTATUS(status);
+}
+
+void	execute(t_prompt *prompt)
+{
+	int			end[2];
+	int			fd_in;
+	t_parser	*parser;
+
+	fd_in = STDIN_FILENO;
+	parser = prompt->parser;
+	if (!parser->next)
+		single_command(prompt, prompt->parser);
+	else
+	{
+		while (parser)
+		{
+			//ft_putstr_fd("ENTREI\n", STDOUT_FILENO);
+			if (parser->next)
+				pipe(end);
+			/* if (dup_parser(prompt, parser, fd_in, end) < 0)
+				return ; */
+			if (fork_parser(prompt, parser, fd_in, end) < 0)
+				return ;
+			fd_in = end[0];
+			parser = parser->next;
+		}
+		wait_pipe(prompt, prompt->pid);
+	}
+}
 
 char	**get_paths(t_prompt *prompt)
 {
@@ -63,23 +151,6 @@ static int	env_list_size(t_env_list *env_list)
 	}
 	return (count);
 }
-
-/* char	*get_full_string(t_env_list *env_list)
-{
-	int		i;
-	int		len;
-	char	*full_string;
-
-	i = 0;
-	len = ft_strlen(env);
-	full_string = malloc(sizeof(char) * len + 1);
-	if (!full_string)
-		return (NULL);
-	ft_strlcpy(full_string, env, len + 1);
-	
-	return (full_string);
-} 
- */
 
 char	**convert_env(t_env_list *env_list)
 {
@@ -201,7 +272,7 @@ int	exec_path(t_prompt *prompt, char **paths)
 	while (paths[++i])
 	{
 		path = ft_strjoin(paths[i], prompt->parser->command->content);
-		if (!access(path, F_OK) && prompt->parser->command->content[1])
+		if (!access(path, F_OK))
 		{
 			env_array = convert_env(prompt->env_list);
 			parser_array = convert_parser(prompt, prompt->parser);
@@ -209,7 +280,8 @@ int	exec_path(t_prompt *prompt, char **paths)
 			free(path);
 			free_array(env_array);
 			free_array(parser_array);
-			return (127);
+			g_code = 127;
+			return (g_code);
 		}
 		free (path);
 	}
@@ -231,20 +303,16 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
  	if (parser->redirects)
 	{
 		g_code = handle_redirects(prompt);
-		exit (1);
 	}
+	//printf("CONTENT: [%s]\n", parser->command->content);
 	if (parser->builtin)
 	{
 		g_code = exec_builtins(prompt, parser);
 		free_data(prompt);
 		exit (g_code);
 	}
-	if (parser->command && parser->command->content)
-	{
-		paths = get_paths(prompt);
-		g_code = exec_path(prompt, paths);
-	}
-	printf("AI\n");
+	paths = get_paths(prompt);
+	g_code = exec_path(prompt, paths);
 	free_array(paths);
 	if (cmd_not_found(prompt, parser))
 	{
@@ -263,28 +331,20 @@ void	set_heredoc(t_prompt *prompt)
 	char	*file;
 
 	new_input = NULL;
-	input = NULL;
 	prompt->parser->hd_file = get_hdfile(prompt->parser->redirects);
 	file = prompt->parser->hd_file;
 	delimiter = get_delimiter(prompt->parser);
-	fd = create_temp_file(file);
-	while (1)
+	fd = create_temp_file(new_input, file);
+	while (ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
 	{
 		ms_free_string(input);
 		input = readline("> ");
-		if (!ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
-		{
-			free_data(prompt);
-			break ;
-		}
 		if (input)
 			new_input = expander(input, prompt->env_list);
 		ft_putstr_fd(new_input, fd);
-		ft_putstr_fd("\n", fd);
-		ms_free_string(new_input);
 	}
-	close(fd);
 	ms_free_string(input);
+	close(fd);
 	ms_free_string(delimiter);
 }
 
@@ -295,30 +355,30 @@ char	*get_delimiter(t_parser *parser)
 
 	delimiter = NULL;
 	head = parser->redirects;
-	while (head->type != HEREDOC)
+	while (ft_strncmp(head->content, "<<", 3))
 		head = head->next;
-	delimiter = ft_strdup(head->content);
-	return (delimiter);	
+	if (head->content)
+		delimiter = ft_strdup(head->content);
+	return (delimiter);
+	
 }
 
-int	create_temp_file(char *hdfile)
+int	create_temp_file(char *input, char *file)
 {
 	int		fd;
-	char	*file;
 
 	fd = 0;
-	if (hdfile)
-		file = ft_strdup(hdfile);
-	else
-		file = ft_strdup("ztemp.txt");
-	fd = open(file, O_CREAT | O_RDWR | O_APPEND, 0644);
-	if (fd < 0)
+	if (!file)
+		file = ft_strdup("temp");
+	if (input)
 	{
-		ms_free_string(file);
-		return (1);
+		fd = open(file, O_CREAT | O_RDWR | O_APPEND, 0644);
+		if (fd < 0)
+			return (1);
 	}
 	ms_free_string(file);
 	return (fd);
+		
 }
 
 char	*get_hdfile(t_lexer *redir)
@@ -330,16 +390,10 @@ char	*get_hdfile(t_lexer *redir)
 	file = NULL;
 	if (!head->content)
 		return (file);
-	while (head)
-	{
-		if ((head->type == REDIR_OUT || head->type == REDIR2_OUT) && !head->next)
-			file = ft_strdup(head->content);
-		printf("HEAD: [%s]\n", head->content);
-		if (head->next)
-			ms_free_string(file);
-		printf("FILE: [%s]\n", file);
+	while (head && (ft_strncmp(head->content, ">", 2) && ft_strncmp(head->content, ">>", 3)))
 		head = head->next;
-	}
+	if (head->content && head->next->content)
+		file = ft_strdup(head->next->content);
 	return (file);
 }
 
@@ -394,12 +448,9 @@ int	set_fd_out(t_lexer *redir)
 	else if (redir->type == REDIR_OUT)
 		fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	if (fd < 0)
-	{
 		return (1);
-	}
-	if (dup2(fd, STDOUT_FILENO) < 0) {
+	if (dup2(fd, STDOUT_FILENO) < 0)
 		return (1);
-	}
 	close(fd);
 	return (0);
 }
@@ -432,108 +483,4 @@ void    single_command(t_prompt *prompt, t_parser *parser)
 	//printf("PIDE: [%d]\n", pid);
 	if (WIFEXITED(status))
 		g_code = WEXITSTATUS(status);
-}
-
-
-int	dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2])
-{
-	(void)prompt;
-	
-	if (parser->prev && dup2(fd_in, STDIN_FILENO) < 0)
-		return (1);
-	close(end[0]);
-	if (parser->next && dup2(end[1], STDOUT_FILENO) < 0)
-		return (1);
-	close(end[1]);
-	if (parser->prev)
-		close (fd_in);
-	handle_command(prompt, parser);
-	return (0);
-}
-
-int	fork_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2])
-{
-	static int	i;
-	
-	if (!i)
-		i = 0;
-
-	prompt->pid[i] = fork();
-	printf("ISTO EH O PID: [%d]\n", prompt->pid[i]);
-	if (prompt->pid[i] < 0)
-		return (ms_error(5), 1);
-	if (prompt->pid[i] == 0)
-	{
-		if (dup_parser(prompt, parser, fd_in, end))
-			return (ms_error(4), 1);
-	}
-	i++;
-	return (0);
-}
-
-static void	wait_pipe(t_prompt *prompt, int *pid)
-{
-	t_parser 	*parser;
-	int			n_pipes;
-	int			i;
-	int			status;
-
-	parser = prompt->parser;
-	n_pipes = 0;
-	while (parser)
-	{
-		n_pipes++;
-		parser = parser->next;
-	}
-	i = -1;
-	while (++i < n_pipes - 1)
-		waitpid(pid[i], &status, 0);
-	waitpid(pid[i], &status, 0);
-	if (WIFEXITED(status))
-		g_code = WEXITSTATUS(status);
-}
-
-/* static int	check_fd(t_parser *parser, int end[2])
-{
-	int	fd_in;
-
-	fd_in = end[0];
- 	if (prompt->heredoc)
-	{
-		close(end[0]);
-		if (process->hd_file)
-			fd_in = open(process->hd_file, O_RDONLY);
-	}
-	return (fd_in);
-} */
-
-void execute(t_prompt *prompt)
-{
-    t_parser *parser;
-    int end[2];
-    int fd_in;
-
-    fd_in = STDIN_FILENO;
-    parser = prompt->parser;
-    if (!parser->next)
-    {
-        single_command(prompt, parser);
-        return ;
-    }
-	else
-	{
-		while (parser)
-		{
-			if (parser->next)
-				pipe(end);
-			if (fork_parser(prompt, parser, fd_in, end))
-				return ;
-			close(end[1]);
-			if (parser->prev)
-				close(fd_in);
-			fd_in = end[0];
-			parser = parser->next;
-		}
-	}
-    wait_pipe(prompt, prompt->pid);
 }

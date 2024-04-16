@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/12 17:58:23 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/16 17:09:21 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,7 @@ int	dev_mod(t_prompt *prompt)
 	}
 	printf("\n\n");
 	printf("\033[32;1m==============================\033[0m\n");
-	return (1);	if (!prompt->pid) // Initialize the pid array if not already initialized
-		if (init_pid(prompt))
-			return (ms_error(1), 1);
+	return (1);
 }
 
 /* ============================  dev mod ============================ */
@@ -136,8 +134,8 @@ int main(int argc, char **argv, char **env)
 			add_history(input);
 			get_token(input, prompt);
 			get_parser(prompt);
-			init_pid(prompt);
 			execute(prompt);
+			//single_command(prompt, prompt->parser);
 			dev_mod(prompt); // aapaaaagare
 			free(input);
 		}

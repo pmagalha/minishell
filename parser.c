@@ -3,16 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/12 15:21:32 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/11 17:02:56 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/* void print_parser(t_prompt *prompt) {
+// meter erro para quando so tem redirect e nao tem ficheiro seguinte
+
+void print_parser(t_prompt *prompt) {
     int i = 1;
     t_parser *parser = prompt->parser;
 
@@ -34,7 +36,7 @@
         parser = parser->next;
         i++;
     }
-} */
+}
 
 void	get_parser(t_prompt *prompt)
 {

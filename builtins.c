@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/09 18:26:43 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/16 17:23:19 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,11 +222,15 @@ static void	exit_code(char **str)
 {
 	int	exit_code;
 
+	exit_code = 0;
 	//printf("A STRING[0] eh: %s\n", str[0]);
 	if (!str[0]) // sem argumentos, exit com 0
 		exit_code = 0;
 	else if (str[1]) // mais do que um argumento, printa erro
 	{
+/* 		write(1, "=", 1);
+		ft_putstr_fd(str[1], 1);
+		write(1, "=", 1); */
 		ft_putstr_fd("-minishell: exit: too many arguments\n", STDERR_FILENO);
 		exit_code = 1;
 		free_array(str);
@@ -271,7 +275,7 @@ int ms_exit(t_parser *parser, t_prompt *prompt)
         temp = temp->next;
     }
     str = (char **)ft_calloc(size + 1, sizeof(char *));
-	temp = prompt->lexer->next;
+	temp = parser->command->next;
     i = 0;
     while (temp)
     {

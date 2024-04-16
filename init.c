@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/12 16:40:10 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/16 16:16:27 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	init_pid(t_prompt *prompt)
 		return (1);
 	prompt->pid = malloc(n_parsers * sizeof(int));
 	if (!prompt->pid)
-		return (ms_error(1), 1);
+		return (1);
 	return (0);
 }
 
