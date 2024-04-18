@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/16 16:26:38 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/18 13:41:08 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ typedef struct  s_prompt
     t_parser    *parser;
 	bool		quotes[2];
     int         *pid;
+    int         pid_size;
+    bool        reset;
     //t_parser    *comands; maybe use this for storing commands between pipes
 }               t_prompt;
 
@@ -163,7 +165,7 @@ int		is_identifier(char c);
 char *find_value(char *key, t_env_list *env_list);
 
 //Builtins
-int     ms_pwd(void);
+int	    ms_pwd(void);
 int	    ms_echo(t_parser *parser);
 int     ms_env(t_prompt *prompt, t_parser *parser);
 int 	exec_builtins(t_prompt *prompt, t_parser *parser);

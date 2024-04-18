@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/11 13:16:06 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:24:28 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,5 +118,8 @@ void free_data(t_prompt *prompt)
     free_env_list(&(prompt->env_list));
     free_lexer_list(&(prompt->lexer));
     free_parser_list(&(prompt->parser));
+    if (prompt->pid)
+        free(prompt->pid);
+    prompt->pid = NULL;
     free(prompt);
 }

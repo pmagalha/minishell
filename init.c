@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/16 16:16:27 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:12:36 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,17 @@ int	init_pid(t_prompt *prompt)
 		n_parsers++;
 		parser = parser->next;
 	}
-	if (!n_parsers)
-		return (1);
-	prompt->pid = malloc(n_parsers * sizeof(int));
-	if (!prompt->pid)
-		return (1);
-	return (0);
+    if (!prompt->pid)
+        prompt->pid = ft_calloc(sizeof(int), n_parsers);
+    else
+    {
+        free(prompt->pid); // Free previous allocation
+        prompt->pid = ft_calloc(sizeof(int), n_parsers); // Reallocate
+    }
+	prompt->pid_size = n_parsers;
+    if (!prompt->pid)
+        return (1);
+    return (0);
 }
 
 t_prompt	*init(t_prompt *prompt, char **env)
@@ -44,6 +49,7 @@ t_prompt	*init(t_prompt *prompt, char **env)
 	prompt->env_list = NULL;
 	prompt->quotes[0] = false;
 	prompt->quotes[1] = false;
+	prompt->reset = false;
 	prompt->pid = NULL;
 	return (prompt);
 }

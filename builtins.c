@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/16 17:23:19 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/18 16:27:37 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int	ms_echo(t_parser *parser)
 {
 	int		i = 1;
 	float	flg = false;
+	
 	t_lexer *temp = parser->command->next; // salta o primeiro command
 	while (temp && temp->content[0] == '-' && temp->content[1] == 'n')
 	{
@@ -57,7 +58,9 @@ int	ms_echo(t_parser *parser)
 	}
 	ft_print(temp); // Printa os commands depois do echo
 	if (flg == false)
+	{
 		ft_putchar_fd('\n', STDOUT_FILENO);
+	}
 	return (0);
 }
 
@@ -74,7 +77,7 @@ int	ms_env(t_prompt *prompt, t_parser *parser)
 	while (temp)
 	{
 		if (temp->value && *temp->value)
-			{
+		{
 			ft_putstr_fd(temp->key, STDOUT_FILENO);
 			ft_putchar_fd('=', STDOUT_FILENO);
 			ft_putstr_fd(temp->value, STDOUT_FILENO);
@@ -287,7 +290,7 @@ int ms_exit(t_parser *parser, t_prompt *prompt)
 	//printf("EXIT LEXER: [%s]\n", prompt->lexer->content);
 	//free_lexer_list(&prompt->lexer);
     rl_clear_history();
-	ft_putstr_fd("exit\n", STDERR_FILENO);
+	ft_putstr_fd("exit\n", STDOUT_FILENO);
     //printf("ISTO EH A STRING ANTES: [%s]\n", str[0]);
 	free_data(prompt);
     exit_code(str);
@@ -300,20 +303,20 @@ int	exec_builtins(t_prompt *prompt, t_parser *parser)
 {
 	int 	status;
 
-	status = 1; 
-	if (!ft_strncmp(prompt->parser->builtin, "echo", 5))
+	status = 1;
+	if (!ft_strncmp(parser->command->content, "echo", 5))
 		status = ms_echo(parser);
-	else if (!ft_strncmp(prompt->parser->builtin, "pwd", 4))
+	else if (!ft_strncmp(parser->command->content, "pwd", 4))
 		status = ms_pwd();
-	else if (!ft_strncmp(prompt->parser->builtin, "env", 4))
+	else if (!ft_strncmp(parser->command->content, "env", 4))
 		status = ms_env(prompt, parser); 
-	else if (!ft_strncmp(prompt->parser->builtin, "cd", 3))
+	else if (!ft_strncmp(parser->command->content, "cd", 3))
 		status = ms_cd(prompt);
-	else if (!ft_strncmp(prompt->parser->builtin, "exit", 5))
+	else if (!ft_strncmp(parser->command->content, "exit", 5))
 		return (ms_exit(parser, prompt));
-	else if (!ft_strncmp(prompt->parser->builtin, "export", 7))
+	else if (!ft_strncmp(parser->command->content, "export", 7))
 		status = ms_export(prompt);
-	else if (!ft_strncmp(prompt->parser->builtin, "unset", 6))
+	else if (!ft_strncmp(parser->command->content, "unset", 6))
 		status = ms_unset(prompt);
 	return (status);
 }

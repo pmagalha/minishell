@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/16 17:27:04 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/18 16:23:07 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,41 +14,66 @@
 
 extern int	g_code;
 
-int	dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int *end)
+int	dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2])
 {
 	(void)prompt;
-
 	if (parser->prev && dup2(fd_in, STDIN_FILENO) < 0)
+	{
 		return (1);
+	}
 	close(end[0]);
 	if (parser->next && dup2(end[1], STDOUT_FILENO) < 0)
 		return (1);
 	close(end[1]);
 	if (parser->prev)
 		close(fd_in);
+	handle_command(prompt, parser);
 	return (0);
 }
 
-int	fork_parser(t_prompt *prompt, t_parser *parser, int fd_in, int *end)
+void print_pid_array(const t_prompt *prompt) 
+{
+    if (prompt == NULL || prompt->pid == NULL) 
+	{
+        printf("PID array is NULL\n");
+        return;
+    }
+    printf("PID Array:\n");
+    for (int i = 0; i < prompt->pid_size; i++) 
+	{
+        printf("[%d]: %d\n", i, prompt->pid[i]);
+    }
+}
+
+int	fork_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2])
 {
 	static int	i;
 
-	if (!prompt->pid)
-		init_pid(prompt);
+	(void)end[2];
+	(void)fd_in;
 	if (!i)
 		i = 0;
+	if (prompt->reset == true)
+	{
+		i = 0;
+		prompt->reset = false;
+	}	
+/* 	if (i >= prompt->pid_size) {
+        printf("Error: pid array out of bounds\n");
+        return (1);
+    } */
 	prompt->pid[i] = fork();
 	if (prompt->pid[i] < 0)
 	{
 		printf("error with pid\n");
-		exit (1); // METER AQUI UM ERRO DECENTE
+		return (1); // METER AQUI UM ERRO DECENTE
 	}
-	if (prompt->pid[i] == 0)
+ 	if (prompt->pid[i] == 0)
 	{
-		dup_parser(prompt, parser, fd_in, end);
-		//ft_putstr_fd(parser->command->content, STDOUT_FILENO);
-		handle_command(prompt, parser);
+		if (dup_parser(prompt, parser, fd_in, end))
+			return (1);
 	}
+	i++;
 	return (0);
 }
 
@@ -61,11 +86,7 @@ void	wait_pipe(t_prompt *prompt, int *pid)
 
 	parser = prompt->parser;
 	n_pipes = 0;
-	while (parser)
-	{
-		n_pipes++;
-		parser = parser->next;
-	}
+	n_pipes = prompt->pid_size;
 	i = -1;
 	while (++i < n_pipes - 1)
 		waitpid(pid[i], &status, 0);
@@ -82,8 +103,11 @@ void	execute(t_prompt *prompt)
 
 	fd_in = STDIN_FILENO;
 	parser = prompt->parser;
+/*   	printf("PID ARRAY BEFORE\n");
+	print_pid_array(prompt);
+	printf("\n"); */
 	if (!parser->next)
-		single_command(prompt, prompt->parser);
+		return (single_command(prompt, prompt->parser));
 	else
 	{
 		while (parser)
@@ -93,11 +117,18 @@ void	execute(t_prompt *prompt)
 				pipe(end);
 			/* if (dup_parser(prompt, parser, fd_in, end) < 0)
 				return ; */
-			if (fork_parser(prompt, parser, fd_in, end) < 0)
+			if (fork_parser(prompt, parser, fd_in, end))
 				return ;
+			//printf("Execute vai dar close do end[1]: %d com pid[%d]\n", end[1], getpid());
+			close(end[1]);
+ 			//printf("Execute vai dar close do fd_in: %d com pid[%d]\n", fd_in, getpid());
+			if (parser->prev)
+				close (fd_in);
 			fd_in = end[0];
 			parser = parser->next;
 		}
+/*   		printf("PID ARRAY AFTER\n");
+		print_pid_array(prompt); */
 		wait_pipe(prompt, prompt->pid);
 	}
 }
@@ -114,11 +145,20 @@ char	**get_paths(t_prompt *prompt)
 		return (NULL);
 	paths = ft_split(path, ':');
 	free(path);
+	if (!paths)
+		return (NULL);
 	i = -1;
 	while (paths[++i])
 	{
 		tmp = ft_strjoin(paths[i], "/");
 		free(paths[i]);
+		if (!tmp)
+		{
+			while (--i >= 0)
+				ms_free_string(paths[i]);
+			free_array(paths);
+			return (NULL);
+		}
 		paths[i] = tmp;
 	}
 	return (paths);
@@ -188,6 +228,8 @@ char	**convert_env(t_env_list *env_list)
 	return (env_array);
 }
 
+
+
 char	**convert_parser(t_prompt *prompt, t_parser *parser)
 {
 	char	**parser_array;
@@ -209,7 +251,6 @@ char	**convert_parser(t_prompt *prompt, t_parser *parser)
 	}
 	return (parser_array);
 }
-
 
 static char	*file_dir_error(char *tmp)
 {
@@ -258,7 +299,7 @@ int	cmd_not_found(t_prompt *prompt, t_parser *parser)
 	return (status);
 }
 
-int	exec_path(t_prompt *prompt, char **paths)
+int	exec_path(t_prompt *prompt, t_parser *parser, char **paths)
 {
 	int		i;
 	char	*path;
@@ -266,26 +307,32 @@ int	exec_path(t_prompt *prompt, char **paths)
 	char	**parser_array;
 
 	i = -1;
-	path = NULL;
 	if (!paths)
-		return (1);
+        return (1);
 	while (paths[++i])
 	{
-		path = ft_strjoin(paths[i], prompt->parser->command->content);
+		path = ft_strjoin(paths[i], parser->command->content);
+		if (!path)
+		{
+			perror("Memory allocation error");
+			return (1); // handle the error appropriately
+		}
 		if (!access(path, F_OK))
 		{
 			env_array = convert_env(prompt->env_list);
 			parser_array = convert_parser(prompt, prompt->parser);
 			execve(path, parser_array, env_array);
 			free(path);
-			free_array(env_array);
-			free_array(parser_array);
-			g_code = 127;
-			return (g_code);
+			if (env_array)
+				free_array(env_array);
+			if (parser_array)
+				free_array(parser_array);
+			return (127);
 		}
 		free (path);
 	}
-	return (0);
+	g_code = cmd_not_found(prompt, parser);
+	return (g_code);
 }
 
 int	handle_command(t_prompt *prompt, t_parser *parser)
@@ -295,6 +342,8 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 
 	paths = NULL;
 	file = NULL;
+/* 	printf("content is [%s] :\n" ,parser->command->content);
+	printf("content is [%s] :\n" ,parser->command->next->content); */
 	if (!parser->command && parser->redirects)
 	{
 		printf("ERROR: SHEET\n");
@@ -311,15 +360,23 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 		free_data(prompt);
 		exit (g_code);
 	}
-	paths = get_paths(prompt);
-	g_code = exec_path(prompt, paths);
-	free_array(paths);
-	if (cmd_not_found(prompt, parser))
+	if (parser->command && parser->command->content)
+	{
+		paths = get_paths(prompt);
+		g_code = exec_path(prompt, parser, paths);
+		free_array(paths);
+		free_data(prompt);
+		printf("sai pela handle command\n");
+		exit (g_code);
+	}
+/* 	free_array(paths);
+	free_data(prompt); // added this here */
+/* 	if (cmd_not_found(prompt, parser))
 	{
 		free_data(prompt);
-		exit (127);
-	}
-	return (cmd_not_found(prompt, parser));
+		exit(127);
+	} */
+	exit (g_code);
 }
 
 void	set_heredoc(t_prompt *prompt)
