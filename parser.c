@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/17 17:50:15 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/19 16:50:35 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,7 @@ void	get_redirects(t_prompt *prompt)
 			prompt->parser->redirects = NULL;
 			printf("Redirect: No such file or directory\n");
 			prompt->lexer = prompt->lexer->next;
-			return ;
+			exit (1); // METER ERRO DESSENTE AKI
 		}
 		if (!prompt->parser->redirects)
 			prompt->parser->redirects = create_node(ft_strdup(prompt->lexer->next->content), prompt->lexer->type);

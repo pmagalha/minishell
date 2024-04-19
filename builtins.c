@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/18 16:27:37 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/19 16:45:10 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,26 +170,26 @@ static void    add_path(t_prompt *prompt)
 // tratar do caso de ser um PATH maior do que permitido (checkar path max)
 // tratar de cd ../relative_directory
 
-static int	absolute_path(t_prompt *prompt)
+static int	absolute_path(t_parser *parser)
 {
 	int	new_path;
 
-	new_path = chdir(prompt->parser->command->next->content); // this works for .. and for cd without anything because the chdir function can receive those
+	new_path = chdir(parser->command->next->content); // this works for .. and for cd without anything because the chdir function can receive those
 	if (new_path != 0)
 	{
 		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
-		ft_putstr_fd(prompt->parser->command->next->content, STDERR_FILENO);
+		ft_putstr_fd(parser->command->next->content, STDERR_FILENO);
 		perror(" ");
 	}
 	return (new_path);
 }
 
-int	ms_cd(t_prompt *prompt)
+int	ms_cd(t_prompt *prompt, t_parser *parser)
 {
 	int		new_path;
 	t_lexer	*temp;
 
-	temp = prompt->parser->command->next;
+	temp = parser->command->next;
 	if (!temp || !temp->content[0] || (temp->content[0] &&
 			(!ft_strncmp(temp->content, "~", 2) || (temp->content[0] == '-' && (temp->content[1] == '-' && !temp->content[2])))))
 		new_path = change_path(prompt, "HOME");
@@ -201,7 +201,7 @@ int	ms_cd(t_prompt *prompt)
 		return (1);
 	}
 	else
-		new_path = absolute_path(prompt);
+		new_path = absolute_path(parser);
 	add_path(prompt);
 	return (new_path);
 }
@@ -284,7 +284,7 @@ int ms_exit(t_parser *parser, t_prompt *prompt)
     {
 		str[i] = ft_strdup(temp->content);
 		temp = temp->next;
-		i++;		
+		i++;
     }
 	//printf("22222 A STRING[0] eh: %s\n", str[0]);
 	//printf("EXIT LEXER: [%s]\n", prompt->lexer->content);
@@ -311,12 +311,12 @@ int	exec_builtins(t_prompt *prompt, t_parser *parser)
 	else if (!ft_strncmp(parser->command->content, "env", 4))
 		status = ms_env(prompt, parser); 
 	else if (!ft_strncmp(parser->command->content, "cd", 3))
-		status = ms_cd(prompt);
+		status = ms_cd(prompt, parser);
 	else if (!ft_strncmp(parser->command->content, "exit", 5))
 		return (ms_exit(parser, prompt));
 	else if (!ft_strncmp(parser->command->content, "export", 7))
-		status = ms_export(prompt);
+		status = ms_export(prompt, parser);
 	else if (!ft_strncmp(parser->command->content, "unset", 6))
-		status = ms_unset(prompt);
+		status = ms_unset(prompt, parser);
 	return (status);
 }

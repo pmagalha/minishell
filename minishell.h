@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/18 13:41:08 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:53:53 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,7 @@ typedef struct s_parser
     t_lexer *redirects; // isto eh para guardar as redirections no parser
     char    *builtin;
     char    *hd_file; // heredoc file, que aparentemente sera necessario
+    int  hd_ident; // temp file identifier
     struct s_parser	*next;
     struct s_parser	*prev;
 }                   t_parser;
@@ -122,12 +123,12 @@ t_env_list	*create_key_value(char *key, char *value);
 
 // Parser
 char	ms_count_words(t_prompt *prompt);
-int	count_pipes (t_lexer *lexer);
-int check_quotes(char *str);
-int check_dquotes(char *str);
-int check_squotes(char *str);
+int 	count_pipes (t_lexer *lexer);
+int     check_quotes(char *str);
+int     check_dquotes(char *str);
+int     check_squotes(char *str);
 char	*trim_quotes(char *string);
-void   get_parser(t_prompt *prompt);
+void    get_parser(t_prompt *prompt);
 void    add_parser_back(t_parser **token_lst, t_parser *new);
 char	*get_builtin(t_prompt *prompt);
 char	get_first_quote(char *str);
@@ -162,7 +163,7 @@ char	next_char(char *str);
 char	next_char_space(char *str);
 char	*ms_safejoin(char *str1, char *str2);
 int		is_identifier(char c);
-char *find_value(char *key, t_env_list *env_list);
+char    *find_value(char *key, t_env_list *env_list);
 
 //Builtins
 int	    ms_pwd(void);
@@ -176,21 +177,21 @@ void	free_array(char **arr);
 // Export
 void	print_export(t_env_list *head);
 void	insert(t_env_list **head, char *key, char *value) ;
-int	    ms_export(t_prompt *prompt);
+int	ms_export(t_prompt *prompt, t_parser *parser);
 void	insert_sorted(t_env_list **head, t_env_list *node);
 void	add_value(char *variable, t_prompt *prompt);
 void	add_on_env_list(t_env_list *env_list, char *key, char *value);
 char	*extract_key(char *variable);
 char	*extract_value(char *variable);
 void 	extract_variables(char *variable, char *key, char *value);
-int     check_export(t_prompt *prompt);
+int	check_export(t_prompt *prompt, t_parser *parser);
 
 // Export Utils
 void	sort_export(t_env_list *dup_env);
 // Unset
 int	    remove_value(char *variable, t_prompt *prompt);
 int     delete_env(t_env_list *node);
-int	    ms_unset(t_prompt *prompt);
+int	ms_unset(t_prompt *prompt, t_parser *parser);
 void	swap(t_env_list *node1, t_env_list *node2);
 
 // Free Utils
@@ -201,13 +202,14 @@ void	reset_data(t_prompt *prompt);
 // Executor
 void	execute(t_prompt *prompt);
 void    single_command(t_prompt *prompt, t_parser *parser);
-int		handle_redirects(t_prompt *prompt);
-int		set_fd_in(t_lexer *redir);
+int	handle_redirects(t_parser *parser);
+int	set_fd_in(t_lexer *redir);
 int		set_fd_out(t_lexer *redir);
 char	*get_delimiter(t_parser *parser);
-void	set_heredoc(t_prompt *prompt);
-int		create_temp_file(char *input, char *file);
-char	*get_hdfile(t_lexer *redir);
+int	set_heredoc(t_prompt *prompt, t_parser *parser);
+void	send_heredoc(t_prompt *prompt, t_parser *parser, int fd);
+int     create_hdfile(char *file);
+char	*get_hdfile(t_parser *parser, t_lexer *redir);
 
 int	dev_mod(t_prompt *prompt);
 

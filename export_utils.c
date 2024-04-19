@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 13:55:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/10 17:40:44 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/19 14:21:39 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	sort_export(t_env_list *dup_env)
 	head = dup_env;
 	while (current && current->next)
 	{
-		if (ft_strncmp(current->key, current->next->key, i) > 0)
+		if (ft_strncmp(current->key, current->next->key, ft_strlen(current->next->key) + 1) > 0)
 		{
 			swap(current, current->next);
 			current = head;
@@ -39,13 +39,20 @@ void	sort_export(t_env_list *dup_env)
 
 void	print_export(t_env_list *current)
 {
-	printf("declare -x %s", current->key);
+	ft_putstr_fd("declare -x ", STDOUT_FILENO);
+	ft_putstr_fd(current->key, STDOUT_FILENO);
+	
 	if (current->value && *current->value)
-		printf("=\"%s\"\n", current->value);
+	{
+		ft_putstr_fd("=\"", STDOUT_FILENO);
+		ft_putstr_fd(current->value, STDOUT_FILENO);
+		ft_putchar_fd('\"', STDOUT_FILENO);
+		ft_putchar_fd('\n', STDOUT_FILENO);
+	}
 	else if (current->value)
-		printf("=\"\"\n");
+		ft_putstr_fd("=\"\"\n", STDOUT_FILENO);
 	else
-		printf("\n");
+		ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
 void	add_on_env_list(t_env_list *env_list, char *key, char *value)

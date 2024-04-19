@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 13:52:46 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/08 14:00:47 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/19 14:48:19 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,11 @@ void	swap(t_env_list *node1, t_env_list *node2)
 	node2->value = temp_value;
 }
 
-int	ms_unset(t_prompt *prompt)
+int	ms_unset(t_prompt *prompt, t_parser *parser)
 {
 	t_lexer	*command;
 
-	command = prompt->parser->command->next;
+	command = parser->command->next;
 	while (command != NULL)
 	{
 		remove_value(command->content, prompt);

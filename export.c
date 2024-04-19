@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/10 18:13:27 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/19 14:43:28 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,11 @@ int	check_export_arg(char *string)
 	return (0);
 }
 
-int	check_export(t_prompt *prompt)
+int	check_export(t_prompt *prompt, t_parser *parser)
 {
 	t_lexer	*command;
 
-	command = prompt->parser->command->next;
+	command = parser->command->next;
 	while (command)
 	{
 		if (command->content[0] != '='
@@ -119,7 +119,7 @@ void	add_value(char *variable, t_prompt *prompt)
 	ms_free_string(key);
 }
 
-int	ms_export(t_prompt *prompt)
+int	ms_export(t_prompt *prompt, t_parser *parser)
 {
 	t_lexer		*command;
 	t_env_list	*dup_env;
@@ -127,7 +127,8 @@ int	ms_export(t_prompt *prompt)
 	t_env_list	*head;
 
 	dup_env = create_dup(prompt->env_list);
-	command = prompt->parser->command->next;
+	command = parser->command->next;
+	//printf("Command content: [%s]\n", command->content);
 	head = dup_env;
 	if (!command)
 	{
@@ -139,7 +140,7 @@ int	ms_export(t_prompt *prompt)
 			current = current->next;
 		}
 	}
-	if (check_export(prompt))
+ 	if (check_export(prompt, parser))
 	{
 		free_env_list(&head);
 		return (1);

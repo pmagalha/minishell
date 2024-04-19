@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/18 12:12:36 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/19 16:03:42 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,7 @@ t_parser	*init_parser(t_parser *parser)
 	parser->builtin = NULL;
 	parser->redirects = NULL;
 	parser->hd_file = NULL;
+	parser->hd_ident = 0;
 	return (parser);
 }
 
