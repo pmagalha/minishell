@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/19 18:39:59 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/22 16:21:16 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,14 +104,14 @@ int	check_fd(t_parser *parser, int end[2])
 	return (fd_in);
 }
 
-void	send_heredoc(t_prompt *prompt, t_parser *parser, int fd)
+void	send_heredoc(t_prompt *prompt, t_lexer *redir, int fd)
 {
 	char	*input;
 	char	*delimiter;
 	char	*new_input;
 
 	new_input = NULL;
-	delimiter = get_delimiter(parser);
+	delimiter = get_delimiter(redir);
 	input = readline("> ");
 	while (ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
 	{
@@ -122,10 +122,11 @@ void	send_heredoc(t_prompt *prompt, t_parser *parser, int fd)
 		ft_putchar_fd('\n', fd);
 		input = readline("> ");
 		ms_free_string(new_input);
+		redir = redir->next;
 	}
+	close(fd);
 	ms_free_string(input);
 	ms_free_string(delimiter);
-	close(fd);
 }
 
 int	set_heredoc(t_prompt *prompt, t_parser *parser)
@@ -140,12 +141,12 @@ int	set_heredoc(t_prompt *prompt, t_parser *parser)
 		{
 			if (parser->hd_file)
 			{
-				free(parser->hd_file);
 				unlink(parser->hd_file);
+				free(parser->hd_file);
 			}
 			parser->hd_file = ft_strdup("hd_file.tmp");
 			fd = create_hdfile(parser->hd_file);
-			send_heredoc(prompt, parser, fd);
+			send_heredoc(prompt, redir, fd);
 		}
 		redir = redir->next;
 	}
@@ -170,7 +171,6 @@ void	execute(t_prompt *prompt)
 				pipe(end);
 			if (set_heredoc(prompt, parser))
 				return ;
-			//unlink(parser->hd_file);
 			if (fork_parser(prompt, parser, fd_in, end))
 				return ;
 			close(end[1]);
@@ -370,7 +370,7 @@ int	exec_path(t_prompt *prompt, t_parser *parser, char **paths)
 			env_array = convert_env(prompt->env_list);
 			parser_array = convert_parser(prompt, parser);
 			execve(path, parser_array, env_array);
-			free(path);
+			free (path);
 			if (env_array)
 				free_array(env_array);
 			if (parser_array)
@@ -390,18 +390,13 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 
 	paths = NULL;
 	file = NULL;
-/* 	printf("content is [%s] :\n" ,parser->command->content);
-	printf("content is [%s] :\n" ,parser->command->next->content); */
 	if (!parser->command && parser->redirects)
 	{
 		printf("ERROR: SHEET\n");
 		return (1);
 	}
  	if (parser->redirects)
-	{
 		g_code = handle_redirects(parser);
-	}
-	//printf("CONTENT: [%s]\n", parser->command->content);
 	if (parser->builtin)
 	{
 		g_code = exec_builtins(prompt, parser);
@@ -416,30 +411,23 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 		free_data(prompt);
 		exit (g_code);
 	}
-/* 	free_array(paths);
-	free_data(prompt); // added this here */
-/* 	if (cmd_not_found(prompt, parser))
-	{
-		free_data(prompt);
-		exit(127);
-	} */
 	exit (g_code);
 }
 
-char	*get_delimiter(t_parser *parser)
+char	*get_delimiter(t_lexer *redir)
 {
 	t_lexer	*head;
 	char	*delimiter;
 
 	delimiter = NULL;
-	head = parser->redirects;
+	head = redir;
 	while (head->type != HEREDOC)
 		head = head->next;
 	if (head->content)
 		delimiter = ft_strdup(head->content);
 	return (delimiter);	
 }
- 
+
 int	create_hdfile(char *file)
 {
 	int		fd;
@@ -449,17 +437,6 @@ int	create_hdfile(char *file)
 		return (1);
 	return (fd);
 }
-
-/* char	*get_temp_file(t_parser *parser)
-{
-	char	*file;
-
-	file = ft_strdup("hd_temp_");
-	file = ms_safejoin(file, ft_itoa(parser->hd_ident));
-	file = ms_safejoin(file, ".tmp");
-	parser->hd_ident++;
-	return (file);
-} */
 
 char	*get_hdfile(t_parser *parser, t_lexer *redir)
 {
@@ -490,18 +467,29 @@ int	handle_redirects(t_parser *parser)
 			if (set_fd_out(redir))
 				return (1);
 		}
+		else if (redir->type == HEREDOC)
+		{
+			if (set_hdfile_in(parser->hd_file))
+				return (1);
+		}
 		else if (redir->type == REDIR_IN) // <
 		{
 			if (set_fd_in(redir))
 				return (1);
 		}
-/* 		else if (redir->type == HEREDOC) // <<
-		{
-			set_heredoc(prompt, parser);
-			return (1);
-		} */
 		redir = redir->next;
 	}
+	return (0);
+}
+
+int	set_hdfile_in(char *file)
+{
+	int		fd;
+
+	fd = open(file, O_RDONLY);
+	if (dup2(fd, STDIN_FILENO) < 0)
+		return (1);
+	close(fd);
 	return (0);
 }
 
@@ -549,6 +537,8 @@ void    single_command(t_prompt *prompt, t_parser *parser)
 	if (!prompt->parser->command)
 		return ;
 	command = prompt->parser->command->content;
+	if (set_heredoc(prompt, parser))
+				return ;
 	if (command && (!ft_strncmp(command, "exit", 5) || !ft_strncmp(command, "cd", 3)
 			|| !ft_strncmp(command, "export", 7) || !ft_strncmp(command, "unset", 6)))
 	{
@@ -562,7 +552,6 @@ void    single_command(t_prompt *prompt, t_parser *parser)
 	if (pid == 0)
 		handle_command(prompt, parser);
 	waitpid(pid, &status, 0);
-	//printf("PIDE: [%d]\n", pid);
 	if (WIFEXITED(status))
 		g_code = WEXITSTATUS(status);
 }

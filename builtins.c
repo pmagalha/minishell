@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtins.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/19 16:45:10 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/22 16:16:04 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,9 @@ extern int	g_code;
 
 int	ms_pwd(void)
 {
-	char *temp;
-	
+	char	*temp;
+
 	temp = getcwd(NULL, 0);
-	
 	ft_putstr_fd(temp, STDOUT_FILENO);
 	ft_putchar_fd('\n', STDOUT_FILENO);
 	if (temp)
@@ -27,10 +26,11 @@ int	ms_pwd(void)
 	return (0);
 }
 
-static void ft_print(t_lexer *command)
+static void	ft_print(t_lexer *command)
 {
-	t_lexer *temp = command;
+	t_lexer	*temp;
 
+	temp = command;
 	while (temp)
 	{
 		ft_putstr_fd(temp->content, STDOUT_FILENO);
@@ -42,10 +42,13 @@ static void ft_print(t_lexer *command)
 
 int	ms_echo(t_parser *parser)
 {
-	int		i = 1;
-	float	flg = false;
-	
-	t_lexer *temp = parser->command->next; // salta o primeiro command
+	int		i;
+	float	flg;
+	t_lexer	*temp;
+
+	i = 1;
+	flg = false;
+	temp = parser->command->next;
 	while (temp && temp->content[0] == '-' && temp->content[1] == 'n')
 	{
 		while (temp->content[i] == 'n')
@@ -53,10 +56,10 @@ int	ms_echo(t_parser *parser)
 		if (temp->content[i] == '\0')
 			flg = true;
 		else
-			break;
+			break ;
 		temp = temp->next;
 	}
-	ft_print(temp); // Printa os commands depois do echo
+	ft_print(temp);
 	if (flg == false)
 	{
 		ft_putchar_fd('\n', STDOUT_FILENO);
@@ -64,16 +67,8 @@ int	ms_echo(t_parser *parser)
 	return (0);
 }
 
-int	ms_env(t_prompt *prompt, t_parser *parser)
+void	print_ms_env(t_env_list *temp)
 {
-	t_env_list	*temp;
-
-	if (parser->command->next)
-	{
-		//METER AQUI O PRINT DO ERRO QUANDO O ENV TEM ARGS A FRENTE
-		return (127);
-	}
-	temp = prompt->env_list;
 	while (temp)
 	{
 		if (temp->value && *temp->value)
@@ -83,7 +78,7 @@ int	ms_env(t_prompt *prompt, t_parser *parser)
 			ft_putstr_fd(temp->value, STDOUT_FILENO);
 			ft_putchar_fd('\n', STDOUT_FILENO);
 			temp = temp->next;
-			}
+		}
 		else if (temp->value && !*temp->value)
 		{
 			ft_putstr_fd(temp->key, STDOUT_FILENO);
@@ -93,6 +88,21 @@ int	ms_env(t_prompt *prompt, t_parser *parser)
 		else
 			temp = temp->next;
 	}
+}
+
+int	ms_env(t_prompt *prompt, t_parser *parser)
+{
+	t_env_list	*temp;
+
+	temp = prompt->env_list;
+	if (parser->command->next)
+	{
+		ft_putstr_fd("env: '", STDOUT_FILENO);
+		ft_putstr_fd(parser->command->next->content, STDOUT_FILENO);
+		ft_putstr_fd("': No such file or directory\n", STDOUT_FILENO);
+		return (127);
+	}
+	print_ms_env(temp);
 	return (0);
 }
 
@@ -116,7 +126,7 @@ static int	change_path(t_prompt *prompt, char *path)
 {
 	char	*temp;
 	int		new_dir;
-	
+
 	temp = get_env(prompt, path);
 	if (!temp)
 	{
@@ -135,46 +145,49 @@ static int	change_path(t_prompt *prompt, char *path)
 	return (new_dir);
 }
 
-static void    add_path(t_prompt *prompt)
+static void	add_path_aux(t_env_list *env, char *old_path, char *old_value)
 {
-    char        *tmp;
-    char        *old_value;
-    char        *old_path;
-    t_env_list  *env;
+	char		*tmp;
 
-    old_path = get_env(prompt, "PWD");
-    env = prompt->env_list;
-    while (env != NULL)
-    {
-        if (!ft_strncmp(env->key, "PWD", 4))
-        {
-            old_value = env->value;
-            tmp = getcwd(NULL, 0);
-            env->value = ft_strdup(tmp);
+	while (env != NULL)
+	{
+		if (!ft_strncmp(env->key, "PWD", 4))
+		{
+			old_value = env->value;
+			tmp = getcwd(NULL, 0);
+			env->value = ft_strdup(tmp);
 			if (tmp)
 				free (tmp);
-        }
-        else if (!ft_strncmp(env->key, "OLDPWD", 7))
-        {
-            old_value = env->value;
-            env->value = ft_strdup(old_path);
-            if (old_value)
+		}
+		else if (!ft_strncmp(env->key, "OLDPWD", 7))
+		{
+			old_value = env->value;
+			env->value = ft_strdup(old_path);
+			if (old_value)
 				free (old_value);
-        }
-        env = env->next;
-    }
-	free (old_path);
+		}
+		env = env->next;
+	}
 }
 
-// tratar de ~/.. - vai para o home/user mas uma pasta acima, tipo so home memo tipo /home/
-// tratar do caso de ser um PATH maior do que permitido (checkar path max)
-// tratar de cd ../relative_directory
+static void	add_path(t_prompt *prompt)
+{
+	char		*old_value;
+	char		*old_path;
+	t_env_list	*env;
+
+	old_value = NULL;
+	old_path = get_env(prompt, "PWD");
+	env = prompt->env_list;
+	add_path_aux(env, old_path, old_value);
+	free (old_path);
+}
 
 static int	absolute_path(t_parser *parser)
 {
 	int	new_path;
 
-	new_path = chdir(parser->command->next->content); // this works for .. and for cd without anything because the chdir function can receive those
+	new_path = chdir(parser->command->next->content);
 	if (new_path != 0)
 	{
 		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
@@ -190,8 +203,9 @@ int	ms_cd(t_prompt *prompt, t_parser *parser)
 	t_lexer	*temp;
 
 	temp = parser->command->next;
-	if (!temp || !temp->content[0] || (temp->content[0] &&
-			(!ft_strncmp(temp->content, "~", 2) || (temp->content[0] == '-' && (temp->content[1] == '-' && !temp->content[2])))))
+	if (!temp || !temp->content[0] || (temp->content[0]
+			&& (!ft_strncmp(temp->content, "~", 2) || (temp->content[0] == '-'
+					&& (temp->content[1] == '-' && !temp->content[2])))))
 		new_path = change_path(prompt, "HOME");
 	else if (temp->content[0] == '-' && temp->content[1] != '-')
 		new_path = change_path(prompt, "OLDPWD");
@@ -226,82 +240,68 @@ static void	exit_code(char **str)
 	int	exit_code;
 
 	exit_code = 0;
-	//printf("A STRING[0] eh: %s\n", str[0]);
-	if (!str[0]) // sem argumentos, exit com 0
+	if (!str[0])
 		exit_code = 0;
-	else if (str[1]) // mais do que um argumento, printa erro
+	else if (str[1])
 	{
-/* 		write(1, "=", 1);
-		ft_putstr_fd(str[1], 1);
-		write(1, "=", 1); */
 		ft_putstr_fd("-minishell: exit: too many arguments\n", STDERR_FILENO);
 		exit_code = 1;
 		free_array(str);
 		exit(exit_code);
 	}
-	else if (ft_isdigit(str[0][0])) // Checka se eh digito
+	else if (ft_isdigit(str[0][0]))
 		exit_code = ft_atoi(str[0]);
-	else // se o argumento nao for valido
+	else
 	{
-		ft_putstr_fd("-minishell: exit: numeric argument required\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: exit: numeric ", STDERR_FILENO);
+		ft_putstr_fd("argument required\n", STDERR_FILENO);
 		exit_code = 2;
 	}
 	free_array(str);
-	//free_data(prompt);
-	//print_parser(prompt);
-	//dev_mod(prompt);
-	//printf("SAIU AQUI\n");
 	exit(exit_code);
 }
-// valor maximo de erro eh 256. se o valor ultrapassar isto, tem de voltar atras. tipo se for 256 + 1 vai para 0 I GUESS
 
-int ms_exit(t_parser *parser, t_prompt *prompt)
+void	ms_exit_success(t_prompt *prompt, char **str)
 {
-    char **str;
-    t_lexer *temp;
-    int size;
-    int i;
+	rl_clear_history();
+	ft_putstr_fd("exit\n", STDOUT_FILENO);
+	free_data(prompt);
+	exit_code(str);
+	free_array(str);
+}
 
-	//printf("NODE DO LEXER: [%s]\n", prompt->lexer->content);
-    if (!parser)
-    {
-        free_data(prompt);
-        exit(g_code);
-    }
-    size = 0;
-    temp = parser->command->next;
-	//printf("COMMAND CONTENT: [%s]\n", parser->command->content);
-	//printf("COMMAND CONTENT: [%s]\n", parser->command->next->content);
-    while (temp)
-    {
-        size++;
-        temp = temp->next;
-    }
-    str = (char **)ft_calloc(size + 1, sizeof(char *));
+int	ms_exit(t_parser *parser, t_prompt *prompt)
+{
+	int		i;
+	int		size;
+	char	**str;
+	t_lexer	*temp;
+
+	size = 0;
 	temp = parser->command->next;
-    i = 0;
-    while (temp)
-    {
+	if (!parser)
+	{
+		free_data(prompt);
+		exit(g_code);
+	}
+	while (temp && ++size)
+		temp = temp->next;
+	str = (char **)ft_calloc(size + 1, sizeof(char *));
+	temp = parser->command->next;
+	i = 0;
+	while (temp)
+	{
 		str[i] = ft_strdup(temp->content);
 		temp = temp->next;
 		i++;
-    }
-	//printf("22222 A STRING[0] eh: %s\n", str[0]);
-	//printf("EXIT LEXER: [%s]\n", prompt->lexer->content);
-	//free_lexer_list(&prompt->lexer);
-    rl_clear_history();
-	ft_putstr_fd("exit\n", STDOUT_FILENO);
-    //printf("ISTO EH A STRING ANTES: [%s]\n", str[0]);
-	free_data(prompt);
-    exit_code(str);
-	free_array(str);
-	//printf("ISTO EH A STRING DEPOIS: [%s]\n", str[0]);
-    return (EXIT_SUCCESS);
+	}
+	ms_exit_success(prompt, str);
+	return (EXIT_SUCCESS);
 }
 
 int	exec_builtins(t_prompt *prompt, t_parser *parser)
 {
-	int 	status;
+	int	status;
 
 	status = 1;
 	if (!ft_strncmp(parser->command->content, "echo", 5))
@@ -309,7 +309,7 @@ int	exec_builtins(t_prompt *prompt, t_parser *parser)
 	else if (!ft_strncmp(parser->command->content, "pwd", 4))
 		status = ms_pwd();
 	else if (!ft_strncmp(parser->command->content, "env", 4))
-		status = ms_env(prompt, parser); 
+		status = ms_env(prompt, parser);
 	else if (!ft_strncmp(parser->command->content, "cd", 3))
 		status = ms_cd(prompt, parser);
 	else if (!ft_strncmp(parser->command->content, "exit", 5))

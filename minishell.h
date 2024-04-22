@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/19 17:53:53 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/22 16:20:38 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -202,12 +202,13 @@ void	reset_data(t_prompt *prompt);
 // Executor
 void	execute(t_prompt *prompt);
 void    single_command(t_prompt *prompt, t_parser *parser);
-int	handle_redirects(t_parser *parser);
-int	set_fd_in(t_lexer *redir);
+int		handle_redirects(t_parser *parser);
+int		set_fd_in(t_lexer *redir);
 int		set_fd_out(t_lexer *redir);
-char	*get_delimiter(t_parser *parser);
-int	set_heredoc(t_prompt *prompt, t_parser *parser);
-void	send_heredoc(t_prompt *prompt, t_parser *parser, int fd);
+int		set_hdfile_in(char *file);
+char	*get_delimiter(t_lexer *redir);
+int		set_heredoc(t_prompt *prompt, t_parser *parser);
+void	send_heredoc(t_prompt *prompt, t_lexer *redir, int fd);
 int     create_hdfile(char *file);
 char	*get_hdfile(t_parser *parser, t_lexer *redir);
 
