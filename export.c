@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/19 14:43:28 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/22 19:11:37 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,7 @@ int	check_export_arg(char *string)
 		if (isalpha(string[i]) || (string[i] == '=' && i != 0))
 			i++;
 		else
-		{
-			//ms_free_array(string);
 			return (1);
-		}
 	}
 	free(string);
 	return (0);
@@ -84,6 +81,20 @@ int	check_export(t_prompt *prompt, t_parser *parser)
 	return (0);
 }
 
+int	update_existing_value(char *key, char *value, t_env_list *current)
+{
+	if (value)
+	{
+		ms_free_string(current->value);
+		current->value = ft_strdup(value);
+		ms_free_string(value);
+		ms_free_string(key);
+		return (0);
+	}
+	ms_free_string(key);
+	return (1);
+}
+
 void	add_value(char *variable, t_prompt *prompt)
 {
 	char		*key;
@@ -103,15 +114,8 @@ void	add_value(char *variable, t_prompt *prompt)
 	while (current)
 	{
 		if (!ft_strncmp(current->key, key, ft_strlen(key) + 1))
-		{
-			if (value)
-			{
-				current->value = ft_strdup(value);
-				ms_free_string(value);
-			}
-			ms_free_string(key);
-			return ;
-		}
+			if (!update_existing_value(key, value, current))
+				return ;
 		current = current->next;
 	}
 	add_on_env_list(prompt->env_list, key, value);
@@ -128,7 +132,6 @@ int	ms_export(t_prompt *prompt, t_parser *parser)
 
 	dup_env = create_dup(prompt->env_list);
 	command = parser->command->next;
-	//printf("Command content: [%s]\n", command->content);
 	head = dup_env;
 	if (!command)
 	{
@@ -140,7 +143,7 @@ int	ms_export(t_prompt *prompt, t_parser *parser)
 			current = current->next;
 		}
 	}
- 	if (check_export(prompt, parser))
+	if (check_export(prompt, parser))
 	{
 		free_env_list(&head);
 		return (1);

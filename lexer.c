@@ -6,26 +6,43 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 14:17:14 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/22 19:13:23 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	get_token(char *input, t_prompt *prompt)
+extern int	g_code;
+
+void	pipe_error(t_prompt *prompt)
+{
+	ft_printf("minishell: syntax error near unexpected token `|'\n");
+	free_data(prompt);
+	exit(g_code);
+}
+
+int	check_content(char *content, char *new_content)
+{
+	if (new_content == NULL)
+	{
+		free (content);
+		return (1);
+	}
+	return (0);
+}
+
+int	get_token(char *input, t_prompt *prompt)
 {
 	char	*content;
 	char	*new_content;
 	int		len;
 	t_type	type;
-	
+
 	new_content = NULL;
 	len = 0;
- 	if (!check_quotes(input))
-			exit (1);
 	while (*input)
 	{
-		while (*input == 32)
+		while (*input == 32 || (*input >= 9 && *input <= 13))
 			input++;
 		if (!*input)
 			break ;
@@ -33,22 +50,13 @@ void	get_token(char *input, t_prompt *prompt)
 		len = ft_strlen(content);
 		new_content = expander(content, prompt->env_list);
 		input += len;
-		if (new_content == NULL)
-		{	
-			free (content);
+		if (check_content(content, new_content))
 			continue ;
-		}
 		type = get_type(new_content);
 		free (content);
 		token_add_back(&(prompt->lexer), create_node(new_content, type));
-        if (prompt->lexer->type == PIPE && !prompt->lexer->next) // this is the case for when there is only a single PIPE and nothing after it
-		{
-			ft_printf("minishell: syntax error near unexpected token `|'\n"); // o exit code vai ser 2
-			exit(2); // fazer um msexit para quando houver um erro fazer os frees e dar exit do programa | 
-            // lidar com erro para quando ha redirect e nada depois. O nome do erro eh "minishell: syntax error near unexpected token `newline' (mas se for tipo >>>> tem de dar ">>") o exit code disto vai ser 2"
-            // quando a palavra a frente do redirect eh uma variavel env que tem de ser substituida mas nao existe. Nome "minishell: ambiguous redirect" e o exit code eh 1
-		}
 	}
+	return (0);
 }
 
 char	*get_token_content(t_prompt *prompt, char *content)
@@ -94,36 +102,60 @@ t_type	get_type(char *content)
 		return (OTHER);
 }
 
-char    *other_content(char *input)
+char	*other_content(char *input)
 {
-    int i;
-    bool in_quotes;
-    char *res;
-    int quote;
+	int		i;
+	bool	in_quotes;
+	char	*res;
 
-    i = 0;
-    quote = -1;
-    in_quotes = false;
-    if (!input)
-        return (NULL);
-    while (input[i++])
+	i = 0;
+	in_quotes = false;
+	if (!input)
+		return (NULL);
+	while (input[i] && (!in_quotes || input[i] != input[i - 1]))
 	{
-        if (input[i] == '\'' || input[i] == '\"')
-        {
-			if (!in_quotes)
-				quote = i;
-            if (!in_quotes && input[i] == input[quote])
-                in_quotes = true;
-            else if (in_quotes && input[i] == input[quote])
-                in_quotes = false;
-        }
-        if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
-                || input[i] == '|') && !in_quotes) // it breaks and exists the loop in case it finds any operator and is not between quotes
-            break ;
-    }
-    res = ft_calloc(i + 1, sizeof(char));
-    ft_strlcpy(res, input, i + 1);
-    return (res);
+		if (input[i] == '\'' || input[i] == '\"')
+			in_quotes = !in_quotes;
+		if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
+				|| input[i] == '|') && !in_quotes)
+			break ;
+		i++;
+	}
+	res = ft_calloc(i + 1, sizeof(char));
+	ft_strlcpy(res, input, i + 1);
+	return (res);
 }
 
-// NAO ESQUECER DE TRATAR TABS E OUTROS WHITESPACES
+/* char	*other_content(char *input)
+{
+	int		i;
+	bool	in_quotes;
+	char	*res;
+	int		quote;
+
+	i = 0;
+	quote = -1;
+	in_quotes = false;
+	if (!input)
+		return (NULL);
+	while (input[i++])
+	{
+		if (input[i] == '\'' || input[i] == '\"')
+		{
+			if (!in_quotes)
+				quote = i;
+			if (!in_quotes && input[i] == input[quote])
+				in_quotes = true;
+			else if (in_quotes && input[i] == input[quote])
+				in_quotes = false;
+		}
+		if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
+				|| input[i] == '|') && !in_quotes)
+			break ;
+	}
+	res = ft_calloc(i + 1, sizeof(char));
+	ft_strlcpy(res, input, i + 1);
+	return (res);
+} */
+// Ter em conta o caso poop | echo lala	cenas. os processos estao
+// a atropelar uns aos outros for some reason, provavelmente printfs

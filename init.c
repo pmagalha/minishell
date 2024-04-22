@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 14:17:40 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/22 19:13:43 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,17 @@ int	init_pid(t_prompt *prompt)
 		n_parsers++;
 		parser = parser->next;
 	}
-    if (!prompt->pid)
-        prompt->pid = ft_calloc(sizeof(int), n_parsers);
-    else
-    {
-        free(prompt->pid);
-        prompt->pid = ft_calloc(sizeof(int), n_parsers);
-    }
+	if (!prompt->pid)
+		prompt->pid = ft_calloc(sizeof(int), n_parsers);
+	else
+	{
+		free(prompt->pid);
+		prompt->pid = ft_calloc(sizeof(int), n_parsers);
+	}
 	prompt->pid_size = n_parsers;
-    if (!prompt->pid)
-        return (1);
-    return (0);
+	if (!prompt->pid)
+		return (1);
+	return (0);
 }
 
 t_prompt	*init(t_prompt *prompt, char **env)
@@ -88,7 +88,6 @@ t_parser	*init_parser(t_parser *parser)
 	parser->builtin = NULL;
 	parser->redirects = NULL;
 	parser->hd_file = NULL;
-	parser->hd_ident = 0;
 	return (parser);
 }
 

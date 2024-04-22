@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 14:10:17 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/22 19:12:06 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ t_lexer	*create_node(char *content, t_type type)
 	new->type = type;
 	new->next = NULL;
 	new->prev = NULL;
-    free(content);
+	free(content);
 	return (new);
 }
 
@@ -51,7 +51,7 @@ bool	quotes_flag(t_prompt *prompt, char c)
 	return (prompt->quotes[0] || prompt->quotes[1]);
 }
 
-char	*get_quoted_content(t_prompt *prompt, char *input) //function working, ommented just to create another and test
+char	*get_quoted_content(t_prompt *prompt, char *input)
 {
 	char	*res;
 	int		i;
@@ -63,12 +63,12 @@ char	*get_quoted_content(t_prompt *prompt, char *input) //function working, omme
 	{
 		in_quotes = quotes_flag(prompt, input[i]);
 		if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
-			|| input[i] == '|') && !in_quotes) // it breaks and exists the loop in case it finds any operator and is not between quotes
+				|| input[i] == '|') && !in_quotes)
 			break ;
 	}
 	res = ft_calloc(i + 2, sizeof(char));
 	if (!res)
-		return (NULL); // or write any allocation error in the future
+		return (NULL);
 	ft_strlcpy(res, input, i + 1);
 	return (res);
 }

@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 16:21:16 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/22 17:13:03 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,8 @@ void	send_heredoc(t_prompt *prompt, t_lexer *redir, int fd)
 		ft_putchar_fd('\n', fd);
 		input = readline("> ");
 		ms_free_string(new_input);
-		redir = redir->next;
+		if (redir->next)
+			redir = redir->next;
 	}
 	close(fd);
 	ms_free_string(input);

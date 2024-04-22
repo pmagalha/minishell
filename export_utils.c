@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 13:55:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/19 14:21:39 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/22 19:11:26 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,8 @@ void	sort_export(t_env_list *dup_env)
 	head = dup_env;
 	while (current && current->next)
 	{
-		if (ft_strncmp(current->key, current->next->key, ft_strlen(current->next->key) + 1) > 0)
+		if (ft_strncmp(current->key, current->next->key,
+				ft_strlen(current->next->key) + 1) > 0)
 		{
 			swap(current, current->next);
 			current = head;
@@ -41,7 +42,6 @@ void	print_export(t_env_list *current)
 {
 	ft_putstr_fd("declare -x ", STDOUT_FILENO);
 	ft_putstr_fd(current->key, STDOUT_FILENO);
-	
 	if (current->value && *current->value)
 	{
 		ft_putstr_fd("=\"", STDOUT_FILENO);
