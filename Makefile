@@ -6,7 +6,7 @@
 #    By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/12 20:33:55 by pmagalha          #+#    #+#              #
-#    Updated: 2024/04/11 13:30:42 by joao-ppe         ###   ########.fr        #
+#    Updated: 2024/04/22 14:13:49 by joao-ppe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@
 
 SRC = main.c lexer.c init.c lexer_utils.c env.c expander.c expander_utils.c \
 parser.c parser_utils.c quotes_utils.c builtins.c export.c export_utils.c \
-unset.c free_utils.c expander_quotes.c executor.c error.c 
+unset.c free_utils.c expander_quotes.c executor.c error.c ms_utils.c
 OBJS = $(SRC:.c=.o)
 DEPS = libft/libft.a
 

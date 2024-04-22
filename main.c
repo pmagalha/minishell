@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/18 14:42:09 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/22 14:15:19 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,21 +102,7 @@ int	dev_mod(t_prompt *prompt)
 
 
 
-void	reset_data(t_prompt *prompt)
-{
-	if (!prompt)
-		return ;
-	if (prompt->lexer)
-		free_lexer_list(&prompt->lexer);
-	if (prompt->parser)
-		free_parser_list(&prompt->parser);
-	if (prompt->pid)
-		free(prompt->pid);
-	prompt->pid = NULL;
-	prompt->lexer = NULL;
-	prompt->parser = NULL;
-	prompt->reset = true;
-}
+
 
 int main(int argc, char **argv, char **env)
 {

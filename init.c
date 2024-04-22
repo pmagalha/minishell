@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/19 16:03:42 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/22 14:17:40 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ int	init_pid(t_prompt *prompt)
         prompt->pid = ft_calloc(sizeof(int), n_parsers);
     else
     {
-        free(prompt->pid); // Free previous allocation
-        prompt->pid = ft_calloc(sizeof(int), n_parsers); // Reallocate
+        free(prompt->pid);
+        prompt->pid = ft_calloc(sizeof(int), n_parsers);
     }
 	prompt->pid_size = n_parsers;
     if (!prompt->pid)

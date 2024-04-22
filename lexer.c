@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/09 18:34:19 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/22 14:17:14 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,6 @@ void	get_token(char *input, t_prompt *prompt)
 	
 	new_content = NULL;
 	len = 0;
-	//printf("\033[32;1m=========== EXPANDER DEV MOD ==========\033[0m\n");
  	if (!check_quotes(input))
 			exit (1);
 	while (*input)
@@ -30,10 +29,8 @@ void	get_token(char *input, t_prompt *prompt)
 			input++;
 		if (!*input)
 			break ;
-		//ft_printf("CONTENT AFTER EXPANDER: [%s]\n", content);
 		content = get_token_content(prompt, input);
 		len = ft_strlen(content);
-		//printf("\033[32;1m=========== EXPANDER DEV MOD [%s] ==========\033[0m\n", content);
 		new_content = expander(content, prompt->env_list);
 		input += len;
 		if (new_content == NULL)
@@ -52,7 +49,6 @@ void	get_token(char *input, t_prompt *prompt)
             // quando a palavra a frente do redirect eh uma variavel env que tem de ser substituida mas nao existe. Nome "minishell: ambiguous redirect" e o exit code eh 1
 		}
 	}
-	//printf("\033[32;1m=========== EXPANDER GREAT SUCCESS ==========\033[0m\n");
 }
 
 char	*get_token_content(t_prompt *prompt, char *content)
@@ -98,37 +94,6 @@ t_type	get_type(char *content)
 		return (OTHER);
 }
 
-bool	quotes_flag(t_prompt *prompt, char c)
-{
-	if (c == '"' && !prompt->quotes[0])
-		prompt->quotes[1] = !prompt->quotes[1];
-	else if (c == '\'' && !prompt->quotes[1])
-		prompt->quotes[0] = !prompt->quotes[0];
-	return (prompt->quotes[0] || prompt->quotes[1]);
-}
-
-char	*get_quoted_content(t_prompt *prompt, char *input) //function working, ommented just to create another and test
-{
-	char	*res;
-	int		i;
-	bool	in_quotes;
-
-	i = 0;
-	in_quotes = quotes_flag(prompt, input[i]);
-	while (input[i++])
-	{
-		in_quotes = quotes_flag(prompt, input[i]);
-		if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
-			|| input[i] == '|') && !in_quotes) // it breaks and exists the loop in case it finds any operator and is not between quotes
-			break ;
-	}
-	res = ft_calloc(i + 2, sizeof(char));
-	if (!res)
-		return (NULL); // or write any allocation error in the future
-	ft_strlcpy(res, input, i + 1);
-	return (res);
-}
-
 char    *other_content(char *input)
 {
     int i;
@@ -162,7 +127,3 @@ char    *other_content(char *input)
 }
 
 // NAO ESQUECER DE TRATAR TABS E OUTROS WHITESPACES
-
-// Comandos para testar tipo: echo "$?" $? '$?' "'"$?"'" """'$?'"""
-
-// echo $9$?I$SER$2USER$USER

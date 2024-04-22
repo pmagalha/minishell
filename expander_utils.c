@@ -21,24 +21,6 @@ int is_identifier(char c)
         || c == '~' || c == '=' || c == '-' || c == '?' || c == '&' || c == '*');
 }
 
-char *ms_safejoin(char *str1, char *str2)
-{
-    char *new;
-
-    new = NULL;
-    if (!str1 && !str2)
-        return NULL;
-    else if (!str1 && str2)
-        new = ft_strdup(str2);
-    else if (str1 && !str2)
-		new = ft_strdup(str1);
-    else
-		new = ft_strjoin(str1, str2);
- 	ms_free_string(str1);
-	ms_free_string(str2);
-    return (new);
-}
-
 bool    sign_exists(char *str, char sign, char c)
 {
     int i;
@@ -65,7 +47,7 @@ int count_signs(char *str, char c)
     return (i);
 }
 
-char    next_char(char *str) // procura o proximo caracter nao alfanumerico e ignora espacos
+char    next_char(char *str)
 {
     int     i;
 
@@ -78,7 +60,7 @@ char    next_char(char *str) // procura o proximo caracter nao alfanumerico e ig
     return (0);
 }
 
-char    next_char_space(char *str) // procura o proximo caracter nao alfanumerico INCLUINDO espacos
+char    next_char_space(char *str)
 {
     int     i;
 
@@ -128,17 +110,16 @@ char    *get_key_value(char *new_str, char *input, t_env_list *env_list)
 
     new = NULL;
 	temp = NULL;
-    if (*(input + 1) == '\0') // no caso do input ser por exemplo só "$" ou "echo $", sem qualquer tipo de key ou conteudo depois do cifrão
+    if (*(input + 1) == '\0')
 	{
 		temp = ft_strdup("$");
         return (ms_safejoin(new_str, temp));
 	}
-    else if (*input == '$' && ft_isdigit(*(input + 1))) // no caso de haver numeros depois do 
+    else if (*input == '$' && ft_isdigit(*(input + 1))) 
         return (expand_digits(new_str, input));
-    key = ft_strndup(input + 1, ft_strclen(input + 1, next_char_space(input))); // isolar a key do INPUT, sem espacos e $ para ser mais facil comparar na lista do ENV
+    key = ft_strndup(input + 1, ft_strclen(input + 1, next_char_space(input)));
     input += ft_strclen(input, '$') - 1;
     value = find_value(key, env_list);
-	//printf("KEY: [%s] [%ld] | VALUE [%s] [%ld]\n", key, ft_strlen(key), value, ft_strlen(value));
     new = ms_safejoin(new_str, value);
     if (key)
         free (key);

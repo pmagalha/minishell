@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/19 18:27:00 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/22 14:10:17 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,84 +42,33 @@ void	token_add_back(t_lexer **token_lst, t_lexer *new)
 	}
 }
 
-void free_lexer_list(t_lexer **lexer)
+bool	quotes_flag(t_prompt *prompt, char c)
 {
-    if (lexer == NULL || *lexer == NULL) {
-        return;
-    }
-    t_lexer *current = *lexer;
-    t_lexer *next = NULL;
-
-    while (current != NULL)
-    {
-        if (current->content)
-            free(current->content);
-        next = current->next;
-        if (current)
-            free(current);
-        current = next;
-    }
-    *lexer = NULL;
+	if (c == '"' && !prompt->quotes[0])
+		prompt->quotes[1] = !prompt->quotes[1];
+	else if (c == '\'' && !prompt->quotes[1])
+		prompt->quotes[0] = !prompt->quotes[0];
+	return (prompt->quotes[0] || prompt->quotes[1]);
 }
 
-void free_parser_list(t_parser **parser)
+char	*get_quoted_content(t_prompt *prompt, char *input) //function working, ommented just to create another and test
 {
-    if (parser == NULL || *parser == NULL) {
-        return;
-    }
+	char	*res;
+	int		i;
+	bool	in_quotes;
 
-    t_parser *current = *parser;
-    t_parser *next = NULL;
-
-    while (current != NULL)
-    {
-        if (current->command)
-            free_lexer_list(&(current->command));
-        if (current->redirects)
-            free_lexer_list(&(current->redirects));
-        if (current->builtin)
-            free(current->builtin);
-        if (current->hd_file)
-            free(current->hd_file);
-        next = current->next;
-        if (current)
-            free(current);
-        current = next;
-    }
-    *parser = NULL;
-}
-
-void free_env_list(t_env_list **env)
-{
-    t_env_list *head;
-    t_env_list *tmp;
-
-    head = *env;
-	tmp = NULL;
-    if (!env)
-        return ;
-    while (head != NULL) 
+	i = 0;
+	in_quotes = quotes_flag(prompt, input[i]);
+	while (input[i++])
 	{
-        if (head->key)
-            free(head->key);
-        if (head->value)
-            free(head->value);
-		tmp = head;
-		head = head->next;
-        free(tmp);
-    }
-    //free(env);
-}
-
-void free_data(t_prompt *prompt)
-{
-    if (!prompt)
-        return;
-    free_env_list(&(prompt->env_list));
-    free_lexer_list(&(prompt->lexer));
-    free_parser_list(&(prompt->parser));
-    if (prompt->pid)
-        free(prompt->pid);
-    prompt->pid = NULL;
-    free(prompt);
+		in_quotes = quotes_flag(prompt, input[i]);
+		if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
+			|| input[i] == '|') && !in_quotes) // it breaks and exists the loop in case it finds any operator and is not between quotes
+			break ;
+	}
+	res = ft_calloc(i + 2, sizeof(char));
+	if (!res)
+		return (NULL); // or write any allocation error in the future
+	ft_strlcpy(res, input, i + 1);
+	return (res);
 }
