@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirects.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:35:47 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/24 14:47:38 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 20:25:48 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,18 @@ int	set_fd_in(t_lexer *redir)
 
 	file = redir->content;
 	fd = open(file, O_RDONLY);
+	if (fd < 0)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(file, STDERR_FILENO);
+		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		exit (1);
+	}
 	if (dup2(fd, STDIN_FILENO) < 0)
+	{
+		close(fd);
 		return (1);
+	}
 	close(fd);
 	return (0);
 }
@@ -75,7 +85,12 @@ int	set_fd_out(t_lexer *redir)
 	else if (redir->type == REDIR_OUT)
 		fd = open(file, O_CREAT | O_RDWR | O_TRUNC, 0644);
 	if (fd < 0)
-		return (1);
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(file, STDERR_FILENO);
+		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		exit (1);
+	}
 	if (dup2(fd, STDOUT_FILENO) < 0)
 		return (1);
 	return (0);

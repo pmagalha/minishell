@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:30:29 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/24 14:32:04 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 20:25:38 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,12 @@ int	create_hdfile(char *file)
 
 	fd = open(file, O_CREAT | O_RDWR | O_APPEND, 0644);
 	if (fd < 0)
-		return (1);
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(file, STDERR_FILENO);
+		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		exit (1);
+	}
 	return (fd);
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/24 18:23:30 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 19:55:42 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,6 @@ void	set_env_from_strings(char **env, t_prompt *prompt)
 	key = NULL;
 	value = NULL;
 	new_node = NULL;
-	token_add_back_env(&(prompt->env_list), create_key_value("merda_lixo", "foda-se"));
 	while (i < lines)
 	{
 		key = ft_substr(env[i], 0, ft_strchr(env[i], '=') - env[i]);
