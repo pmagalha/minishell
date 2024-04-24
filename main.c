@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 14:15:19 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 18:27:59 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,27 +100,26 @@ int	dev_mod(t_prompt *prompt)
 
 /* ============================  dev mod ============================ */
 
-
-
-
-
 int main(int argc, char **argv, char **env)
 {
     char *input;
 	t_prompt *prompt;
 	
+	(void)argv;
 	prompt = NULL;
+	if (argc > 1)
+	{
+		ft_putstr_fd("Minishell does not accept arguments\n", STDERR_FILENO);
+		exit (0);
+	}
 	prompt = init(prompt, env);
-	(void)argc;
+	set_signals(prompt);
 	set_env(env, prompt);
 	while (1)
 	{
-		if (argv[1])
-		{
-			printf("Wrong number of arguments\n");
-			exit (2);
-		}
+		prompt->interactive = true;
 		input = readline("minishell$ ");
+		prompt->interactive = false;
 		if (input != NULL)
 		{
 			add_history(input);
@@ -128,11 +127,9 @@ int main(int argc, char **argv, char **env)
 			get_parser(prompt);
 			if (!prompt->pid && prompt->parser->next)
 				init_pid(prompt);
-			//single_command(prompt, prompt->parser);
-			execute(prompt);
 			//dev_mod(prompt); // aapaaaagare
+			execute(prompt);
 			free(input);
-			//printf("ola\n");
 		}
 		else
 		{
@@ -140,11 +137,6 @@ int main(int argc, char **argv, char **env)
 			exit (1); // isto eh quando faz ctrl D (new line)
 		}
 		reset_data(prompt);
-		//printf("AFTER RESET DATA:\n");
-    	//print_parser(prompt);
-		
-		//prompt->lexer = NULL;
-		//prompt->parser = NULL;
 	}
 	free_data(prompt);
 }
@@ -155,12 +147,4 @@ int main(int argc, char **argv, char **env)
 // REDUZIR LINHAS DO EXPANDER - J
 
 // nao esquecer de fazer o add history nao guardar comandos vazios
-
-/* void	set_sign(void)
-{	
-	signal.sa_handler = &handle_signal;
-	signal.sa_flags = 0;
-	sigemptyset(&signal.sa_mask);
-	sigaction(SIGINT, &signal, NULL);
-	sigaction(SIGQUIT, &signal, NULL);
-} */
+// temos um double free com ''

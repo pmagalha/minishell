@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:10:31 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 19:13:43 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 15:02:55 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ t_prompt	*init(t_prompt *prompt, char **env)
 	prompt->parser = NULL;
 	prompt->env = env;
 	prompt->env_list = NULL;
+	prompt->interactive = false;
 	prompt->quotes[0] = false;
 	prompt->quotes[1] = false;
 	prompt->reset = false;

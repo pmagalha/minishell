@@ -17,6 +17,8 @@ static char *expand_single_quotes(char *input)
     char    *new;
 
     new = NULL;
+	if (ft_strlen(input) == 2)
+		return (new);
 	new = copy_content(new, input + 1, *input);
     return (new);
 }
@@ -42,6 +44,12 @@ static char *expand_double_quotes(char *input, t_env_list *env_list)
 			{
 				new = ms_safejoin(new, ft_strdup("$'"));
 				newinput += 2;
+				continue ;
+			}
+			else if (*(newinput + 1) == 32)
+			{
+				new = ms_safejoin(new, ft_strdup("$"));
+				newinput++;
 				continue ;
 			}
 			key = get_key(newinput);

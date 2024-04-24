@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 19:13:23 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 17:24:45 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,12 @@ int	get_token(char *input, t_prompt *prompt)
 			break ;
 		content = get_token_content(prompt, input);
 		len = ft_strlen(content);
+		type = get_type(content);
 		new_content = expander(content, prompt->env_list);
 		input += len;
 		if (check_content(content, new_content))
 			continue ;
-		type = get_type(new_content);
+		
 		free (content);
 		token_add_back(&(prompt->lexer), create_node(new_content, type));
 	}
@@ -132,7 +133,7 @@ char	*other_content(char *input)
 	bool	in_quotes;
 	char	*res;
 	int		quote;
-
+ !content[3]
 	i = 0;
 	quote = -1;
 	in_quotes = false;

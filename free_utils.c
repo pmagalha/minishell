@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 16:47:00 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/22 19:11:47 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 14:43:17 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,21 @@ void	free_env_list(t_env_list **env)
 		head = head->next;
 		free(tmp);
 	}
+}
+
+void	free_array(char **arr)
+{
+	int	i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i])
+	{
+		ms_free_string(arr[i]);
+		i++;
+	}
+	free(arr);
 }
 
 void	free_data(t_prompt *prompt)

@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 19:15:39 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 16:03:14 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,11 +73,54 @@ typedef struct s_prompt
 	t_lexer		*lexer;
 	t_lexer		**token_lst;
 	t_parser	*parser;
+	bool		interactive;
 	bool		quotes[2];
 	int			*pid;
 	int			pid_size;
 	bool		reset;
 }				t_prompt;
+
+// BUILTINS.C
+int			ms_pwd(void);
+int			ms_echo(t_parser *parser);
+void		print_ms_env(t_env_list *temp);
+int			ms_env(t_prompt *prompt, t_parser *parser);
+char		*get_env(t_prompt *prompt, char *path);
+int			ms_cd(t_prompt *prompt, t_parser *parser);
+void		ms_exit_success(t_prompt *prompt, char **str);
+int			ms_exit(t_parser *parser, t_prompt *prompt);
+int			exec_builtins(t_prompt *prompt, t_parser *parser);
+// ENV.C
+int			count_lines(char **env);
+t_env_list	*create_key_value(char *key, char *value);
+void		token_add_back_env(t_env_list **env_list, t_env_list *new);
+void		set_env_from_strings(char **env, t_prompt *prompt);
+void		set_default_env(t_prompt *prompt);
+void		set_env(char **env, t_prompt *prompt);
+void		print_env_list(t_env_list *head);
+// ERROR.C
+void		ms_error(int error);
+char		*file_dir_error(char *tmp);
+int			cmd_not_found(t_prompt *prompt, t_parser *parser);
+// EXECUTOR.C
+int			fork_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2]);
+void		execute(t_prompt *prompt);
+int			exec_path(t_prompt *prompt, t_parser *parser, char **paths);
+int			handle_command(t_prompt *prompt, t_parser *parser);
+void    	single_command(t_prompt *prompt, t_parser *parser);
+// EXECUTOR_UTILS1.C
+int			dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2]);
+void		wait_pipe(t_prompt *prompt, int *pid);
+char		**get_paths(t_prompt *prompt);
+int			lexer_list_size(t_lexer *lexer);
+int			env_list_size(t_env_list *env_list);
+// EXECUTOR_UTILS2.C
+char		**convert_env(t_env_list *env_list);
+char		**convert_parser(t_prompt *prompt, t_parser *parser);
+// CONTINUAR A ORGANIZAR DAQUI!!!!!!!!!!!!
+// REDIRECTS.C
+int			check_fd(t_parser *parser, int end[2]);
+
 
 // LEXER
 
@@ -198,6 +241,12 @@ void		send_heredoc(t_prompt *prompt, t_lexer *redir, int fd);
 int			create_hdfile(char *file);
 char		*get_hdfile(t_parser *parser, t_lexer *redir);
 int			handle_command(t_prompt *prompt, t_parser *parser);
+
+//SIGNALS.C
+void		execute_sig(void *baseprompt, int sig);
+void		init_sign(void);
+void		set_signals(t_prompt *prompt);
+void		handle(int sig);
 
 //ERROR HANDLING
 void		ms_error(int error);

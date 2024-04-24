@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:21:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 16:16:04 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 18:58:54 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,6 +203,7 @@ int	ms_cd(t_prompt *prompt, t_parser *parser)
 	t_lexer	*temp;
 
 	temp = parser->command->next;
+	new_path = 0;
 	if (!temp || !temp->content[0] || (temp->content[0]
 			&& (!ft_strncmp(temp->content, "~", 2) || (temp->content[0] == '-'
 					&& (temp->content[1] == '-' && !temp->content[2])))))
@@ -216,28 +217,29 @@ int	ms_cd(t_prompt *prompt, t_parser *parser)
 	}
 	else
 		new_path = absolute_path(parser);
+	if (new_path < 0)
+		return (1);
 	add_path(prompt);
 	return (new_path);
 }
 
-void	free_array(char **arr)
+int	str_is_digit(char *str)
 {
 	int	i;
 
-	if (!arr)
-		return ;
 	i = 0;
-	while (arr[i])
+	while (str[i])
 	{
-		ms_free_string(arr[i]);
+		if (!ft_isdigit(str[i]))
+			return (0);
 		i++;
 	}
-	free(arr);
+	return (1);
 }
 
 static void	exit_code(char **str)
 {
-	int	exit_code;
+	int		exit_code;
 
 	exit_code = 0;
 	if (!str[0])
@@ -249,8 +251,10 @@ static void	exit_code(char **str)
 		free_array(str);
 		exit(exit_code);
 	}
-	else if (ft_isdigit(str[0][0]))
+	else if (str_is_digit(str[0]) || ft_atoi(str[0]))
 		exit_code = ft_atoi(str[0]);
+	else if (str[0][0] && str[0][0] == '-' && str_is_digit(str[0] + 1))
+		exit_code = 256 - ft_atoi(str[0] + 1);
 	else
 	{
 		ft_putstr_fd("minishell: exit: numeric ", STDERR_FILENO);

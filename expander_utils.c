@@ -55,7 +55,7 @@ char	next_char(char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if (!ft_isalnum(str[i]) && str[i] != 32)
+		if ((!ft_isalnum(str[i]) && str[i] != 32) && str[i] != '_')
 			return (str[i]);
 	}
 	return (0);
@@ -68,7 +68,7 @@ char	next_char_space(char *str)
 	i = -1;
 	while (str[++i])
 	{
-		if (!ft_isalnum(str[i]) || str[i] == 32)
+		if ((!ft_isalnum(str[i]) || str[i] == 32) && str[i] != '_')
 			return (str[i]);
 	}
 	return (0);

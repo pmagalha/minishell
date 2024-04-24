@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 19:11:37 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 17:34:49 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,8 +73,9 @@ int	check_export(t_prompt *prompt, t_parser *parser)
 		}
 		else
 		{
-			printf("minishell: export: `%s': not a valid identifier\n",
-				command->content);
+			ft_putstr_fd("minishell: export: `", STDERR_FILENO);
+			ft_putstr_fd(command->content, STDERR_FILENO);
+			ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 			return (1);
 		}
 	}

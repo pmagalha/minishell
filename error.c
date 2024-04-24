@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 13:12:12 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/11 13:13:06 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/24 14:46:31 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,4 +35,49 @@ void	ms_error(int error)
 		ft_putstr_fd("infile: No such file or directory\n", STDERR_FILENO);
 	else if (error == 8)
 		ft_putendl_fd("Path does not exist\n", STDERR_FILENO);
+}
+
+char	*file_dir_error(char *tmp)
+{
+	struct stat	st;
+	char		*str;
+
+	if (stat(tmp, &st) == 0)
+	{
+		if (S_ISDIR(st.st_mode))
+			str = ft_strjoin(tmp, ": Is a directory");
+		else if (S_IXUSR)
+			str = ft_strjoin(tmp, ": Permission denied");
+	}
+	else
+		str = ft_strjoin(tmp, ": No such file or directory\n");
+	return (str);
+}
+
+int	cmd_not_found(t_prompt *prompt, t_parser *parser)
+{
+	struct stat	st;
+	char		*str;
+	char		*tmp;
+	int			status;
+
+	status = 127;
+	(void)prompt;
+	if (!parser->command && !parser->command)
+		return (1);
+	if (parser->command->content[0])
+		tmp = ft_strdup(parser->command->content);
+	else
+		tmp = ft_strdup("\'\'");
+	if ((parser->command->content[0] == '/' || parser->command->content[0] == '.') && parser->command->content[1])
+		str = file_dir_error(tmp);
+	else
+		str = ft_strjoin(tmp, ": command not found");
+	ft_putendl_fd(str, STDERR_FILENO);
+	if ((parser->command->content[0] == '/' || parser->command->content[0] == '.')
+		&& stat(tmp, &st) == 0 && (S_ISDIR(st.st_mode) | S_IXUSR))
+		status = 126;
+	ms_free_string(tmp);
+	ms_free_string(str);
+	return (status);
 }
