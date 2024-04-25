@@ -3,40 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/24 16:56:09 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 13:51:57 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// meter erro para quando so tem redirect e nao tem ficheiro seguinte
-
-void print_parser(t_prompt *prompt) {
-    int i = 1;
-    t_parser *parser = prompt->parser;
-
-    while (parser) {
-        printf("\nNODE [%d] = BUILTIN: [%s]\n", i, parser->builtin);
-
-        t_lexer *command = parser->command; // Reset command pointer for each parser node
-		t_lexer *redirects = parser->redirects; // Reset command pointer for each parser node
-		
-        while (command) {
-            printf("COMMAND [%d] = COMMAND: [%s]\n", i, command->content);
-            command = command->next;
-		}
-		while (redirects) {
-            printf("REDIRECTS [%d] = REDIR: [%s]\n", i, redirects->content);
-            redirects = redirects->next;
-        }
-
-        parser = parser->next;
-        i++;
-    }
+void	pipe_handling(t_prompt *prompt)
+{
+	if (prompt->lexer->next->type == PIPE)
+		prompt->lexer->next = prompt->lexer->next->next;
+	add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
+	prompt->lexer = prompt->lexer->next;
 }
+// HA UMA LEAK QUANDO SE FAZ DOIS PIPES EX echo boas || echo top
 
 void	get_parser(t_prompt *prompt)
 {
@@ -48,6 +31,8 @@ void	get_parser(t_prompt *prompt)
 	add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
 	p_start = prompt->parser;
 	pipe_count = count_pipes(prompt->lexer);
+	if (pipe_count < 0)
+		return ;
 	while (pipe_count-- >= 0)
 	{
 		while (prompt->lexer && prompt->lexer->type != PIPE)
@@ -58,12 +43,7 @@ void	get_parser(t_prompt *prompt)
 			get_redirects(prompt);
 		}
 		if (prompt->lexer && prompt->lexer->next && prompt->lexer->type == PIPE)
-		{
-			if (prompt->lexer->next->type == PIPE) // this is the condition for the double pipes case, (it will ignore the second)
-				prompt->lexer->next = prompt->lexer->next->next;
-			add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
-			prompt->lexer = prompt->lexer->next;
-		}
+			pipe_handling(prompt);
 	}
 	prompt->parser = p_start;
 	prompt->lexer = start;
@@ -80,10 +60,14 @@ int	count_pipes(t_lexer *lexer)
 	{
 		if (head->type == PIPE)
 			pipe_count++;
-		if (head->type == PIPE && !head->next) //condition in case there is only one pipe
+		if ((head->type == PIPE && !head->next)
+				|| ((head->next && head->next->next) && head->type == PIPE && head->next->type == PIPE
+						&& head->next->next->type == PIPE))
 		{
-			printf("minishell: syntax error near unexpected token `|'\n");
-			exit (1);
+			ft_putstr_fd("minishell: syntax error", STDERR_FILENO);
+			ft_putstr_fd("near unexpected token `|'\n", STDERR_FILENO);
+			g_code = 2;
+			return (-1);
 		}
 		head = head->next;
 	}
@@ -105,19 +89,6 @@ char	ms_count_words(t_prompt *prompt)
 	return (count);
 }
 
-/* static bool	is_builtin(char *input)
-{
-	if (!ft_strncmp(input, "echo", 4)
-		|| !ft_strncmp(input, "pwd", 3)
-		|| !ft_strncmp(input, "env", 3)
-		|| !ft_strncmp(input, "cd", 2)
-		|| !ft_strncmp(input, "exit", 4)
-		|| !ft_strncmp(input, "export", 6)
-		|| !ft_strncmp(input, "unset", 5))
-		return (true);
-	return (false);
-}
- */
 void	get_command(t_prompt *prompt)
 {
 	t_lexer	*command_node;
@@ -127,9 +98,6 @@ void	get_command(t_prompt *prompt)
 		return ;
 	if (prompt->lexer->type == OTHER)
 	{
-		// comentei isto porque estava a avancar um node do echo
-		/* if (is_builtin(prompt->lexer->content) && prompt->lexer->next)
-			prompt->lexer = prompt->lexer->next; */
 		if (!prompt->parser->command)
 			prompt->parser->command = create_node(ft_strdup(prompt->lexer->content), prompt->lexer->type);
 		else
@@ -147,6 +115,14 @@ void	get_command(t_prompt *prompt)
 	}
 }
 
+void	redirects_error(t_prompt *prompt)
+{
+	prompt->parser->redirects = NULL;
+	ft_putstr_fd("bash: syntax error near ", STDERR_FILENO);
+	ft_putstr_fd("unexpected token `newline'\n", STDERR_FILENO);
+	prompt->lexer = prompt->lexer->next;
+}
+
 void	get_redirects(t_prompt *prompt)
 {
 	t_lexer	*redirect;
@@ -158,31 +134,16 @@ void	get_redirects(t_prompt *prompt)
 		return ;
 	if (prompt->lexer->type == REDIR_OUT || prompt->lexer->type == REDIR2_OUT
 		|| prompt->lexer->type == REDIR_IN || prompt->lexer->type == HEREDOC)
-	{ // MUDAR DAQUI O HEREDOC PARA OUTRO SITIO PARA DAR HANDLE DELA ESPECIFICAMENTE
+	{
 		if (!prompt->lexer->next)
-		{
-			prompt->parser->redirects = NULL;
-			printf("Redirect: No such file or directory\n");
-			prompt->lexer = prompt->lexer->next;
-			exit (1); // METER ERRO DESSENTE AKI
-		}
+			return redirects_error(prompt);
 		if (!prompt->parser->redirects)
 			prompt->parser->redirects = create_node(ft_strdup(prompt->lexer->next->content), prompt->lexer->type);
 		else if (prompt->parser->redirects)
 		{
 			new_node = create_node(ft_strdup(prompt->lexer->next->content), prompt->lexer->type);
 			token_add_back(&prompt->parser->redirects, new_node);
-/* 			redirect = prompt->parser->redirects;
-			while (redirect->next != NULL)
-				redirect = redirect->next;
-			redirect->next = malloc(sizeof(t_lexer));
-			redirect->next->type = prompt->lexer->type;
-			redirect->next->content = ft_strjoin(prompt->lexer->content, NULL);
-			redirect->next->next = NULL;
-			redirect->next->prev = redirect; */
 		}
-		else
-			printf("error in redirects\n");
 		if (prompt->lexer->next->next)
 			prompt->lexer = prompt->lexer->next->next;
 		else

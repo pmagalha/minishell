@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 12:56:52 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 13:02:08 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ int	handle_command(t_prompt *prompt, t_parser *parser) // REDUZIR LINHAS
 	if (!parser->command && parser->redirects)
 	{
 		free_data(prompt);
-		exit (1);
+		exit (0);
 	}
  	if (parser->redirects)
 		g_code = handle_redirects(prompt, parser);
