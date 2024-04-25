@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/24 20:23:32 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:50:28 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,14 +231,14 @@ void		reset_data(t_prompt *prompt);
 // Executor
 void		execute(t_prompt *prompt);
 void		single_command(t_prompt *prompt, t_parser *parser);
-int			handle_redirects(t_parser *parser);
-int			set_fd_in(t_lexer *redir);
-int			set_fd_out(t_lexer *redir);
+int			handle_redirects(t_prompt *prompt, t_parser *parser);
+int			set_fd_in(t_prompt *prompt, t_lexer *redir);
+int			set_fd_out(t_prompt *prompt, t_lexer *redir);
 int			set_hdfile_in(char *file);
 char		*get_delimiter(t_lexer *redir);
 int			set_heredoc(t_prompt *prompt, t_parser *parser);
 void		send_heredoc(t_prompt *prompt, t_lexer *redir, int fd);
-int			create_hdfile(char *file);
+int			create_hdfile(t_prompt *prompt, char *file);
 char		*get_hdfile(t_parser *parser, t_lexer *redir);
 int			handle_command(t_prompt *prompt, t_parser *parser);
 

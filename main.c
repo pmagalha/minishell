@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/24 18:27:59 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:39:10 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,6 +123,11 @@ int main(int argc, char **argv, char **env)
 		if (input != NULL)
 		{
 			add_history(input);
+			if (!check_quotes(input))
+			{
+				reset_data(prompt);
+				continue;
+			}
 			get_token(input, prompt);
 			get_parser(prompt);
 			if (!prompt->pid && prompt->parser->next)

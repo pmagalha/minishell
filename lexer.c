@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/24 17:24:45 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:38:10 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ int	get_token(char *input, t_prompt *prompt)
 		input += len;
 		if (check_content(content, new_content))
 			continue ;
-		
 		free (content);
 		token_add_back(&(prompt->lexer), create_node(new_content, type));
 	}

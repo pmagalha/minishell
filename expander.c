@@ -127,9 +127,9 @@ char    *expander(char *input, t_env_list *env_list)
                 continue ;
             }
             new = copy_content(new, input, next_char(input + 1));
-            input += ft_strclen(input, next_char(input + 1)) - 1;
+			input += ft_strclen(input, next_char(input + 1)) - 1;
         }
-        else if (*input == '\'' || *input == '\"')
+        else if (*input == '\'' || *input == '\"') // CHECK HERE
         {
 			tmp = expand_quotes(input, env_list);
             new = ms_safejoin(new, tmp);

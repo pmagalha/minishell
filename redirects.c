@@ -6,13 +6,13 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:35:47 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/24 20:25:48 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:49:22 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	handle_redirects(t_parser *parser)
+int	handle_redirects(t_prompt *prompt, t_parser *parser)
 {
 	t_lexer		*redir;
 
@@ -21,7 +21,7 @@ int	handle_redirects(t_parser *parser)
 	{
 		if (redir->type == REDIR_OUT || redir->type == REDIR2_OUT)
 		{
-			if (set_fd_out(redir))
+			if (set_fd_out(prompt, redir))
 				return (1);
 		}
 		else if (redir->type == HEREDOC)
@@ -31,7 +31,7 @@ int	handle_redirects(t_parser *parser)
 		}
 		else if (redir->type == REDIR_IN)
 		{
-			if (set_fd_in(redir))
+			if (set_fd_in(prompt, redir))
 				return (1);
 		}
 		redir = redir->next;
@@ -50,7 +50,7 @@ int	set_hdfile_in(char *file)
 	return (0);
 }
 
-int	set_fd_in(t_lexer *redir)
+int	set_fd_in(t_prompt *prompt, t_lexer *redir)
 {
 	int		fd;
 	char	*file;
@@ -62,6 +62,7 @@ int	set_fd_in(t_lexer *redir)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(file, STDERR_FILENO);
 		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		free_data(prompt);
 		exit (1);
 	}
 	if (dup2(fd, STDIN_FILENO) < 0)
@@ -73,7 +74,7 @@ int	set_fd_in(t_lexer *redir)
 	return (0);
 }
 
-int	set_fd_out(t_lexer *redir)
+int	set_fd_out(t_prompt *prompt, t_lexer *redir)
 {
 	int		fd;
 	char	*file;
@@ -89,6 +90,7 @@ int	set_fd_out(t_lexer *redir)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(file, STDERR_FILENO);
 		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		free_data(prompt);
 		exit (1);
 	}
 	if (dup2(fd, STDOUT_FILENO) < 0)

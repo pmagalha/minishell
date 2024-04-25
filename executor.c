@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/24 14:47:40 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:56:52 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,11 +117,11 @@ int	handle_command(t_prompt *prompt, t_parser *parser) // REDUZIR LINHAS
 	file = NULL;
 	if (!parser->command && parser->redirects)
 	{
-		printf("ERROR: SHEET\n");
-		return (1);
+		free_data(prompt);
+		exit (1);
 	}
  	if (parser->redirects)
-		g_code = handle_redirects(parser);
+		g_code = handle_redirects(prompt, parser);
 	if (parser->builtin)
 	{
 		g_code = exec_builtins(prompt, parser);

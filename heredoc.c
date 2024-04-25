@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:30:29 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/24 20:25:38 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 12:50:16 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*get_delimiter(t_lexer *redir)
 	return (delimiter);	
 }
 
-int	create_hdfile(char *file)
+int	create_hdfile(t_prompt *prompt, char *file)
 {
 	int		fd;
 
@@ -36,6 +36,7 @@ int	create_hdfile(char *file)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(file, STDERR_FILENO);
 		ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
+		free_data(prompt);
 		exit (1);
 	}
 	return (fd);
@@ -74,7 +75,7 @@ int	set_heredoc(t_prompt *prompt, t_parser *parser)
 				free(parser->hd_file);
 			}
 			parser->hd_file = ft_strdup("hd_file.tmp");
-			fd = create_hdfile(parser->hd_file);
+			fd = create_hdfile(prompt, parser->hd_file);
 			send_heredoc(prompt, redir, fd);
 		}
 		redir = redir->next;
