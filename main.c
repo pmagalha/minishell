@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 13:52:48 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 13:54:00 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,11 +145,3 @@ int main(int argc, char **argv, char **env)
 	}
 	free_data(prompt);
 }
-
-//NEW TASKS:
-// MUDAR O HEREDOC DO GET_REDIRECTS PARA OUTRO LADO E DAR HANDLE DELA ESPECIFICAMENTE - P
-// CRIAR UMA FUNCAO PARA DAR HANDLE DE ERROS - P
-// REDUZIR LINHAS DO EXPANDER - J
-
-// nao esquecer de fazer o add history nao guardar comandos vazios
-// temos um double free com ''

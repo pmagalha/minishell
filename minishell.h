@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 13:28:38 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:52:05 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,15 +101,17 @@ void		print_env_list(t_env_list *head);
 // ERROR.C
 void		ms_error(int error);
 char		*file_dir_error(char *tmp);
-int			cmd_not_found(t_prompt *prompt, t_parser *parser);
+int			cmd_not_found(t_parser *parser);
 // EXECUTOR.C
-int			fork_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2]);
+int			fork_parser(t_prompt *prompt, t_parser *parser,
+				int fd_in, int end[2]);
 void		execute(t_prompt *prompt);
 int			exec_path(t_prompt *prompt, t_parser *parser, char **paths);
 int			handle_command(t_prompt *prompt, t_parser *parser);
-void    	single_command(t_prompt *prompt, t_parser *parser);
+void		single_command(t_prompt *prompt, t_parser *parser);
 // EXECUTOR_UTILS1.C
-int			dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2]);
+int			dup_parser(t_prompt *prompt, t_parser *parser,
+				int fd_in, int end[2]);
 void		wait_pipe(t_prompt *prompt, int *pid);
 char		**get_paths(t_prompt *prompt);
 int			lexer_list_size(t_lexer *lexer);
@@ -121,9 +123,8 @@ char		**convert_parser(t_prompt *prompt, t_parser *parser);
 // REDIRECTS.C
 int			check_fd(t_parser *parser, int end[2]);
 
-
 // LEXER
-
+int			check_content(char *content, char *new_content);
 char		*get_operator(char *content);
 char		*other_content(char *content);
 char		*get_token_content(t_prompt *prompt, char *content);
@@ -155,6 +156,7 @@ void		token_add_back_env(t_env_list **env_list, t_env_list *new);
 t_env_list	*create_key_value(char *key, char *value);
 
 //PARSER
+void		redirects_error(t_prompt *prompt);
 char		ms_count_words(t_prompt *prompt);
 int			count_pipes(t_lexer *lexer);
 int			check_quotes(char *str);
@@ -214,6 +216,7 @@ char		*extract_key(char *variable);
 char		*extract_value(char *variable);
 void		extract_variables(char *variable, char *key, char *value);
 int			check_export(t_prompt *prompt, t_parser *parser);
+t_env_list	*create_dup(t_env_list *env_list);
 
 // Export Utils
 void		sort_export(t_env_list *dup_env);

@@ -6,18 +6,21 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:39:05 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 12:34:56 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:42:33 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int check_quotes(char *str) 
+int	check_quotes(char *str)
 {
-    int num_quotes = 0;
-    bool inside_squotes = false;
-	bool inside_dquotes = false;
+	int		num_quotes;
+	bool	inside_squotes;
+	bool	inside_dquotes;
 
+	num_quotes = 0;
+	inside_squotes = false;
+	inside_dquotes = false;
 	while (*str)
 	{
 		if (*str == '\'' && inside_dquotes == false)
@@ -33,9 +36,9 @@ int check_quotes(char *str)
 		str++;
 	}
 	if (num_quotes % 2 == 0)
-        return 1;
-	printf("Error in check quotes: Uneven number of quotes\n");
-    return (0);
+		return (1);
+	ft_putstr_fd("Error: Uneven number of quotes\n", STDERR_FILENO);
+	return (0);
 }
 
 char	get_first_quote(char *str)
@@ -76,5 +79,3 @@ char	*trim_quotes(char *string)
 	res[j] = '\0';
 	return (res);
 }
-
-// erro em Content: [''"test"'']

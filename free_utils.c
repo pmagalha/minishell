@@ -3,21 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   free_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 16:47:00 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/24 14:43:17 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:32:12 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-void	ms_free_string(char *str)
-{
-	if (str)
-		free(str);
-	return ;
-}
 
 void	free_lexer_list(t_lexer **lexer)
 {

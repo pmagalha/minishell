@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:37:48 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/11 13:21:54 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:39:00 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,19 +45,28 @@ void	add_parser_back(t_parser **token_lst, t_parser *new)
 	}
 }
 
-/* t_parser	*dup_parser(t_prompt *prompt)
+char	ms_count_words(t_prompt *prompt)
 {
-	t_parser	*parser;
+	int		count;
+	t_lexer	*temp;
 
-	parser = parser;
-	while (parser != NULL) 
+	temp = prompt->lexer;
+	count = 0;
+	while ((temp && temp->type == OTHER) && get_builtin(prompt) == NULL)
 	{
-		add_parser_back(&parser, create_pnode(parser->command, NULL, NULL));
-		printf("Content: [%s] | Builtin:\n\n", prompt->lexer->content);
-		parser = head->next;
+		count++;
+		temp = temp->next;
 	}
-	return (parser);
-}*/
+	return (count);
+}
+
+void	redirects_error(t_prompt *prompt)
+{
+	prompt->parser->redirects = NULL;
+	ft_putstr_fd("bash: syntax error near ", STDERR_FILENO);
+	ft_putstr_fd("unexpected token `newline'\n", STDERR_FILENO);
+	prompt->lexer = prompt->lexer->next;
+}
 
 char	*get_builtin(t_prompt *prompt)
 {

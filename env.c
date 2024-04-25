@@ -6,24 +6,11 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/24 19:55:42 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 16:35:58 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	count_lines(char **env)
-{
-	int	count;
-
-	count = 0;
-	while (*env)
-	{
-		count++;
-		env++;
-	}
-	return (count);
-}
 
 t_env_list	*create_key_value(char *key, char *value)
 {
@@ -106,16 +93,4 @@ void	set_env(char **env, t_prompt *prompt)
 {
 	set_env_from_strings(env, prompt);
 	set_default_env(prompt);
-}
-
-void	print_env_list(t_env_list *head)
-{
-	t_env_list	*current;
-
-	current = head;
-	while (current != NULL)
-	{
-		printf("Key: %s | Value: %s \n", current->key, current->value);
-		current = current->next;
-	}
 }

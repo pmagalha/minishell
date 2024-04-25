@@ -6,30 +6,13 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 12:38:10 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:34:55 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 extern int	g_code;
-
-void	pipe_error(t_prompt *prompt)
-{
-	ft_printf("minishell: syntax error near unexpected token `|'\n");
-	free_data(prompt);
-	exit(g_code);
-}
-
-int	check_content(char *content, char *new_content)
-{
-	if (new_content == NULL)
-	{
-		free (content);
-		return (1);
-	}
-	return (0);
-}
 
 int	get_token(char *input, t_prompt *prompt)
 {
@@ -125,37 +108,3 @@ char	*other_content(char *input)
 	ft_strlcpy(res, input, i + 1);
 	return (res);
 }
-
-/* char	*other_content(char *input)
-{
-	int		i;
-	bool	in_quotes;
-	char	*res;
-	int		quote;
- !content[3]
-	i = 0;
-	quote = -1;
-	in_quotes = false;
-	if (!input)
-		return (NULL);
-	while (input[i++])
-	{
-		if (input[i] == '\'' || input[i] == '\"')
-		{
-			if (!in_quotes)
-				quote = i;
-			if (!in_quotes && input[i] == input[quote])
-				in_quotes = true;
-			else if (in_quotes && input[i] == input[quote])
-				in_quotes = false;
-		}
-		if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
-				|| input[i] == '|') && !in_quotes)
-			break ;
-	}
-	res = ft_calloc(i + 1, sizeof(char));
-	ft_strlcpy(res, input, i + 1);
-	return (res);
-} */
-// Ter em conta o caso poop | echo lala	cenas. os processos estao
-// a atropelar uns aos outros for some reason, provavelmente printfs

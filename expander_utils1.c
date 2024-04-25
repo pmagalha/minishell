@@ -12,42 +12,6 @@
 
 #include "minishell.h"
 
-int	is_identifier(char c)
-{
-	return (c == '|' || c == '<' || c == '>' || c == '[' || c == ']'
-		|| c == '\'' || c == '\"' || c == ' ' || c == ',' || c == '.'
-		|| c == ':' || c == '/' || c == '{' || c == '}' || c == '+'
-		|| c == '^' || c == '%' || c == '#' || c == '@' || c == '!'
-		|| c == '~' || c == '=' || c == '-' || c == '?' || c == '&'
-		|| c == '*');
-}
-
-bool	sign_exists(char *str, char sign, char c)
-{
-	int	i;
-
-	i = 0;
-	if (!str && !str[1])
-		return (false);
-	while (str[i] && str[i] != c)
-	{
-		if (str[i] == sign)
-			return (true);
-		i++;
-	}
-	return (false);
-}
-
-int	count_signs(char *str, char c)
-{
-	int	i;
-
-	i = 0;
-	while (str[i] == c)
-		i++;
-	return (i);
-}
-
 char	next_char(char *str)
 {
 	int	i;
@@ -123,19 +87,5 @@ char	*get_key_value(char *new_str, char *input, t_env_list *env_list)
 	new = ms_safejoin(new_str, value);
 	if (key)
 		free (key);
-	return (new);
-}
-
-char	*expand_digits(char *new_str, char *input)
-{
-	char	*temp;
-	char	*new;
-
-	new = NULL;
-	temp = NULL;
-	input = input + 2;
-	if (input)
-		temp = ft_strndup(input, ft_strclen(input, next_char(input)));
-	new = ms_safejoin(new_str, temp);
 	return (new);
 }

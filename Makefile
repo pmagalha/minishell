@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+         #
+#    By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/12 20:33:55 by pmagalha          #+#    #+#              #
-#    Updated: 2024/04/24 14:54:12 by joao-ppe         ###   ########.fr        #
+#    Updated: 2024/04/25 17:30:06 by pmagalha         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,10 +14,10 @@
 #                                  SOURCE FILES                                #
 ################################################################################
 
-SRC = main.c lexer.c init.c lexer_utils.c env.c expander.c expander_utils.c \
-parser.c parser_utils.c quotes_utils.c builtins.c export.c export_utils.c \
-unset.c free_utils.c expander_quotes.c executor.c executor_utils1.c executor_utils2.c error.c ms_utils.c \
-heredoc.c redirects.c signals.c
+SRC = main.c lexer.c init.c lexer_utils.c env.c expander.c expander_utils1.c \
+parser.c parser_utils.c quotes_utils.c builtins.c export.c export_utils1.c export_utils2.c \
+unset.c free_utils.c expander_utils2.c executor.c executor_utils1.c executor_utils2.c error.c ms_utils.c \
+heredoc.c redirects.c signals.c builtins/ms_env.c builtins/ms_echo.c builtins/ms_pwd.c builtins/ms_exit.c builtins/ms_cd.c
 OBJS = $(SRC:.c=.o)
 DEPS = libft/libft.a
 

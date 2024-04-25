@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils1.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:26:51 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/24 14:51:29 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:44:55 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2])
 
 void	wait_pipe(t_prompt *prompt, int *pid)
 {
-	t_parser 	*parser;
+	t_parser	*parser;
 	int			n_pipes;
 	int			i;
 	int			status;
@@ -78,29 +78,3 @@ char	**get_paths(t_prompt *prompt) // REDUZIR LINHAS
 	return (paths);
 }
 
-int	lexer_list_size(t_lexer *lexer)
-{
-	int count = 0;
-	t_lexer *current;
-
-	current = lexer;
-	while (current != NULL)
-	{
-		count++;
-		current = current->next;
-	}
-	return (count);
-}
-
-int	env_list_size(t_env_list *env_list)
-{
-	int count = 0;
-	t_env_list *current = env_list;
-
-	while (current != NULL)
-	{
-		count++;
-		current = current->next;
-	}
-	return (count);
-}

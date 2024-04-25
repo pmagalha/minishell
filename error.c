@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 13:12:12 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/24 14:46:31 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 16:38:27 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*file_dir_error(char *tmp)
 	return (str);
 }
 
-int	cmd_not_found(t_prompt *prompt, t_parser *parser)
+int	cmd_not_found(t_parser *parser)
 {
 	struct stat	st;
 	char		*str;
@@ -62,19 +62,20 @@ int	cmd_not_found(t_prompt *prompt, t_parser *parser)
 	int			status;
 
 	status = 127;
-	(void)prompt;
 	if (!parser->command && !parser->command)
 		return (1);
 	if (parser->command->content[0])
 		tmp = ft_strdup(parser->command->content);
 	else
 		tmp = ft_strdup("\'\'");
-	if ((parser->command->content[0] == '/' || parser->command->content[0] == '.') && parser->command->content[1])
+	if ((parser->command->content[0] == '/' || parser->command->content[0]
+			== '.') && parser->command->content[1])
 		str = file_dir_error(tmp);
 	else
 		str = ft_strjoin(tmp, ": command not found");
 	ft_putendl_fd(str, STDERR_FILENO);
-	if ((parser->command->content[0] == '/' || parser->command->content[0] == '.')
+	if ((parser->command->content[0] == '/'
+			|| parser->command->content[0] == '.')
 		&& stat(tmp, &st) == 0 && (S_ISDIR(st.st_mode) | S_IXUSR))
 		status = 126;
 	ms_free_string(tmp);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 13:52:46 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/24 18:27:55 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:44:07 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ int	remove_value(char *variable, t_prompt *prompt)
 	if (!ft_strncmp(current->key, variable, ft_strlen(variable) + 1))
 	{
 		prompt->env_list = current->next;
-        delete_env(current);
-        return 1;
+		delete_env(current);
+		return (1);
 	}
 	while (current != NULL)
 	{

@@ -3,31 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   ms_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:12:53 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/22 14:16:24 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:47:24 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-char *ms_safejoin(char *str1, char *str2)
+void	ms_free_string(char *str)
 {
-    char *new;
+	if (str)
+		free(str);
+	return ;
+}
 
-    new = NULL;
-    if (!str1 && !str2)
-        return NULL;
-    else if (!str1 && str2)
-        new = ft_strdup(str2);
-    else if (str1 && !str2)
+int	check_content(char *content, char *new_content)
+{
+	if (new_content == NULL)
+	{
+		free (content);
+		return (1);
+	}
+	return (0);
+}
+
+char	*ms_safejoin(char *str1, char *str2)
+{
+	char	*new;
+
+	new = NULL;
+	if (!str1 && !str2)
+		return (NULL);
+	else if (!str1 && str2)
+		new = ft_strdup(str2);
+	else if (str1 && !str2)
 		new = ft_strdup(str1);
-    else
+	else
 		new = ft_strjoin(str1, str2);
- 	ms_free_string(str1);
+	ms_free_string(str1);
 	ms_free_string(str2);
-    return (new);
+	return (new);
 }
 
 void	reset_data(t_prompt *prompt)

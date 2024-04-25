@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/22 19:12:06 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:45:30 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,13 @@ bool	quotes_flag(t_prompt *prompt, char c)
 	else if (c == '\'' && !prompt->quotes[1])
 		prompt->quotes[0] = !prompt->quotes[0];
 	return (prompt->quotes[0] || prompt->quotes[1]);
+}
+
+void	pipe_error(t_prompt *prompt)
+{
+	ft_printf("minishell: syntax error near unexpected token `|'\n");
+	free_data(prompt);
+	exit(g_code);
 }
 
 char	*get_quoted_content(t_prompt *prompt, char *input)

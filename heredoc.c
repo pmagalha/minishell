@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:30:29 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/25 12:50:16 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/25 17:33:29 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	*get_delimiter(t_lexer *redir)
 		head = head->next;
 	if (head->content)
 		delimiter = ft_strdup(head->content);
-	return (delimiter);	
+	return (delimiter);
 }
 
 int	create_hdfile(t_prompt *prompt, char *file)
@@ -52,7 +52,8 @@ char	*get_hdfile(t_parser *parser, t_lexer *redir)
 	file = NULL;
 	if (!head->content)
 		return (file);
-	while (head && (ft_strncmp(head->content, ">", 2) && ft_strncmp(head->content, ">>", 3)))
+	while (head && (ft_strncmp(head->content, ">", 2)
+			&& ft_strncmp(head->content, ">>", 3)))
 		head = head->next;
 	if (head->content && head->next->content)
 		file = ft_strdup(head->next->content);
@@ -63,7 +64,7 @@ int	set_heredoc(t_prompt *prompt, t_parser *parser)
 {
 	int		fd;
 	t_lexer	*redir;
-	
+
 	redir = parser->redirects;
 	while (redir)
 	{
