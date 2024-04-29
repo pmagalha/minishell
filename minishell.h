@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 17:52:05 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 13:46:23 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ void		token_add_back_env(t_env_list **env_list, t_env_list *new);
 t_env_list	*create_key_value(char *key, char *value);
 
 //PARSER
-void		redirects_error(t_prompt *prompt);
+bool		redirects_error(t_prompt *prompt);
 char		ms_count_words(t_prompt *prompt);
 int			count_pipes(t_lexer *lexer);
 int			check_quotes(char *str);
@@ -170,6 +170,7 @@ char		get_first_quote(char *str);
 void		get_command(t_prompt *prompt);
 t_parser	*create_pnode(t_lexer *command, char *builtin, t_lexer *redirects);
 void		get_redirects(t_prompt *prompt);
+bool		has_consecutive_redirects(t_prompt *prompt, char *input);
 
 //Frees
 void		free_parser_list(t_parser **parser);

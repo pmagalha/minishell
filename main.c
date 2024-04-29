@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 13:54:00 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 13:33:21 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,10 +129,12 @@ int main(int argc, char **argv, char **env)
 				continue;
 			}
 			get_token(input, prompt);
+			if (has_consecutive_redirects(prompt, input))
+				continue ;
 			get_parser(prompt);
+			//dev_mod(prompt); // aapaaaagare
 			if (!prompt->pid && prompt->parser->next)
 				init_pid(prompt);
-			//dev_mod(prompt); // aapaaaagare
 			execute(prompt);
 			free(input);
 		}

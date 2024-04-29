@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:12:53 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/25 17:47:24 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 13:46:08 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,21 @@ char	*ms_safejoin(char *str1, char *str2)
 	ms_free_string(str1);
 	ms_free_string(str2);
 	return (new);
+}
+
+char	ms_count_words(t_prompt *prompt)
+{
+	int		count;
+	t_lexer	*temp;
+
+	temp = prompt->lexer;
+	count = 0;
+	while ((temp && temp->type == OTHER) && get_builtin(prompt) == NULL)
+	{
+		count++;
+		temp = temp->next;
+	}
+	return (count);
 }
 
 void	reset_data(t_prompt *prompt)

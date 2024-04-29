@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 17:38:29 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 13:45:16 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	count_pipes(t_lexer *lexer)
 				&& head->next->next->type == PIPE))
 		{
 			ft_putstr_fd("minishell: syntax error", STDERR_FILENO);
-			ft_putstr_fd("near unexpected token `|'\n", STDERR_FILENO);
+			ft_putstr_fd(" near unexpected token `|'\n", STDERR_FILENO);
 			g_code = 2;
 			return (-1);
 		}
@@ -113,8 +113,6 @@ void	get_redirects(t_prompt *prompt)
 	if (prompt->lexer->type == REDIR_OUT || prompt->lexer->type == REDIR2_OUT
 		|| prompt->lexer->type == REDIR_IN || prompt->lexer->type == HEREDOC)
 	{
-		if (!prompt->lexer->next)
-			return (redirects_error(prompt));
 		if (!prompt->parser->redirects)
 			prompt->parser->redirects = create_node(ft_strdup
 					(prompt->lexer->next->content), prompt->lexer->type);

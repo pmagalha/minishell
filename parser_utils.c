@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:37:48 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 17:39:00 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 13:43:58 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,28 +44,44 @@ void	add_parser_back(t_parser **token_lst, t_parser *new)
 		*token_lst = new;
 	}
 }
-
-char	ms_count_words(t_prompt *prompt)
+bool redirects_error(t_prompt *prompt)
 {
-	int		count;
-	t_lexer	*temp;
+    t_lexer *current = prompt->lexer;
 
-	temp = prompt->lexer;
-	count = 0;
-	while ((temp && temp->type == OTHER) && get_builtin(prompt) == NULL)
-	{
-		count++;
-		temp = temp->next;
-	}
-	return (count);
+    while (current)
+    {
+        if (current->type == REDIR_OUT || current->type == REDIR2_OUT ||
+            current->type == REDIR_IN || current->type == HEREDOC)
+        {
+            if (!current->next ||
+                (current->next->type == REDIR_OUT || current->next->type == REDIR2_OUT ||
+                 current->next->type == REDIR_IN || current->next->type == HEREDOC))
+            {
+                ft_putstr_fd("minishell: syntax error near unexpected token `", STDERR_FILENO);
+                if (!current->next)
+                    ft_putstr_fd("newline'\n", STDERR_FILENO);
+                else
+                {
+                    ft_putstr_fd(current->next->content, STDERR_FILENO);
+                    ft_putstr_fd("'\n", STDERR_FILENO);
+                }
+                return true;
+            }
+        }
+        current = current->next;
+    }
+    return false;
 }
 
-void	redirects_error(t_prompt *prompt)
+bool has_consecutive_redirects(t_prompt *prompt, char *input)
 {
-	prompt->parser->redirects = NULL;
-	ft_putstr_fd("bash: syntax error near ", STDERR_FILENO);
-	ft_putstr_fd("unexpected token `newline'\n", STDERR_FILENO);
-	prompt->lexer = prompt->lexer->next;
+    if (redirects_error(prompt))
+	{
+        reset_data(prompt);
+        free(input);
+        return true;
+    }
+    return false;
 }
 
 char	*get_builtin(t_prompt *prompt)
