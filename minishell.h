@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/29 13:46:23 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 14:14:58 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -245,6 +245,7 @@ void		send_heredoc(t_prompt *prompt, t_lexer *redir, int fd);
 int			create_hdfile(t_prompt *prompt, char *file);
 char		*get_hdfile(t_parser *parser, t_lexer *redir);
 int			handle_command(t_prompt *prompt, t_parser *parser);
+void		populate_env_array(char **env_array, t_env_list *head);
 
 //SIGNALS.C
 void		execute_sig(void *baseprompt, int sig);

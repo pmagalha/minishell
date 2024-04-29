@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:26:51 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/25 17:44:55 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 14:13:16 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,22 @@ void	wait_pipe(t_prompt *prompt, int *pid)
 		g_code = WEXITSTATUS(status);
 }
 
-char	**get_paths(t_prompt *prompt) // REDUZIR LINHAS
+void	free_paths(char **paths)
 {
-	char	*path;
-	char	*tmp;
-	char	**paths;
+	int	i;
+
+	i = -1;
+	while (paths[++i])
+		ms_free_string(paths[i]);
+	free_array(paths);
+}
+
+char	**get_paths(t_prompt *prompt)
+{
 	int		i;
+	char	*tmp;
+	char	*path;
+	char	**paths;
 
 	path = find_value("PATH", prompt->env_list);
 	if (!path)
@@ -68,9 +78,7 @@ char	**get_paths(t_prompt *prompt) // REDUZIR LINHAS
 		free(paths[i]);
 		if (!tmp)
 		{
-			while (--i >= 0)
-				ms_free_string(paths[i]);
-			free_array(paths);
+			free_paths(paths);
 			return (NULL);
 		}
 		paths[i] = tmp;
@@ -78,3 +86,30 @@ char	**get_paths(t_prompt *prompt) // REDUZIR LINHAS
 	return (paths);
 }
 
+int	fork_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2])
+{
+	static int	i;
+
+	(void)end[2];
+	(void)fd_in;
+	if (!i)
+		i = 0;
+	if (prompt->reset == true)
+	{
+		i = 0;
+		prompt->reset = false;
+	}
+	prompt->pid[i] = fork();
+	if (prompt->pid[i] < 0)
+	{
+		ft_putstr_fd("Unable to generate PID\n", STDERR_FILENO);
+		return (1);
+	}
+	if (prompt->pid[i] == 0)
+	{
+		if (dup_parser(prompt, parser, fd_in, end))
+			return (1);
+	}
+	i++;
+	return (0);
+}
