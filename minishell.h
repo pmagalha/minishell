@@ -3,15 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/29 14:14:58 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 18:52:43 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+# define SYNTAX 
 
 /*------------- Libraries ---------------*/
 
@@ -156,7 +158,7 @@ void		token_add_back_env(t_env_list **env_list, t_env_list *new);
 t_env_list	*create_key_value(char *key, char *value);
 
 //PARSER
-bool		redirects_error(t_prompt *prompt);
+bool		redirects_error(t_prompt *prompt, char *msg);
 char		ms_count_words(t_prompt *prompt);
 int			count_pipes(t_lexer *lexer);
 int			check_quotes(char *str);
@@ -179,11 +181,14 @@ void		free_env_list(t_env_list **parser);
 void		free_data(t_prompt *prompt);
 
 //Expander
-char		*expander(char *content, t_env_list *env_list);
+char		*expander(char *content, t_env_list *env_list, char *new);
+int			expand_quoted_sign(char *input, char **newinput,
+				t_env_list *env_list);
 
 // Expander Quotes
 char		*expand_quoted_variable(char *key, t_env_list *env_list);
 char		*get_key(char *input);
+char		*expand_single_quotes(char *input);
 
 //Expander Utils
 bool		sign_exists(char *str, char sign, char c);
@@ -196,7 +201,10 @@ char		next_char_space(char *str);
 char		*ms_safejoin(char *str1, char *str2);
 int			is_identifier(char c);
 char		*find_value(char *key, t_env_list *env_list);
-
+void		expand_signs(char **input, char **new, t_env_list *env_list);
+int			expand_single_quoted_content(char **newinput, char **new);
+int			check_quoted_content(char **newinput, char **new);
+int			copy_quoted_content(char *newinput, char **new);
 //Builtins
 int			ms_pwd(void);
 int			ms_echo(t_parser *parser);

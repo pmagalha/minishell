@@ -81,7 +81,7 @@ char	*get_key_value(char *new_str, char *input, t_env_list *env_list)
 	}
 	else if (*input == '$' && ft_isdigit(*(input + 1)))
 		return (expand_digits(new_str, input));
-	key = ft_strndup(input + 1, ft_strclen(input + 1, next_char_space(input)));
+	key = get_key(input + 1);
 	input += ft_strclen(input, '$') - 1;
 	value = find_value(key, env_list);
 	new = ms_safejoin(new_str, value);

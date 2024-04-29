@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 17:34:55 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 18:46:39 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,9 @@ int	get_token(char *input, t_prompt *prompt)
 {
 	char	*content;
 	char	*new_content;
-	int		len;
 	t_type	type;
 
 	new_content = NULL;
-	len = 0;
 	while (*input)
 	{
 		while (*input == 32 || (*input >= 9 && *input <= 13))
@@ -30,10 +28,10 @@ int	get_token(char *input, t_prompt *prompt)
 		if (!*input)
 			break ;
 		content = get_token_content(prompt, input);
-		len = ft_strlen(content);
 		type = get_type(content);
-		new_content = expander(content, prompt->env_list);
-		input += len;
+		if (content)
+			new_content = expander(content, prompt->env_list, NULL);
+		input += ft_strlen(content);
 		if (check_content(content, new_content))
 			continue ;
 		free (content);
@@ -48,7 +46,7 @@ char	*get_token_content(t_prompt *prompt, char *content)
 		return (NULL);
 	if (*content == '>' || *content == '<' || *content == '|')
 		return (get_operator(content));
-	else if (*content == '"' || *content == '\'')
+	else if (*content == '\"' || *content == '\'')
 		return (get_quoted_content(prompt, content));
 	else
 		return (other_content(content));
@@ -85,24 +83,30 @@ t_type	get_type(char *content)
 		return (OTHER);
 }
 
+// APAGAR FUNCAO? TA GLITCHED EEEWWW
 char	*other_content(char *input)
 {
 	int		i;
 	bool	in_quotes;
 	char	*res;
 
-	i = 0;
+	i = -1;
 	in_quotes = false;
 	if (!input)
 		return (NULL);
-	while (input[i] && (!in_quotes || input[i] != input[i - 1]))
+	while (input[++i])
 	{
-		if (input[i] == '\'' || input[i] == '\"')
+		if ((input[i] == '\'' && input[i + 1] == '\'')
+			|| (input[i] == '\"' && input[i + 1] == '\"'))
+		{
+			i += 2;
+			continue ;
+		}
+		else if (input[i] == '\'' || input[i] == '\"')
 			in_quotes = !in_quotes;
 		if ((input[i] == ' ' || input[i] == '<' || input[i] == '>'
 				|| input[i] == '|') && !in_quotes)
 			break ;
-		i++;
 	}
 	res = ft_calloc(i + 1, sizeof(char));
 	ft_strlcpy(res, input, i + 1);

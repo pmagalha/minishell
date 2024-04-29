@@ -12,145 +12,113 @@
 
 #include "minishell.h"
 
-static char *expand_single_quotes(char *input)
+char	*expand_single_quotes(char *input)
 {
-    char    *new;
+	char	*new;
 
-    new = NULL;
+	new = NULL;
 	if (ft_strlen(input) == 2)
 		return (new);
 	new = copy_content(new, input + 1, *input);
-    return (new);
+	return (new);
 }
 
-static char *expand_double_quotes(char *input, t_env_list *env_list)
+int	expand_quoted_sign(char *newinput, char **new, t_env_list *env_list)
 {
-    char    *new;
-    char    *newinput;
-    char    *tmp;
-    char    *key;
-	char	*tmp2;
+	char	*key;
+	int		len;
 
-    newinput = ft_strndup(input, ft_strclen(input + 1, '"') + 1);
+	len = 0;
+	key = NULL;
+	if (*(newinput + 1) == '\'')
+	{
+		*new = ms_safejoin(*new, ft_strdup("$'"));
+		return (2);
+	}
+	else if (*(newinput + 1) == 32)
+	{
+		*new = ms_safejoin(*new, ft_strdup("$"));
+		return (1);
+	}
+	key = get_key(newinput);
+	*new = ms_safejoin(*new, expander(key, env_list, NULL));
+	len = ft_strlen(key);
+	ms_free_string(key);
+	return (len);
+}
+
+static char	*expand_double_quotes(char *newinput, t_env_list *env_list)
+{
+	char	*new;
+	char	*tmp;
+
 	new = NULL;
-    tmp = newinput;
-	tmp2 = NULL;
-    key = NULL;
-    while (*newinput)
-    {
-		if (*newinput == '$') // fazer funcao para passar o &new e modificar diretamente na nova funcao, cuja funcao retorna o tamanho da key ?
+	tmp = newinput;
+	while (*newinput)
+	{
+		if (*newinput == '$')
 		{
-			if (*(newinput + 1) == '\'')
-			{
-				new = ms_safejoin(new, ft_strdup("$'"));
-				newinput += 2;
-				continue ;
-			}
-			else if (*(newinput + 1) == 32)
-			{
-				new = ms_safejoin(new, ft_strdup("$"));
-				newinput++;
-				continue ;
-			}
-			key = get_key(newinput);
-			new = ms_safejoin(new, expander(key, env_list));
-			newinput += ft_strlen(key);
-			ms_free_string(key);
+			newinput += expand_quoted_sign(newinput, &new, env_list);
 			continue ;
 		}
 		else if (*newinput != '\"' && *newinput != '\'' && *newinput != '$')
 		{
-			if (is_identifier(*newinput))
-			{
-				tmp2 = ft_substr(newinput, 0, 1);
-				new = ms_safejoin(new, tmp2);
-				newinput++;
+			if (check_quoted_content(&newinput, &new))
 				continue ;
-			}
-			new = copy_content(new, newinput, next_char(newinput + 1));
-			newinput += ft_strclen(newinput, next_char(newinput + 1)) - 1;
-			if (*newinput == '"')
+			if (*newinput == '\"')
 				newinput++;
-		}
-		else if (*newinput == '\'' && sign_exists(newinput + 1, '\'', '\"'))
-		{
-			tmp2 = expand_single_quotes(newinput);
-			new = ms_safejoin(new, tmp2);
-			newinput += ft_strclen(newinput + 1, '\'') + 1;
 		}
 		else if (*newinput == '\'')
-		{
-			tmp2 = ft_substr(newinput, 0, 1);
-			new = ms_safejoin(new, tmp2);
-		}
+			expand_single_quoted_content(&newinput, &new);
 		if (*newinput != '$')
 			newinput++;
+	}
+	return (ms_free_string(tmp), new);
+}
+
+char	*expand_quotes(char *input, t_env_list *env_list)
+{
+	char	*new_input;
+	char	*temp;
+
+	new_input = NULL;
+	temp = NULL;
+	if (*input == '\"' || *input == '\'')
+	{
+		if (*input == '\"')
+		{
+			temp = ft_strndup(input, ft_strclen(input + 1, '"') + 1);
+			new_input = expand_double_quotes(temp, env_list);
 		}
-		if (tmp)
-			free(tmp);
-		return (new);
+		else if (*input == '\'')
+			new_input = expand_single_quotes(input);
+	}
+	return (new_input);
 }
 
-char    *expand_quotes(char *input, t_env_list *env_list)
+char	*expander(char *input, t_env_list *env_list, char *new)
 {
-    char    *new_input;
-
-    new_input = NULL;
-    if (*input == '\"' || *input == '\'')
-    {
-        if (*input == '\"')
-            new_input = expand_double_quotes(input, env_list);
-        else if (*input == '\'')
-            new_input = expand_single_quotes(input);
-    }
-    return (new_input);
-}
-
-char    *expander(char *input, t_env_list *env_list)
-{
-    char    *new;
-	char	*tmp;
-
-    new = NULL;
-	tmp = NULL;
-	if (!*(input))
-		return (NULL);
-    while (*input)
-    {
-        if (*input != '$' && *input != '\'' && *input != '\"')
-        {
-            if (is_identifier(*input))
-            {
-				tmp = ft_substr(input, 0, 1);
-                new = ms_safejoin(new, tmp);
-                input++;
-                continue ;
-            }
-            new = copy_content(new, input, next_char(input + 1));
+	while (*input)
+	{
+		if (*input != '$' && *input != '\'' && *input != '\"')
+		{
+			if (is_identifier(*input))
+			{
+				new = ms_safejoin(new, ft_substr(input, 0, 1));
+				input++;
+				continue ;
+			}
+			new = copy_content(new, input, next_char(input + 1));
 			input += ft_strclen(input, next_char(input + 1)) - 1;
-        }
-        else if (*input == '\'' || *input == '\"') // CHECK HERE
-        {
-			tmp = expand_quotes(input, env_list);
-            new = ms_safejoin(new, tmp);
-            input += ft_strclen(input + 1, *input) + 1;
-        }
-        else if (*input == '$' && *(input + 1) == '?')
-        {
-            new = ms_safejoin(new, ft_itoa(g_code));
-            input++;
-        }
-        else if (*input == '$' && *(input + 1) == '$')
-        {
-            new = ms_safejoin(new, ft_itoa(getpid()));
-            input++;
-        }
-        else if (*input == '$')
-        {
-            new = get_key_value(new, input, env_list);
-            input += ft_strclen(input + 1, next_char(input + 1));
-        }
-        input++;
-    }
-    return (new);
+		}
+		else if (*input == '$')
+			expand_signs(&input, &new, env_list);
+		else if (*input == '\'' || *input == '\"')
+		{
+			new = ms_safejoin(new, expand_quotes(input, env_list));
+			input += ft_strclen(input + 1, *input) + 1;
+		}
+		input++;
+	}
+	return (new);
 }

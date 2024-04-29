@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:30:29 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/25 17:33:29 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 18:36:12 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ void	send_heredoc(t_prompt *prompt, t_lexer *redir, int fd)
 	while (ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
 	{
 		if (input)
-			new_input = expander(input, prompt->env_list);
+			new_input = expander(input, prompt->env_list, NULL);
 		ms_free_string(input);
 		ft_putstr_fd(new_input, fd);
 		ft_putchar_fd('\n', fd);

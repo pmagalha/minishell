@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:37:48 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/29 13:43:58 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/29 18:59:02 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,44 +44,48 @@ void	add_parser_back(t_parser **token_lst, t_parser *new)
 		*token_lst = new;
 	}
 }
-bool redirects_error(t_prompt *prompt)
-{
-    t_lexer *current = prompt->lexer;
 
-    while (current)
-    {
-        if (current->type == REDIR_OUT || current->type == REDIR2_OUT ||
-            current->type == REDIR_IN || current->type == HEREDOC)
-        {
-            if (!current->next ||
-                (current->next->type == REDIR_OUT || current->next->type == REDIR2_OUT ||
-                 current->next->type == REDIR_IN || current->next->type == HEREDOC))
-            {
-                ft_putstr_fd("minishell: syntax error near unexpected token `", STDERR_FILENO);
-                if (!current->next)
-                    ft_putstr_fd("newline'\n", STDERR_FILENO);
-                else
-                {
-                    ft_putstr_fd(current->next->content, STDERR_FILENO);
-                    ft_putstr_fd("'\n", STDERR_FILENO);
-                }
-                return true;
-            }
-        }
-        current = current->next;
-    }
-    return false;
+bool	redirects_error(t_prompt *prompt, char *msg)
+{
+	t_lexer	*current;
+
+	current = prompt->lexer;
+	while (current)
+	{
+		if (current->type == REDIR_OUT || current->type == REDIR2_OUT
+			|| current->type == REDIR_IN || current->type == HEREDOC)
+		{
+			if (!current->next || (current->next->type >= REDIR_OUT
+					&& current->next->type <= HEREDOC))
+			{
+				ft_putstr_fd(msg, STDERR_FILENO);
+				if (!current->next)
+					ft_putstr_fd("`newline'\n", STDERR_FILENO);
+				else
+				{
+					ft_putstr_fd(current->next->content, STDERR_FILENO);
+					ft_putstr_fd("'\n", STDERR_FILENO);
+				}
+				return (true);
+			}
+		}
+		current = current->next;
+	}
+	return (false);
 }
 
-bool has_consecutive_redirects(t_prompt *prompt, char *input)
+bool	has_consecutive_redirects(t_prompt *prompt, char *input)
 {
-    if (redirects_error(prompt))
+	char	*msg;
+
+	msg = ft_strdup("minishell: syntax error near unexpected token ");
+	if (redirects_error(prompt, msg))
 	{
-        reset_data(prompt);
-        free(input);
-        return true;
-    }
-    return false;
+		reset_data(prompt);
+		free(input);
+		return (ms_free_string(msg), true);
+	}
+	return (ms_free_string(msg), false);
 }
 
 char	*get_builtin(t_prompt *prompt)
