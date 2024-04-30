@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 13:12:12 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/25 16:38:27 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/30 14:54:52 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,12 @@ char	*file_dir_error(char *tmp)
 	struct stat	st;
 	char		*str;
 
+	str = NULL;
 	if (stat(tmp, &st) == 0)
 	{
 		if (S_ISDIR(st.st_mode))
 			str = ft_strjoin(tmp, ": Is a directory");
-		else if (S_IXUSR)
+		else if (S_IXUSR && ft_strncmp(tmp, "./minishell", 12))
 			str = ft_strjoin(tmp, ": Permission denied");
 	}
 	else

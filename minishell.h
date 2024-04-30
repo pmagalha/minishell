@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/29 18:52:43 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/04/30 15:45:49 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -226,6 +226,7 @@ char		*extract_value(char *variable);
 void		extract_variables(char *variable, char *key, char *value);
 int			check_export(t_prompt *prompt, t_parser *parser);
 t_env_list	*create_dup(t_env_list *env_list);
+int			update_existing_value(char *key, char *value, t_env_list *current);
 
 // Export Utils
 void		sort_export(t_env_list *dup_env);
