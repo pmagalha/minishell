@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:12:53 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/29 13:46:08 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/04/30 15:57:22 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ void	ms_free_string(char *str)
 {
 	if (str)
 		free(str);
-	return ;
 }
 
 int	check_content(char *content, char *new_content)

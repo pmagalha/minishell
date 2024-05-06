@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 13:12:12 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/30 14:54:52 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/06 17:48:43 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,11 @@ char	*file_dir_error(char *tmp)
 	{
 		if (S_ISDIR(st.st_mode))
 			str = ft_strjoin(tmp, ": Is a directory");
-		else if (S_IXUSR && ft_strncmp(tmp, "./minishell", 12))
+		else if (S_IXUSR)
 			str = ft_strjoin(tmp, ": Permission denied");
 	}
 	else
-		str = ft_strjoin(tmp, ": No such file or directory\n");
+		str = ft_strjoin(tmp, ": No such file or directory");
 	return (str);
 }
 
@@ -63,7 +63,7 @@ int	cmd_not_found(t_parser *parser)
 	int			status;
 
 	status = 127;
-	if (!parser->command && !parser->command)
+	if (!parser->command && !parser->command->content)
 		return (1);
 	if (parser->command->content[0])
 		tmp = ft_strdup(parser->command->content);

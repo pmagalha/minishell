@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 17:24:50 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/06 17:32:24 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	exec_path(t_prompt *prompt, t_parser *parser, char **paths)
 			free (path);
 			free_array(env_array);
 			free_array(parser_array);
-			return (127);
+			return (126);
 		}
 		free (path);
 	}
@@ -80,11 +80,9 @@ void	exit_builtin(t_prompt *prompt, t_parser *parser)
 int	handle_command(t_prompt *prompt, t_parser *parser)
 {
 	char	**paths;
-	char	*file;
 
 	paths = NULL;
-	file = NULL;
-	if (!parser->command && parser->redirects)
+	if (!parser->command && !parser->redirects)
 	{
 		free_data(prompt);
 		exit (0);
@@ -95,12 +93,16 @@ int	handle_command(t_prompt *prompt, t_parser *parser)
 		exit_builtin(prompt, parser);
 	if (parser->command && parser->command->content)
 	{
-		paths = get_paths(prompt);
-		g_code = exec_path(prompt, parser, paths);
-		free_array(paths);
-		free_data(prompt);
-		exit (g_code);
+		if (execute_dpath(prompt, parser) != 0)
+			g_code = 126;
+		else
+		{
+			paths = get_paths(prompt);
+			g_code = exec_path(prompt, parser, paths);
+			free_array(paths);
+		}
 	}
+	free_data(prompt);
 	exit (g_code);
 }
 
@@ -108,27 +110,51 @@ void	single_command(t_prompt *prompt, t_parser *parser)
 {
 	int		pid;
 	int		status;
-	char	*command;
+	char	*cmd;
 
 	status = 0;
-	if (!prompt->parser->command)
-		return ;
-	command = prompt->parser->command->content;
+	if (!parser->command)
+		cmd = NULL;
+	else
+		cmd = prompt->parser->command->content;
 	if (set_heredoc(prompt, parser))
 		return ;
-	if (command && (!ft_strncmp(command, "exit", 5)
-			|| !ft_strncmp(command, "cd", 3)
-			|| !ft_strncmp(command, "export", 7)
-			|| !ft_strncmp(command, "unset", 6)))
+	if (cmd && (!ft_strncmp(cmd, "exit", 5) || !ft_strncmp(cmd, "cd", 3)
+		|| !ft_strncmp(cmd, "export", 7)	|| !ft_strncmp(cmd, "unset", 6)))
 	{
 		g_code = exec_builtins(prompt, parser);
 		return ;
 	}
 	pid = fork();
-	command = parser->command->content;
+	//set_signals(prompt);
 	if (pid == 0)
 		handle_command(prompt, parser);
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
 		g_code = WEXITSTATUS(status);
+}
+
+int	execute_dpath(t_prompt *prompt, t_parser *parser)
+{
+	struct	stat	st;
+	char	*path;
+	char	**env_array;
+	char	**parser_array;
+
+	path = parser->command->content;
+	env_array = NULL;
+	parser_array = NULL;
+	if (!stat(path, &st)
+		&& (S_ISDIR(st.st_mode)))
+		return (cmd_not_found(parser));
+	if (!access(path, F_OK))
+	{
+		env_array = convert_env(prompt->env_list);
+		parser_array = convert_parser(prompt, parser);
+		execve(path, parser_array, env_array);
+		free_array(env_array);
+		free_array(parser_array);
+		return (126);
+	}
+	return (0);
 }

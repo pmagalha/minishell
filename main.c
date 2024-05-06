@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/29 16:05:49 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/06 15:25:56 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,8 @@ int main(int argc, char **argv, char **env)
 		prompt->interactive = false;
 		if (input != NULL)
 		{
-			add_history(input);
+			if (ft_strncmp(input, "", ft_strlen(input) + 1)) // para nao guardar o historico de comando vazio
+				add_history(input);
 			if (!check_quotes(input))
 			{
 				reset_data(prompt);

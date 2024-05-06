@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:26:40 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/25 17:43:40 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/06 17:48:26 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	execute_sig(void *baseprompt, int sig)
 
 	if (!prompt && baseprompt)
 		prompt = (t_prompt *)baseprompt;
-	if (prompt && prompt->interactive)
+	if (prompt && prompt->interactive == true)
 	{
 		if (sig == SIGINT)
 		{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/30 15:41:30 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/06 11:59:05 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,33 +43,30 @@ void	token_add_back_env(t_env_list **env_list, t_env_list *new)
 	}
 }
 
-void	set_env_from_strings(char **env, t_prompt *prompt)
+void	set_env_from_strings(char **env, t_prompt *prompt) // norminettar isto
 {
 	int			i;
 	int			lines;
 	char		*key;
 	char		*value;
 	t_env_list	*new_node;
+	int			shlvl;
 
 	i = 0;
 	lines = count_lines(env);
 	key = NULL;
 	value = NULL;
 	new_node = NULL;
+	shlvl = 0;
+	if (prompt->env_list)
+		shlvl = ft_atoi(get_env(prompt, "SHLVL"));
 	while (i < lines)
 	{
 		key = ft_substr(env[i], 0, ft_strchr(env[i], '=') - env[i]);
-		if (!ft_strncmp(key, "SHLVL", ft_strlen(key) + 1))
-		{
-			value = ft_itoa(0);
-			new_node = create_key_value(key, value);
-			token_add_back_env(&(prompt->env_list), new_node);
-			ms_free_string(key);
-			ms_free_string(value);
-			i++;
-			continue;
-		}
-		value = ft_substr(env[i], ft_strchr(env[i], '=')
+		if (!ft_strncmp(key, "SHLVL", ft_strlen(key) + 1) && shlvl >= 1)
+			value = ft_itoa(shlvl + 1);
+		else
+			value = ft_substr(env[i], ft_strchr(env[i], '=')
 				- env[i] + 1, ft_strlen(env[i]));
 		new_node = create_key_value(key, value);
 		token_add_back_env(&(prompt->env_list), new_node);
@@ -81,15 +78,15 @@ void	set_env_from_strings(char **env, t_prompt *prompt)
 
 void	update_shlvl(t_prompt *prompt)
 {
-	t_env_list *head;
+	t_env_list	*head;
 	int			shlvl;
-	char		*shlvl_value;
+	char		*value;
 
-	shlvl_value = get_env(prompt, "SHLVL");
-	shlvl = ft_atoi(shlvl_value);
-	//ms_free_string(shlvl_value);
+	value = get_env(prompt, "SHLVL");
+	if (!value)
+		return ;
+	shlvl = ft_atoi(value);
 	head = prompt->env_list;
-	printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
 	while (head)
 	{
 		if (!ft_strncmp(head->key, "SHLVL", ft_strlen(head->key) + 1))
@@ -112,7 +109,6 @@ void	set_default_env(t_prompt *prompt)
 	value = NULL;
 	new_node = NULL;
 	head = prompt->env_list;
-
 	update_shlvl(prompt);
 	if (!get_env(prompt, "OLDPWD"))
 	{

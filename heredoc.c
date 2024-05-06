@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:30:29 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/29 18:36:12 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/06 17:51:40 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,15 +92,20 @@ void	send_heredoc(t_prompt *prompt, t_lexer *redir, int fd)
 
 	new_input = NULL;
 	delimiter = get_delimiter(redir);
+	prompt->interactive = true;
 	input = readline("> ");
-	while (ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
+	prompt->interactive = false;
+	while (input && ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
 	{
 		if (input)
 			new_input = expander(input, prompt->env_list, NULL);
 		ms_free_string(input);
-		ft_putstr_fd(new_input, fd);
+		if (new_input)
+			ft_putstr_fd(new_input, fd);
 		ft_putchar_fd('\n', fd);
+		prompt->interactive = true;
 		input = readline("> ");
+		prompt->interactive = false;
 		ms_free_string(new_input);
 		if (redir->next)
 			redir = redir->next;

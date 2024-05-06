@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/30 15:45:49 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/06 11:37:54 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ void		execute(t_prompt *prompt);
 int			exec_path(t_prompt *prompt, t_parser *parser, char **paths);
 int			handle_command(t_prompt *prompt, t_parser *parser);
 void		single_command(t_prompt *prompt, t_parser *parser);
+int			execute_dpath(t_prompt *prompt, t_parser *parser);
 // EXECUTOR_UTILS1.C
 int			dup_parser(t_prompt *prompt, t_parser *parser,
 				int fd_in, int end[2]);
@@ -149,6 +150,7 @@ t_prompt	*init(t_prompt *prompt, char **env);
 //ENV
 int			count_lines(char **env);
 char		**duplicate_env(char **env);
+void		update_shlvl(t_prompt *prompt);
 
 //ENV LIST AUX
 void		print_env(char **env);
