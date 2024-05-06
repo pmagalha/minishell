@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/10 19:28:15 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/29 14:43:12 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/06 18:59:00 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ bool	quotes_flag(t_prompt *prompt, char c)
 
 void	pipe_error(t_prompt *prompt)
 {
-	ft_printf("minishell: syntax error near unexpected token `|'\n");
+	printf("minishell: syntax error near unexpected token `|'\n");
 	free_data(prompt);
 	exit(g_code);
 }

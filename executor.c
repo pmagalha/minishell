@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/06 17:32:24 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/06 18:55:01 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,6 @@ void	single_command(t_prompt *prompt, t_parser *parser)
 		return ;
 	}
 	pid = fork();
-	//set_signals(prompt);
 	if (pid == 0)
 		handle_command(prompt, parser);
 	waitpid(pid, &status, 0);
