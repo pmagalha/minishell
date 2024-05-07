@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:30:29 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/05/06 19:10:17 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/07 16:01:37 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,24 +42,6 @@ int	create_hdfile(t_prompt *prompt, char *file)
 	return (fd);
 }
 
-char	*get_hdfile(t_parser *parser, t_lexer *redir)
-{
-	t_lexer	*head;
-	char	*file;
-
-	(void)parser;
-	head = redir;
-	file = NULL;
-	if (!head->content)
-		return (file);
-	while (head && (ft_strncmp(head->content, ">", 2)
-			&& ft_strncmp(head->content, ">>", 3)))
-		head = head->next;
-	if (head->content && head->next->content)
-		file = ft_strdup(head->next->content);
-	return (file);
-}
-
 int	set_heredoc(t_prompt *prompt, t_parser *parser)
 {
 	int		fd;
@@ -92,9 +74,7 @@ void	send_heredoc(t_prompt *prompt, t_lexer *redir, int fd)
 
 	new_input = NULL;
 	delimiter = get_delimiter(redir);
-	prompt->interactive = true;
-	input = readline("> ");
-	prompt->interactive = false;
+	input = get_hd_input(prompt);
 	while (input && ft_strncmp(input, delimiter, ft_strlen(delimiter) + 1))
 	{
 		if (input)
@@ -103,9 +83,7 @@ void	send_heredoc(t_prompt *prompt, t_lexer *redir, int fd)
 		if (new_input)
 			ft_putstr_fd(new_input, fd);
 		ft_putchar_fd('\n', fd);
-		prompt->interactive = true;
-		input = readline("> ");
-		prompt->interactive = false;
+		input = get_hd_input(prompt);
 		ms_free_string(new_input);
 		if (redir->next)
 			redir = redir->next;

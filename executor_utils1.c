@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils1.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:26:51 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/05/06 17:02:43 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/07 15:59:02 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 int	dup_parser(t_prompt *prompt, t_parser *parser, int fd_in, int end[2])
 {
-	(void)prompt;
 	if (parser->prev && dup2(fd_in, STDIN_FILENO) < 0)
 		return (1);
 	close(end[0]);

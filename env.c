@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/06 11:59:05 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/07 15:49:13 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,23 +43,19 @@ void	token_add_back_env(t_env_list **env_list, t_env_list *new)
 	}
 }
 
-void	set_env_from_strings(char **env, t_prompt *prompt) // norminettar isto
+void	set_env_from_strings(int shlvl, char **env, t_prompt *prompt)
 {
 	int			i;
 	int			lines;
 	char		*key;
 	char		*value;
 	t_env_list	*new_node;
-	int			shlvl;
 
 	i = 0;
 	lines = count_lines(env);
 	key = NULL;
 	value = NULL;
 	new_node = NULL;
-	shlvl = 0;
-	if (prompt->env_list)
-		shlvl = ft_atoi(get_env(prompt, "SHLVL"));
 	while (i < lines)
 	{
 		key = ft_substr(env[i], 0, ft_strchr(env[i], '=') - env[i]);
@@ -67,34 +63,12 @@ void	set_env_from_strings(char **env, t_prompt *prompt) // norminettar isto
 			value = ft_itoa(shlvl + 1);
 		else
 			value = ft_substr(env[i], ft_strchr(env[i], '=')
-				- env[i] + 1, ft_strlen(env[i]));
+					- env[i] + 1, ft_strlen(env[i]));
 		new_node = create_key_value(key, value);
 		token_add_back_env(&(prompt->env_list), new_node);
 		ms_free_string(key);
 		ms_free_string(value);
 		i++;
-	}
-}
-
-void	update_shlvl(t_prompt *prompt)
-{
-	t_env_list	*head;
-	int			shlvl;
-	char		*value;
-
-	value = get_env(prompt, "SHLVL");
-	if (!value)
-		return ;
-	shlvl = ft_atoi(value);
-	head = prompt->env_list;
-	while (head)
-	{
-		if (!ft_strncmp(head->key, "SHLVL", ft_strlen(head->key) + 1))
-		{
-			ms_free_string(head->value);
-			head->value = ft_itoa(shlvl + 1);
-		}
-		head = head->next;
 	}
 }
 
@@ -123,6 +97,11 @@ void	set_default_env(t_prompt *prompt)
 
 void	set_env(char **env, t_prompt *prompt)
 {
-	set_env_from_strings(env, prompt);
+	int	shlvl;
+
+	shlvl = 0;
+	if (prompt->env_list)
+		shlvl = ft_atoi(get_env(prompt, "SHLVL"));
+	set_env_from_strings(shlvl, env, prompt);
 	set_default_env(prompt);
 }

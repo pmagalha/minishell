@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/06 19:08:00 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/07 15:00:24 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,82 +30,42 @@ char	*print_type(t_type type)
 		return ("OTHER");
 }
 
-int	dev_mod(t_prompt *prompt)
+void	the_loop(char *input, t_prompt *prompt)
 {
-	printf("\033[32;1m=========== DEV MOD ==========\033[0m\n");
-	if (prompt->lexer)
+	while (42)
 	{
-		t_lexer	*lexer = prompt->lexer;
-		printf("\n\033[32;1mLEXER: \n\033[0m");
-		while(lexer)
+		prompt->interactive = true;
+		input = readline("minishell$ ");
+		prompt->interactive = false;
+		if (!input)
 		{
-			printf("String: [%s] " "Type: [%s] \n", lexer->content, print_type(lexer->type));
-			lexer = lexer->next;
+			free_data(prompt);
+			exit(1);
 		}
-	}
-	t_parser	*process = prompt->parser;
-	int n = 1;
-	while (process)
-	{
-		printf("\n\n\033[32;1mPARSER (%d): \033[0m", n++);
-		printf("\n");
-		printf("\033[34m   COMMANDS: \033[0m");
-		if (process->command)
+		if (*input && check_quotes(input))
 		{
-			t_lexer *temp_command = process->command; // Create a temporary pointer
-			while (temp_command)
+			add_history(input);
+			get_token(input, prompt);
+			if (!has_consecutive_redirects(prompt, input))
 			{
-				printf("[%s]  ", temp_command->content);
-				temp_command = temp_command->next; // Move the temporary pointer
+				get_parser(prompt);
+				if (!prompt->pid && prompt->parser->next)
+					init_pid(prompt);
+				execute(prompt);
 			}
 		}
-		else
-			printf("\033[90m(null)\033[0m");
-		printf("\n\033[34m   BUILTIN: \033[0m");
-		if (process->builtin)
-			printf("[%s]\n", process->builtin);
-		else
-			printf("\033[90m(null)\033[0m\n");
-		printf("\033[34m   REDIRECT: \033[0m");
-		t_lexer *redir = process->redirects;
-		if (!redir)
-			printf("\033[90m(null)\033[0m");
-		else
-		{
-			while (redir)
-			{
-				if (redir->type == REDIR_IN)
-					printf("[<] ");
-				if (redir->type == REDIR_OUT)
-					printf("[>] ");
-				if (redir->type == REDIR2_OUT)
-					printf("[>>] ");
-				if (redir->type == HEREDOC)
-					printf("[<<] ");
-				printf("[%s]  ", redir->content);
-				redir = redir->next;
-			}
-		}
-		printf("\n\033[34m   HD_FILE: \033[0m");
-		if (process->hd_file)
-			printf("[%s]", process->hd_file);
-		else
-			printf("\033[90m(null)\033[0m");
-		process = process->next;
+		ms_free_string(input);
+		reset_data(prompt);
 	}
-	printf("\n\n");
-	printf("\033[32;1m==============================\033[0m\n");
-	return (1);
 }
 
-/* ============================  dev mod ============================ */
-
-int main(int argc, char **argv, char **env)
+int	main(int argc, char **argv, char **env)
 {
-    char *input;
-	t_prompt *prompt;
-	
+	char		*input;
+	t_prompt	*prompt;
+
 	(void)argv;
+	input = NULL;
 	prompt = NULL;
 	if (argc > 1)
 	{
@@ -115,36 +75,6 @@ int main(int argc, char **argv, char **env)
 	prompt = init(prompt, env);
 	set_signals(prompt);
 	set_env(env, prompt);
-	while (1)
-	{
-		prompt->interactive = true;
-		input = readline("minishell$ ");
-		prompt->interactive = false;
-		if (input != NULL)
-		{
-			if (ft_strncmp(input, "", ft_strlen(input) + 1)) // para nao guardar o historico de comando vazio
-				add_history(input);
-			if (!check_quotes(input))
-			{
-				reset_data(prompt);
-				continue;
-			}
-			get_token(input, prompt);
-			if (has_consecutive_redirects(prompt, input))
-				continue ;
-			get_parser(prompt);
-			//dev_mod(prompt); // aapaaaagare
-			if (!prompt->pid && prompt->parser->next)
-				init_pid(prompt);
-			execute(prompt);
-			free(input);
-		}
-		else
-		{
-			free_data(prompt);
-			exit (1); // isto eh quando faz ctrl D (new line)
-		}
-		reset_data(prompt);
-	}
+	the_loop(input, prompt);
 	free_data(prompt);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/06 11:37:54 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/07 17:28:17 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,7 +96,7 @@ int			exec_builtins(t_prompt *prompt, t_parser *parser);
 int			count_lines(char **env);
 t_env_list	*create_key_value(char *key, char *value);
 void		token_add_back_env(t_env_list **env_list, t_env_list *new);
-void		set_env_from_strings(char **env, t_prompt *prompt);
+void		set_env_from_strings(int shlvl, char **env, t_prompt *prompt);
 void		set_default_env(t_prompt *prompt);
 void		set_env(char **env, t_prompt *prompt);
 void		print_env_list(t_env_list *head);
@@ -105,6 +105,7 @@ void		ms_error(int error);
 char		*file_dir_error(char *tmp);
 int			cmd_not_found(t_parser *parser);
 // EXECUTOR.C
+void		exit_builtin(t_prompt *prompt, t_parser *parser);
 int			fork_parser(t_prompt *prompt, t_parser *parser,
 				int fd_in, int end[2]);
 void		execute(t_prompt *prompt);
@@ -121,8 +122,7 @@ int			lexer_list_size(t_lexer *lexer);
 int			env_list_size(t_env_list *env_list);
 // EXECUTOR_UTILS2.C
 char		**convert_env(t_env_list *env_list);
-char		**convert_parser(t_prompt *prompt, t_parser *parser);
-// CONTINUAR A ORGANIZAR DAQUI!!!!!!!!!!!!
+char		**convert_parser(t_parser *parser);
 // REDIRECTS.C
 int			check_fd(t_parser *parser, int end[2]);
 
@@ -221,7 +221,7 @@ void		print_export(t_env_list *head);
 void		insert(t_env_list **head, char *key, char *value);
 int			ms_export(t_prompt *prompt, t_parser *parser);
 void		insert_sorted(t_env_list **head, t_env_list *node);
-void		add_value(char *variable, t_prompt *prompt);
+int			add_value(char *variable, t_prompt *prompt);
 void		add_on_env_list(t_env_list *env_list, char *key, char *value);
 char		*extract_key(char *variable);
 char		*extract_value(char *variable);
@@ -244,6 +244,7 @@ void		print_parser(t_prompt *prompt);
 void		reset_data(t_prompt *prompt);
 
 // Executor
+char		*get_hd_input(t_prompt *prompt);
 void		execute(t_prompt *prompt);
 void		single_command(t_prompt *prompt, t_parser *parser);
 int			handle_redirects(t_prompt *prompt, t_parser *parser);
@@ -254,7 +255,7 @@ char		*get_delimiter(t_lexer *redir);
 int			set_heredoc(t_prompt *prompt, t_parser *parser);
 void		send_heredoc(t_prompt *prompt, t_lexer *redir, int fd);
 int			create_hdfile(t_prompt *prompt, char *file);
-char		*get_hdfile(t_parser *parser, t_lexer *redir);
+char		*get_hdfile(t_lexer *redir);
 int			handle_command(t_prompt *prompt, t_parser *parser);
 void		populate_env_array(char **env_array, t_env_list *head);
 

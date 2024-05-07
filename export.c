@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 17:30:45 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/07 17:27:59 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,12 @@ int	check_export_arg(char *string)
 		if (isalpha(string[i]) || (string[i] == '=' && i != 0))
 			i++;
 		else
+		{
+			ms_free_string(string);
 			return (1);
+		}
 	}
-	free(string);
+	ms_free_string(string);
 	return (0);
 }
 
@@ -65,11 +68,16 @@ int	update_existing_value(char *key, char *value, t_env_list *current)
 		ms_free_string(key);
 		return (0);
 	}
+	else
+	{
+		ms_free_string(current->value);
+		current->value = NULL;
+	}
 	ms_free_string(key);
 	return (1);
 }
 
-void	add_value(char *variable, t_prompt *prompt)
+int	add_value(char *variable, t_prompt *prompt)
 {
 	char		*key;
 	char		*value;
@@ -88,13 +96,13 @@ void	add_value(char *variable, t_prompt *prompt)
 	while (current)
 	{
 		if (!ft_strncmp(current->key, key, ft_strlen(key) + 1))
-			if (!update_existing_value(key, value, current))
-				return ;
+			return (update_existing_value(key, value, current));
 		current = current->next;
 	}
 	add_on_env_list(prompt->env_list, key, value);
 	ms_free_string(value);
 	ms_free_string(key);
+	return (0);
 }
 
 int	ms_export(t_prompt *prompt, t_parser *parser)

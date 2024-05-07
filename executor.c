@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/06 18:55:01 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/07 17:56:02 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,14 @@ int	exec_path(t_prompt *prompt, t_parser *parser, char **paths)
 
 	i = -1;
 	if (!paths)
-		return (1);
+		return (cmd_not_found(parser));
 	while (paths[++i])
 	{
 		path = ft_strjoin(paths[i], parser->command->content);
 		if (!access(path, F_OK))
 		{
 			env_array = convert_env(prompt->env_list);
-			parser_array = convert_parser(prompt, parser);
+			parser_array = convert_parser(parser);
 			execve(path, parser_array, env_array);
 			free (path);
 			free_array(env_array);
@@ -68,13 +68,6 @@ int	exec_path(t_prompt *prompt, t_parser *parser, char **paths)
 	}
 	g_code = cmd_not_found(parser);
 	return (g_code);
-}
-
-void	exit_builtin(t_prompt *prompt, t_parser *parser)
-{
-	g_code = exec_builtins(prompt, parser);
-	free_data(prompt);
-	exit (g_code);
 }
 
 int	handle_command(t_prompt *prompt, t_parser *parser)
@@ -120,7 +113,7 @@ void	single_command(t_prompt *prompt, t_parser *parser)
 	if (set_heredoc(prompt, parser))
 		return ;
 	if (cmd && (!ft_strncmp(cmd, "exit", 5) || !ft_strncmp(cmd, "cd", 3)
-		|| !ft_strncmp(cmd, "export", 7)	|| !ft_strncmp(cmd, "unset", 6)))
+			|| !ft_strncmp(cmd, "export", 7) || !ft_strncmp(cmd, "unset", 6)))
 	{
 		g_code = exec_builtins(prompt, parser);
 		return ;
@@ -135,10 +128,10 @@ void	single_command(t_prompt *prompt, t_parser *parser)
 
 int	execute_dpath(t_prompt *prompt, t_parser *parser)
 {
-	struct	stat	st;
-	char	*path;
-	char	**env_array;
-	char	**parser_array;
+	struct stat		st;
+	char			*path;
+	char			**env_array;
+	char			**parser_array;
 
 	path = parser->command->content;
 	env_array = NULL;
@@ -149,7 +142,7 @@ int	execute_dpath(t_prompt *prompt, t_parser *parser)
 	if (!access(path, F_OK))
 	{
 		env_array = convert_env(prompt->env_list);
-		parser_array = convert_parser(prompt, parser);
+		parser_array = convert_parser(parser);
 		execve(path, parser_array, env_array);
 		free_array(env_array);
 		free_array(parser_array);

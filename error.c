@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 13:12:12 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/05/06 17:48:43 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/07 17:37:02 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	cmd_not_found(t_parser *parser)
 	int			status;
 
 	status = 127;
-	if (!parser->command && !parser->command->content)
+	if (!parser->command || !parser->command->content)
 		return (1);
 	if (parser->command->content[0])
 		tmp = ft_strdup(parser->command->content);

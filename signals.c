@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:26:40 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/05/06 19:11:54 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/07 16:09:23 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 extern int	g_code;
 
-void	execute_sig(void *baseprompt, int sig)
+void	execute_signal(void *baseprompt, int sig)
 {
 	static t_prompt	*prompt;
 
@@ -43,16 +43,16 @@ void	execute_sig(void *baseprompt, int sig)
 		g_code = 130;
 }
 
-void	handle(int sig)
+void	handle_sig(int sig)
 {
-	execute_sig(0, sig);
+	execute_signal(0, sig);
 }
 
 void	init_sign(void)
 {
 	struct sigaction	sa;
 
-	sa.sa_handler = &handle;
+	sa.sa_handler = &handle_sig;
 	sa.sa_flags = 0;
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGINT, &sa, NULL);
@@ -62,5 +62,5 @@ void	init_sign(void)
 void	set_signals(t_prompt *prompt)
 {
 	init_sign();
-	execute_sig(prompt, 0);
+	execute_signal(prompt, 0);
 }

@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:28:37 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/29 14:12:58 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/07 16:00:02 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	populate_env_array(char **env_array, t_env_list *head)
 	}
 }
 
-char	**convert_parser(t_prompt *prompt, t_parser *parser)
+char	**convert_parser(t_parser *parser)
 {
 	char	**parser_array;
 	size_t	size;
@@ -60,7 +60,6 @@ char	**convert_parser(t_prompt *prompt, t_parser *parser)
 	int		i;
 
 	i = 0;
-	(void)prompt;
 	size = lexer_list_size(parser->command);
 	head = parser->command;
 	parser_array = (char **)ft_calloc(size + 1, sizeof(char *));
