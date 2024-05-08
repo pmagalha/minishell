@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/19 12:18:20 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/29 13:45:16 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/08 15:45:07 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,14 @@
 
 void	pipe_handling(t_prompt *prompt)
 {
+	t_lexer	*tmp;
+
+	tmp = prompt->lexer;
 	if (prompt->lexer->next->type == PIPE)
-		prompt->lexer->next = prompt->lexer->next->next;
+	{
+		tmp = prompt->lexer;
+		prompt->lexer = prompt->lexer->next;
+	}
 	add_parser_back(&(prompt->parser), create_pnode(NULL, NULL, NULL));
 	prompt->lexer = prompt->lexer->next;
 }
@@ -58,17 +64,19 @@ int	count_pipes(t_lexer *lexer)
 	while (head != NULL)
 	{
 		if (head->type == PIPE)
+		{
+			if (head == lexer || (head->prev && head->prev->type == PIPE))
+			{
+				return (pipe_error());
+				exit (g_code);
+			}
 			pipe_count++;
+		}
 		if ((head->type == PIPE && !head->next)
 			|| ((head->next && head->next->next) && head->type == PIPE
 				&& head->next->type == PIPE
 				&& head->next->next->type == PIPE))
-		{
-			ft_putstr_fd("minishell: syntax error", STDERR_FILENO);
-			ft_putstr_fd(" near unexpected token `|'\n", STDERR_FILENO);
-			g_code = 2;
-			return (-1);
-		}
+			return (pipe_error());
 		head = head->next;
 	}
 	return (pipe_count);

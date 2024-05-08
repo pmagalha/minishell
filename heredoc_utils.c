@@ -1,25 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_pwd.c                                           :+:      :+:    :+:   */
+/*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/25 16:04:45 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/08 13:00:51 by pmagalha         ###   ########.fr       */
+/*   Created: 2024/05/08 15:41:12 by pmagalha          #+#    #+#             */
+/*   Updated: 2024/05/08 15:43:25 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "minishell.h"
 
-int	ms_pwd(void)
+void	print_hd(char *input, int fd)
 {
-	char	*temp;
-
-	temp = getcwd(NULL, 0);
-	ft_putstr_fd(temp, STDOUT_FILENO);
-	ft_putchar_fd('\n', STDOUT_FILENO);
-	if (temp)
-		free(temp);
-	return (0);
+    if (input)
+		ft_putstr_fd(input, fd);
+	ft_putchar_fd('\n', fd);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/29 18:46:39 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/08 16:26:27 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,10 +16,12 @@ extern int	g_code;
 
 int	get_token(char *input, t_prompt *prompt)
 {
+	int		i;
+	t_type	type;
 	char	*content;
 	char	*new_content;
-	t_type	type;
 
+	i = 0;
 	new_content = NULL;
 	while (*input)
 	{
@@ -28,9 +30,15 @@ int	get_token(char *input, t_prompt *prompt)
 		if (!*input)
 			break ;
 		content = get_token_content(prompt, input);
+		if (*input == '|' && !content)
+			return (reset_data(prompt), 2);
 		type = get_type(content);
-		if (content)
+		if (type == HEREDOC)
+			i = 2;
+		if (content && i == 0)
 			new_content = expander(content, prompt->env_list, NULL);
+		else if (content && i-- != 0)
+			new_content = ft_strdup(content);
 		input += ft_strlen(content);
 		if (check_content(content, new_content))
 			continue ;
@@ -42,14 +50,35 @@ int	get_token(char *input, t_prompt *prompt)
 
 char	*get_token_content(t_prompt *prompt, char *content)
 {
+	char	*operator;
 	if (!content)
 		return (NULL);
 	if (*content == '>' || *content == '<' || *content == '|')
-		return (get_operator(content));
+	{
+		operator = get_operator(content);
+		if (operator)
+			return (operator);
+		else
+			return (NULL);
+	}
 	else if (*content == '\"' || *content == '\'')
 		return (get_quoted_content(prompt, content));
 	else
 		return (other_content(content));
+}
+
+int	check_pipe(char *content)
+{
+	int	i;
+
+	i = 0;
+	while (content[i + 1] != '|' && content[i + 1])
+	{
+		if (content[i] != 32 && (content[i] < 9 || content[i] > 13))
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
 char	*get_operator(char *content)
@@ -62,8 +91,17 @@ char	*get_operator(char *content)
 		return (ft_substr(content, 0, 2));
 	else if (content[0] == '<' && content[1] != '<')
 		return (ft_substr(content, 0, 1));
-	else if (content[0] == '|')
+	else if (content[0] == '|' && !check_pipe(content))
+	{
+		printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+		pipe_error();
+
+	}
+	else if (content[0] == '|' && check_pipe(content))
+	{
+		printf("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
 		return (ft_substr(content, 0, 1));
+	}
 	return (NULL);
 }
 
@@ -83,7 +121,6 @@ t_type	get_type(char *content)
 		return (OTHER);
 }
 
-// APAGAR FUNCAO? TA GLITCHED EEEWWW
 char	*other_content(char *input)
 {
 	int		i;

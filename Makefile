@@ -6,7 +6,7 @@
 #    By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/12 20:33:55 by pmagalha          #+#    #+#              #
-#    Updated: 2024/05/07 15:57:18 by pmagalha         ###   ########.fr        #
+#    Updated: 2024/05/08 15:43:42 by pmagalha         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@
 SRC = main.c lexer.c init.c lexer_utils.c env.c expander.c expander_utils1.c \
 parser.c parser_utils.c quotes_utils.c builtins.c export.c export_utils1.c export_utils2.c \
 unset.c free_utils.c expander_utils2.c expander_utils3.c executor.c executor_utils1.c executor_utils2.c error.c \
-heredoc.c redirects.c signals.c builtins/ms_env.c builtins/ms_echo.c builtins/ms_pwd.c builtins/ms_exit.c builtins/ms_cd.c \
+heredoc.c heredoc_utils.c redirects.c signals.c builtins/ms_env.c builtins/ms_echo.c builtins/ms_pwd.c builtins/ms_exit.c builtins/ms_cd.c \
 ms_utils1.c ms_utils2.c
 
 OBJS = $(SRC:.c=.o)

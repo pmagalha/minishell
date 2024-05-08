@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/07 17:28:17 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/08 15:42:53 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ int			get_token(char *input, t_prompt *prompt);
 t_type		get_type(char *content);
 
 //LEXER LIST AUX
-
+int			pipe_error(void);
 t_lexer		*create_node(char *content, t_type type);
 void		token_add_back(t_lexer **token_lst, t_lexer *new);
 
@@ -251,9 +251,10 @@ int			handle_redirects(t_prompt *prompt, t_parser *parser);
 int			set_fd_in(t_prompt *prompt, t_lexer *redir);
 int			set_fd_out(t_prompt *prompt, t_lexer *redir);
 int			set_hdfile_in(char *file);
-char		*get_delimiter(t_lexer *redir);
+bool		get_delimiter(t_lexer *redir, char **delimiter);
 int			set_heredoc(t_prompt *prompt, t_parser *parser);
 void		send_heredoc(t_prompt *prompt, t_lexer *redir, int fd);
+void		print_hd(char *input, int fd);
 int			create_hdfile(t_prompt *prompt, char *file);
 char		*get_hdfile(t_lexer *redir);
 int			handle_command(t_prompt *prompt, t_parser *parser);

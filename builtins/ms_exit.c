@@ -6,11 +6,11 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:03:55 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 16:28:31 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/08 13:00:45 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell/minishell.h"
+#include "../minishell.h"
 
 extern int	g_code;
 

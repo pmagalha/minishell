@@ -6,11 +6,11 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 15:52:09 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/04/25 17:47:47 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/08 13:00:42 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell/minishell.h"
+#include "../minishell.h"
 
 int	count_lines(char **env)
 {
