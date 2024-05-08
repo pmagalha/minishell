@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_cd.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:02:44 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/08 13:00:33 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/08 18:13:28 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,14 @@ int	ms_cd(t_prompt *prompt, t_parser *parser)
 					&& (temp->content[1] == '-' && !temp->content[2])))))
 		new_path = change_path(prompt, "HOME");
 	else if (temp->content[0] == '-' && temp->content[1] != '-')
+	{
+		if (temp->next)
+		{
+			ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
+			return (1);
+		}
 		new_path = change_path(prompt, "OLDPWD");
+	}
 	else if (temp->next != NULL)
 	{
 		ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
