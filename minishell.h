@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/08 15:42:53 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/08 16:46:53 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ char		*get_token_content(t_prompt *prompt, char *content);
 char		*get_quoted_content(t_prompt *prompt, char *input);
 int			get_token(char *input, t_prompt *prompt);
 t_type		get_type(char *content);
-
+int			check_pipe(char *content);
 //LEXER LIST AUX
 int			pipe_error(void);
 t_lexer		*create_node(char *content, t_type type);

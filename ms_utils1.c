@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ms_utils.c                                         :+:      :+:    :+:   */
+/*   ms_utils1.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 14:12:53 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/30 15:57:22 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/08 16:54:24 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,10 @@ int	check_content(char *content, char *new_content)
 {
 	if (new_content == NULL)
 	{
-		free (content);
+		ms_free_string(content);
 		return (1);
 	}
+	ms_free_string(content);
 	return (0);
 }
 

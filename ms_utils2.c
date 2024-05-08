@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_utils2.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/07 15:47:37 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/07 15:55:41 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/08 16:46:25 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,4 +50,18 @@ char	*get_hd_input(t_prompt *prompt)
 	input = readline("> ");
 	prompt->interactive = false;
 	return (input);
+}
+
+int	check_pipe(char *content)
+{
+	int	i;
+
+	i = 1;
+	while (content[i] != '|' && content[i])
+	{
+		if (content[i] != 32 && (content[i] < 9 || content[i] > 13))
+			return (1);
+		i++;
+	}
+	return (0);
 }
