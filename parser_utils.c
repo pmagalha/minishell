@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/30 10:37:48 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/07 16:17:42 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:30:30 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,11 +74,10 @@ bool	redirects_error(t_prompt *prompt, char *msg)
 	return (false);
 }
 
-bool	has_consecutive_redirects(t_prompt *prompt, char *input)
+bool	has_consecutive_redirects(t_prompt *prompt)
 {
 	char	*msg;
 
-	(void)input;
 	msg = ft_strdup("minishell: syntax error near unexpected token ");
 	if (redirects_error(prompt, msg))
 	{

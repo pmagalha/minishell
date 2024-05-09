@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 16:11:33 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/07 15:49:13 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:03:15 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,12 +77,10 @@ void	set_default_env(t_prompt *prompt)
 	char		*key;
 	char		*value;
 	t_env_list	*new_node;
-	t_env_list	*head;
 
 	key = NULL;
 	value = NULL;
 	new_node = NULL;
-	head = prompt->env_list;
 	update_shlvl(prompt);
 	if (!get_env(prompt, "OLDPWD"))
 	{

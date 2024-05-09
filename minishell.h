@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/09 13:27:50 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:30:40 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ void		print_ms_env(t_env_list *temp);
 int			ms_env(t_prompt *prompt, t_parser *parser);
 char		*get_env(t_prompt *prompt, char *path);
 int			ms_cd(t_prompt *prompt, t_parser *parser);
-void		ms_exit_success(t_prompt *prompt, char **str);
+int			ms_exit_success(t_prompt *prompt, char **str);
 int			ms_exit(t_parser *parser, t_prompt *prompt);
 int			exec_builtins(t_prompt *prompt, t_parser *parser);
 int			ms_cd_error(void);
@@ -176,7 +176,7 @@ char		get_first_quote(char *str);
 void		get_command(t_prompt *prompt);
 t_parser	*create_pnode(t_lexer *command, char *builtin, t_lexer *redirects);
 void		get_redirects(t_prompt *prompt);
-bool		has_consecutive_redirects(t_prompt *prompt, char *input);
+bool		has_consecutive_redirects(t_prompt *prompt);
 
 //Frees
 void		free_parser_list(t_parser **parser);
@@ -211,6 +211,7 @@ int			check_quoted_content(char **newinput, char **new);
 int			copy_quoted_content(char *newinput, char **new);
 //Builtins
 int			ms_pwd(void);
+void		create_pwd(t_prompt *prompt);
 int			ms_echo(t_parser *parser);
 int			ms_env(t_prompt *prompt, t_parser *parser);
 int			exec_builtins(t_prompt *prompt, t_parser *parser);

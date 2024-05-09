@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:02:44 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/09 18:50:25 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:28:08 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static int	change_path(t_prompt *prompt, char *path)
 		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
 		ft_putstr_fd(path, STDERR_FILENO);
 		ft_putstr_fd(" not set\n", STDERR_FILENO);
-		return (1);
+		return (0);
 	}
 	new_dir = chdir(temp);
 	if (new_dir != 0)
@@ -78,6 +78,12 @@ static int	absolute_path(t_parser *parser)
 	int	new_path;
 
 	new_path = chdir(parser->command->next->content);
+	if (!new_path)
+	{
+		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
+		ft_putstr_fd(parser->command->next->content, STDERR_FILENO);
+		ft_putstr_fd(" not set\n", STDERR_FILENO);
+	}
 	if (new_path != 0)
 	{
 		ft_putstr_fd("minishell: cd: ", STDERR_FILENO);
@@ -106,10 +112,10 @@ int	ms_cd(t_prompt *prompt, t_parser *parser)
 	}
 	else if (temp->next != NULL)
 		return (ms_cd_error());
-	else
+	else if (new_path != 0)
 		new_path = absolute_path(parser);
-	if (new_path < 0)
-		return (1);
+	if (new_path <= 0)
+		return (create_pwd(prompt), 1);
 	add_path(prompt);
 	return (new_path);
 }

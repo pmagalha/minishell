@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ms_exit.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:03:55 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/08 13:00:45 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:33:22 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,18 @@ int	str_is_digit(char *str)
 	return (1);
 }
 
-static void	exit_code(char **str)
+static int	exit_code(char **str, t_prompt *prompt)
 {
 	int		exit_code;
 
 	exit_code = 0;
 	if (!str[0])
 		exit_code = 0;
-	else if (str[1])
+	else if (str_is_digit(str[0]) && str[1])
 	{
-		ft_putstr_fd("-minishell: exit: too many arguments\n", STDERR_FILENO);
+		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
 		exit_code = 1;
-		free_array(str);
-		exit(exit_code);
+		return (1);
 	}
 	else if (str_is_digit(str[0]) || ft_atoi(str[0]))
 		exit_code = ft_atoi(str[0]);
@@ -53,16 +52,22 @@ static void	exit_code(char **str)
 		exit_code = 2;
 	}
 	free_array(str);
+	free_data(prompt);
 	exit(exit_code);
 }
 
-void	ms_exit_success(t_prompt *prompt, char **str)
+int	ms_exit_success(t_prompt *prompt, char **str)
 {
 	rl_clear_history();
 	ft_putstr_fd("exit\n", STDOUT_FILENO);
+	if (exit_code(str, prompt))
+	{
+		free_array(str);
+		return (1);
+	}
 	free_data(prompt);
-	exit_code(str);
 	free_array(str);
+	return (0);
 }
 
 int	ms_exit(t_parser *parser, t_prompt *prompt)
@@ -90,6 +95,5 @@ int	ms_exit(t_parser *parser, t_prompt *prompt)
 		temp = temp->next;
 		i++;
 	}
-	ms_exit_success(prompt, str);
-	return (EXIT_SUCCESS);
+	return (ms_exit_success(prompt, str));
 }

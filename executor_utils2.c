@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor_utils2.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 14:28:37 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/05/07 16:00:02 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/09 20:12:12 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ void	populate_env_array(char **env_array, t_env_list *head)
 	i = 0;
 	while (head)
 	{
-		temp = ms_safejoin(head->key, NULL);
+		temp = ms_safejoin(ft_strdup(head->key), NULL);
 		temp = ms_safejoin(temp, ft_strdup("="));
 		if (head->value && *head->value)
-			temp = ms_safejoin(temp, head->value);
+			temp = ms_safejoin(temp, ft_strdup(head->value));
 		env_array[i] = malloc((ft_strlen(temp) + 1) * sizeof(char));
 		if (!env_array[i])
 		{

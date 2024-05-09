@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:35:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/08 16:32:52 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:30:45 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,13 @@ void	the_loop(char *input, t_prompt *prompt)
 		if (!input)
 		{
 			free_data(prompt);
-			exit(1);
+			exit(0);
 		}
 		if (*input && check_quotes(input))
 		{
 			add_history(input);
 			get_token(input, prompt);
-			if (!has_consecutive_redirects(prompt, input))
+			if (!has_consecutive_redirects(prompt))
 			{
 				get_parser(prompt);
 				if (!prompt->pid && prompt->parser->next)
