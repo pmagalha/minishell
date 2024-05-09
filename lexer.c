@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/08 16:47:17 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/09 13:27:09 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,7 @@ int	get_token(char *input, t_prompt *prompt)
 		type = get_type(content);
 		if (type == HEREDOC)
 			i = 2;
-		if (content && i == 0)
-			new_content = expander(content, prompt->env_list, NULL);
-		else if (content && i-- != 0)
-			new_content = ft_strdup(content);
+		new_content = create_content(i, prompt->env_list, content);
 		input += ft_strlen(content);
 		if (check_content(content, new_content))
 			continue ;

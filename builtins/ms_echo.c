@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:02:02 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/08 13:00:39 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/09 14:56:52 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,23 @@
 static void	ft_print(t_lexer *command)
 {
 	t_lexer	*temp;
+	char	*homedir;
 
+	homedir = NULL;
 	temp = command;
 	while (temp)
 	{
-		ft_putstr_fd(temp->content, STDOUT_FILENO);
+		if (!ft_strncmp(temp->content, "~", 2))
+			homedir = ft_strdup(getenv("HOME"));
+		if (homedir)
+			ft_putstr_fd(homedir, STDOUT_FILENO);
+		else
+			ft_putstr_fd(temp->content, STDOUT_FILENO);
 		temp = temp->next;
-		if (temp)
+		if (temp || homedir)
 			ft_putchar_fd(' ', STDOUT_FILENO);
+		ms_free_string(homedir);
+		homedir = NULL;
 	}
 }
 
@@ -47,8 +56,6 @@ int	ms_echo(t_parser *parser)
 	}
 	ft_print(temp);
 	if (flg == false)
-	{
 		ft_putchar_fd('\n', STDOUT_FILENO);
-	}
 	return (0);
 }

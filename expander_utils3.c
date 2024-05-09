@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander_utils3.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 18:41:25 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/04/29 18:43:07 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/09 13:27:22 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,4 +67,22 @@ int	copy_quoted_content(char *newinput, char **new)
 	}
 	*new = copy_content(*new, newinput, next_char(newinput + 1));
 	return (ft_strclen(newinput, next_char(newinput + 1)) - 1);
+}
+
+char	*create_content(int i, t_env_list *env_list, char *content)
+{
+	char	*new_content;
+
+	new_content = NULL;
+	if (content && i == 0)
+	{
+		new_content = expander(content, env_list, NULL);
+		return (new_content);
+	}
+	else if (content && i-- != 0)
+	{
+		new_content = ft_strdup(content);
+		return (new_content);
+	}
+	return (0);
 }

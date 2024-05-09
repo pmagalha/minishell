@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 18:16:11 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/08 17:57:22 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/09 13:46:18 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ int	check_export_arg(char *string)
 		return (0);
 	while (string[i])
 	{
-		if (isalpha(string[i]) || (string[i] == '=' && i != 0))
+		if (isalpha(string[i]) || (((string[i] == '_')
+					|| string[i] == '=') && i != 0))
 			i++;
 		else
 		{
@@ -33,16 +34,6 @@ int	check_export_arg(char *string)
 	return (0);
 }
 
-void	export_error(char *content)
-{
-	ft_putstr_fd("minishell: export: `", STDERR_FILENO);
-	if (content[0] == 32 || (content[0] > 9 && content[0] < 13))
-		ft_putstr_fd(content, STDERR_FILENO);
-	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
-}
-
-// o problema aqui eh que o get_token so guarda ate ao igual, por causa do espaco a seguir,
-// Por outras palavras: CMD1[export] CMD2[a=] CMD3[""] - O CMD3 nao existe porque esta vazio, entao nao da para prever o erro
 int	check_export(t_prompt *prompt, t_parser *parser)
 {
 	t_lexer	*cmd;
@@ -51,8 +42,8 @@ int	check_export(t_prompt *prompt, t_parser *parser)
 	while (cmd)
 	{
 		if (cmd->content[0] && cmd->content[0] != '='
-			&& !check_export_arg(ft_strndup(cmd->content, 
-				ft_strclen(cmd->content, '='))))
+			&& !check_export_arg(ft_strndup(cmd->content,
+					ft_strclen(cmd->content, '='))))
 		{
 			add_value(cmd->content, prompt);
 			cmd = cmd->next;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
+/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:06:27 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/08 16:46:53 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/09 13:27:50 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ int			ms_cd(t_prompt *prompt, t_parser *parser);
 void		ms_exit_success(t_prompt *prompt, char **str);
 int			ms_exit(t_parser *parser, t_prompt *prompt);
 int			exec_builtins(t_prompt *prompt, t_parser *parser);
+int			ms_cd_error(void);
 // ENV.C
 int			count_lines(char **env);
 t_env_list	*create_key_value(char *key, char *value);
@@ -127,6 +128,7 @@ char		**convert_parser(t_parser *parser);
 int			check_fd(t_parser *parser, int end[2]);
 
 // LEXER
+char		*create_content(int i, t_env_list *env_list, char *content);
 int			check_content(char *content, char *new_content);
 char		*get_operator(char *content);
 char		*other_content(char *content);
@@ -217,6 +219,7 @@ int			ms_exit(t_parser *parser, t_prompt *prompt);
 void		free_array(char **arr);
 
 // Export
+void		export_error(char *content);
 void		print_export(t_env_list *head);
 void		insert(t_env_list **head, char *key, char *value);
 int			ms_export(t_prompt *prompt, t_parser *parser);

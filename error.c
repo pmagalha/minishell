@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 13:12:12 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/05/07 17:37:02 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/09 13:12:51 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,4 +82,18 @@ int	cmd_not_found(t_parser *parser)
 	ms_free_string(tmp);
 	ms_free_string(str);
 	return (status);
+}
+
+void	export_error(char *content)
+{
+	ft_putstr_fd("minishell: export: `", STDERR_FILENO);
+	if (content[0] == 32 || (content[0] > 9 && content[0] < 13))
+		ft_putstr_fd(content, STDERR_FILENO);
+	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
+}
+
+int	ms_cd_error(void)
+{
+	ft_putstr_fd("minishell: cd: too many arguments\n", STDERR_FILENO);
+	return (1);
 }
