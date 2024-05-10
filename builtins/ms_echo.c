@@ -6,7 +6,7 @@
 /*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:02:02 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/10 11:36:33 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/10 12:52:13 by pmagalha         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,9 +46,10 @@ int	ms_echo(t_parser *parser)
 	temp = parser->command->next;
 	while (temp && temp->content[0] == '-' && temp->content[1] == 'n')
 	{
+		i = 1;
 		while (temp->content[i] == 'n')
 			i++;
-		if (temp->content[i] == '\0')
+		if (!temp->content[i])
 			flg = true;
 		else
 			break ;
