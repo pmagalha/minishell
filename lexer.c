@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/07 18:09:16 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/09 13:27:09 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/10 15:51:22 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,11 +93,11 @@ char	*other_content(char *input)
 	bool	in_quotes;
 	char	*res;
 
-	i = -1;
+	i = 0;
 	in_quotes = false;
 	if (!input)
 		return (NULL);
-	while (input[++i])
+	while (input[i++])
 	{
 		if ((input[i] == '\'' && input[i + 1] == '\'')
 			|| (input[i] == '\"' && input[i + 1] == '\"'))

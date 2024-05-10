@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/11 13:12:12 by joao-ppe          #+#    #+#             */
-/*   Updated: 2024/05/09 20:07:45 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/10 16:13:50 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ int	cmd_not_found(t_parser *parser)
 void	export_error(char *content)
 {
 	ft_putstr_fd("minishell: export: `", STDERR_FILENO);
-	if (content[0] == 32 || (content[0] > 9 && content[0] < 13))
+	if (content[0] != 32 || (content[0] > 9 && content[0] < 13))
 		ft_putstr_fd(content, STDERR_FILENO);
 	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 }

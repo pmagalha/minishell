@@ -6,7 +6,7 @@
 /*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:03:55 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/09 18:33:22 by joao-ppe         ###   ########.fr       */
+/*   Updated: 2024/05/10 15:25:39 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ static int	exit_code(char **str, t_prompt *prompt)
 		exit_code = 1;
 		return (1);
 	}
-	else if (str_is_digit(str[0]) || ft_atoi(str[0]))
+	else if (str_is_digit(str[0]) && ft_atoi(str[0]))
 		exit_code = ft_atoi(str[0]);
 	else if (str[0][0] && str[0][0] == '-' && str_is_digit(str[0] + 1))
 		exit_code = 256 - ft_atoi(str[0] + 1);

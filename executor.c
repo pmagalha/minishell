@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   executor.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+        */
+/*   By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 13:15:12 by pmagalha          #+#    #+#             */
-/*   Updated: 2024/05/10 11:29:50 by pmagalha         ###   ########.fr       */
+/*   Updated: 2024/05/10 15:19:55 by joao-ppe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ int	execute_dpath(t_prompt *prompt, t_parser *parser)
 	path = parser->command->content;
 	env_array = NULL;
 	parser_array = NULL;
-	if (!stat(path, &st) && !ft_strncmp(path, "./minishell", 12)
+	if (!stat(path, &st)
 		&& (S_ISDIR(st.st_mode)))
 		return (cmd_not_found(parser));
 	if (!access(path, F_OK))
