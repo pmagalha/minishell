@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: pmagalha <pmagalha@student.42.fr>          +#+  +:+       +#+         #
+#    By: joao-ppe <joao-ppe@student.42porto.com>    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/12 20:33:55 by pmagalha          #+#    #+#              #
-#    Updated: 2024/05/08 15:43:42 by pmagalha         ###   ########.fr        #
+#    Updated: 2024/06/17 18:03:54 by joao-ppe         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,21 +14,21 @@
 #                                  SOURCE FILES                                #
 ################################################################################
 
-SRC = main.c lexer.c init.c lexer_utils.c env.c expander.c expander_utils1.c \
-parser.c parser_utils.c quotes_utils.c builtins.c export.c export_utils1.c export_utils2.c \
-unset.c free_utils.c expander_utils2.c expander_utils3.c executor.c executor_utils1.c executor_utils2.c error.c \
-heredoc.c heredoc_utils.c redirects.c signals.c builtins/ms_env.c builtins/ms_echo.c builtins/ms_pwd.c builtins/ms_exit.c builtins/ms_cd.c \
-ms_utils1.c ms_utils2.c
+SRC = src/main.c src/lexer.c src/init.c src/lexer_utils.c src/env.c src/expander.c src/expander_utils1.c \
+src/parser.c src/parser_utils.c src/quotes_utils.c src/builtins.c src/export.c src/export_utils1.c src/export_utils2.c \
+src/unset.c src/free_utils.c src/expander_utils2.c src/expander_utils3.c src/executor.c src/executor_utils1.c src/executor_utils2.c src/error.c \
+src/heredoc.c src/heredoc_utils.c src/redirects.c src/signals.c src/builtins/ms_env.c src/builtins/ms_echo.c src/builtins/ms_pwd.c src/builtins/ms_exit.c src/builtins/ms_cd.c \
+src/ms_utils1.c src/ms_utils2.c
 
 OBJS = $(SRC:.c=.o)
-DEPS = libft/libft.a
+DEPS = include/libft/libft.a
 
 ################################################################################
 #                           EXECUTABLES & LIBRARIES                            #
 ################################################################################
 
 NAME = minishell
-LIBFT = libft/libft.a
+LIBFT = include/libft/libft.a
 
 ################################################################################
 #                                     FLAGS                                    #
@@ -44,7 +44,7 @@ CFLAGS = -g
 all: deps $(NAME)
 
 deps:
-		$(MAKE) -C ./libft
+		$(MAKE) -C ./include/libft
 
 GREEN		= \033[38;5;47m
 YELLOW		= \033[38;5;226m
@@ -74,11 +74,11 @@ $(OBJS): %.o: %.c
 	@echo "[$(BLUE)compiling$(RESET)]:\t $<"
 	
 clean:
-	$(MAKE) $@ -C ./libft
+	$(MAKE) $@ -C ./include/libft
 	@rm -rf $(OBJS)
 
 fclean: clean
-	$(MAKE) $@ -C ./libft
+	$(MAKE) $@ -C ./include/libft
 	@rm -rf $(NAME)
 	@echo " \n$(RED)::::: Removing $(NAME) executable ::::: $(RESET)\n "
 
